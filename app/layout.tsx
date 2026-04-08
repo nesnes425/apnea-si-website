@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Lora, Roboto, Geist } from "next/font/google";
-import "./globals.css";
+import { Lora, Roboto } from "next/font/google";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import "./globals.css";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -38,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sl" className={cn(lora.variable, roboto.variable, "font-sans", geist.variable)}>
+    <html lang="sl" className={cn(lora.variable, roboto.variable)}>
       <body className="min-h-screen flex flex-col antialiased">
         {children}
       </body>
