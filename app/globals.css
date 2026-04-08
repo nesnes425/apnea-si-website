@@ -8,10 +8,15 @@
   /* === Apnea.si Design Tokens === */
   --color-navy: #33404f;
   --color-navy-dark: #181E25;
+  --color-navy-light: #4a5568;
   --color-gold: #d3a356;
   --color-gold-hover: #c18f3e;
   --color-gold-light: #f5e6c8;
+  --color-gold-pale: #faf4e8;
   --color-body: #585a5a;
+  --color-muted-text: #8a8d8e;
+  --color-surface: #f7f7f5;
+  --color-border-custom: #e8e8e6;
 
   /* === Fonts === */
   --font-heading: var(--font-lora);
