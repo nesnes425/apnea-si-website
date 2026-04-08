@@ -1,12 +1,13 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { schemaTypes } from "./sanity/schemas";
+import { dataset, projectId } from "./sanity/env";
 
 export default defineConfig({
   name: "apnea-si",
   title: "Apnea Slovenija",
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+  projectId,
+  dataset,
   plugins: [structureTool()],
   schema: {
     types: schemaTypes,
