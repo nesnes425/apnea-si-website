@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Lora, Roboto } from "next/font/google";
 import { cn } from "@/lib/utils";
-import "./globals.css";
+import "../globals.css";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
