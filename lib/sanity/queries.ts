@@ -36,7 +36,7 @@ export async function getBlogPosts(
       _id,
       title,
       slug,
-      featuredImage { asset-> { _ref, url }, alt },
+      featuredImage { asset->, alt },
       publishedAt,
       categories,
       metaDescription
@@ -51,8 +51,11 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
       _id,
       title,
       slug,
-      body,
-      featuredImage { asset-> { _ref, url }, alt },
+      body[] {
+        ...,
+        _type == "image" => { ..., asset-> }
+      },
+      featuredImage { asset->, alt },
       publishedAt,
       categories,
       metaDescription
@@ -63,4 +66,39 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 export async function getBlogPostCount(): Promise<number> {
   return sanityClient.fetch(`count(*[_type == "blogPost"])`);
+}
+
+export async function getRelatedPosts(
+  currentId: string,
+  categories: string[] = [],
+  limit = 3
+): Promise<BlogPost[]> {
+  // Try same-category posts first, fill with recent posts if not enough
+  if (categories.length > 0) {
+    const related = await sanityClient.fetch<BlogPost[]>(
+      `*[_type == "blogPost" && _id != $currentId && count((categories[])[@ in $categories]) > 0] | order(publishedAt desc) [0...$limit] {
+        _id, title, slug, featuredImage { asset->, alt }, publishedAt, categories
+      }`,
+      { currentId, categories, limit }
+    );
+    if (related.length >= limit) return related;
+
+    // Fill remaining slots with recent posts
+    const existingIds = [currentId, ...related.map((p) => p._id)];
+    const filler = await sanityClient.fetch<BlogPost[]>(
+      `*[_type == "blogPost" && !(_id in $existingIds)] | order(publishedAt desc) [0...$fillCount] {
+        _id, title, slug, featuredImage { asset->, alt }, publishedAt, categories
+      }`,
+      { existingIds, fillCount: limit - related.length }
+    );
+    return [...related, ...filler];
+  }
+
+  // No categories — just show most recent
+  return sanityClient.fetch(
+    `*[_type == "blogPost" && _id != $currentId] | order(publishedAt desc) [0...$limit] {
+      _id, title, slug, featuredImage { asset->, alt }, publishedAt, categories
+    }`,
+    { currentId, limit }
+  );
 }

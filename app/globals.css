@@ -99,6 +99,8 @@
   --sidebar-ring: #d3a356;
 }
 
+/* Smooth scroll — disabled, using JS instead for better control */
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

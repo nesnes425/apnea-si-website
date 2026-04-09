@@ -37,6 +37,68 @@ export const blogPost = defineType({
         },
         {
           type: "object",
+          name: "cta",
+          title: "Poziv k dejanju (CTA)",
+          fields: [
+            defineField({
+              name: "heading",
+              title: "Naslov",
+              type: "string",
+            }),
+            defineField({
+              name: "text",
+              title: "Besedilo",
+              type: "string",
+            }),
+            defineField({
+              name: "buttons",
+              title: "Gumbi",
+              type: "array",
+              of: [
+                {
+                  type: "object",
+                  fields: [
+                    defineField({
+                      name: "label",
+                      title: "Besedilo gumba",
+                      type: "string",
+                      validation: (Rule) => Rule.required(),
+                    }),
+                    defineField({
+                      name: "href",
+                      title: "Povezava",
+                      type: "string",
+                      validation: (Rule) => Rule.required(),
+                    }),
+                    defineField({
+                      name: "variant",
+                      title: "Slog",
+                      type: "string",
+                      options: {
+                        list: [
+                          { title: "Primarni (zlat)", value: "primary" },
+                          { title: "Sekundarni (obroba)", value: "secondary" },
+                        ],
+                      },
+                      initialValue: "primary",
+                    }),
+                  ],
+                  preview: {
+                    select: { title: "label", subtitle: "href" },
+                  },
+                },
+              ],
+            }),
+          ],
+          preview: {
+            select: { title: "heading" },
+            prepare({ title }) {
+              return { title: title || "CTA", subtitle: "Poziv k dejanju" };
+            },
+          },
+        },
+        {
+          type: "object",
           name: "youtube",
           title: "YouTube Video",
           fields: [

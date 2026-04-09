@@ -18,7 +18,8 @@ export interface BlogPost {
   body: unknown[]; // Portable Text
   featuredImage?: {
     asset: {
-      _ref: string;
+      _id: string;
+      _ref?: string;
       url: string;
     };
     alt?: string;

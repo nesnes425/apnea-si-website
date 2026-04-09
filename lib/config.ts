@@ -85,6 +85,7 @@ export const siteConfig = {
     { label: "Treningi", href: "/treningi" },
     { label: "Predavanja", href: "/predavanja" },
     { label: "Darilni bon", href: "/darilni-bon" },
+    { label: "Novice", href: "/novice" },
     { label: "O nas", href: "/o-nas" },
     { label: "FAQ", href: "/vprasanja" },
     { label: "Kontakt", href: "/kontakt" },
