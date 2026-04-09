@@ -113,6 +113,49 @@
   }
 }
 
+/* Prose styling for legal/content pages */
+.prose-apnea h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+.prose-apnea h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.prose-apnea p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-body);
+  font-family: var(--font-body), system-ui, sans-serif;
+  margin-bottom: 1rem;
+}
+.prose-apnea ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.prose-apnea ul li {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-body);
+  font-family: var(--font-body), system-ui, sans-serif;
+  margin-bottom: 0.25rem;
+}
+.prose-apnea a {
+  color: var(--color-gold);
+  transition: color 0.2s;
+}
+.prose-apnea a:hover {
+  color: var(--color-gold-hover);
+}
+.prose-apnea strong {
+  color: var(--color-navy);
+}
+
 /* Hide scrollbar for gallery */
 .scrollbar-hide {
   -ms-overflow-style: none;
