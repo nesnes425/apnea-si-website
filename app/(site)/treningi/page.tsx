@@ -1,73 +1,74 @@
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
-import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
-import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { CheckList } from "@/components/blocks/CheckList";
 import { FAQ } from "@/components/blocks/FAQ";
-import { FinalCTA } from "@/components/blocks/FinalCTA";
+import { Testimonials } from "@/components/blocks/Testimonials";
+import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 
 export const metadata = {
   title: "Treningi prostega potapljanja",
   description:
-    "Celoletni vodeni treningi prostega potapljanja na 5+ lokacijah po Sloveniji. 4 programi od začetnikov do tekmovalcev. €54–62/mesec.",
+    "Celoletni vodeni treningi prostega potapljanja na 7 lokacijah po Sloveniji. Od začetnikov do tekmovalcev. Sezona oktober–junij. Pridružite se 350+ potapljačem.",
 };
 
-const programs = [
-  {
-    title: "Začetni program",
-    who: "Vsi, ki na novo vstopate v svet plavanja ali prostega potapljanja",
-    what: "Tehnika plavanja (kraul, prsno, delfin), osnove zadrževanja diha, varne progresije pod vodo",
-    prereq: "Brez predhodnih izkušenj",
-  },
-  {
-    title: "Nadaljevalni program",
-    who: "Plavalci z ustrezno tehniko, ki želijo intenzivnejši trening",
-    what: "Aerobni in anaerobni trening, CO₂/O₂ tolerance, sistematična periodizacija",
-    prereq: "Obvladanje osnovnih plavalnih tehnik",
-  },
-  {
-    title: "Performance program",
-    who: "Izkušeni potapljači z ambicijami za tekmovanja",
-    what: "Dolgih potopi s specializiranimi plavutmi, intenzivni O₂/CO₂ seti, individualno spremljanje napredka",
-    prereq: "Odlična plavalna tehnika",
-  },
-  {
-    title: "Statična apneja",
-    who: "Vsi, ki želijo izboljšati zadrževanje diha na površini",
-    what: "Sprostitvene tehnike, prilagajanje na CO₂, progresivni protokoli zadrževanja diha",
-    prereq: "Brez predpogojev",
-  },
+const locations = [
+  { city: "Ljubljana", note: "Več bazenov in terminov", status: "Polno — čakalna lista" },
+  { city: "Kranj", note: "", status: "Prosta mesta" },
+  { city: "Nova Gorica", note: "", status: "Prosta mesta" },
+  { city: "Koper", note: "", status: "Prosta mesta" },
+  { city: "Novo Mesto", note: "", status: "Prosta mesta" },
+  { city: "Velenje", note: "", status: "Prosta mesta" },
+  { city: "Radovljica", note: "", status: "Prosta mesta" },
 ];
 
-const locations = [
-  { city: "Ljubljana", venues: "Fakulteta za šport, Tivoli, Ilirija, Vevče", status: "Polno — čakalna lista" },
-  { city: "Kranj", venues: "Mestni bazen", status: "Prosta mesta" },
-  { city: "Nova Gorica", venues: "Mestni bazen", status: "Prosta mesta" },
-  { city: "Koper", venues: "Mestni bazen", status: "Prosta mesta" },
-  { city: "Novo Mesto", venues: "Mestni bazen", status: "Prosta mesta" },
-  { city: "Velenje", venues: "Mestni bazen", status: "Prosta mesta" },
-  { city: "Radovljica", venues: "Mestni bazen", status: "Prosta mesta" },
+const reviews = [
+  {
+    text: "Treningi so postali del mojega tedna, ki ga ne bi zamenjala za nič. Začela sem kot popolna začetnica — danes plavam pod vodo 100 metrov in hodim na državna prvenstva. Ekipa je fantastična.",
+    name: "Maja L.",
+    detail: "Trenira 4 leta, Ljubljana",
+  },
+  {
+    text: "Prišel sem, ker sem hotel izboljšati potapljanje za podvodni ribolov. Ostal sem, ker so treningi postali najboljši del mojega tedna. Ista ekipa, isti bazen, vsak torek.",
+    name: "Rok S.",
+    detail: "Trenira 3 leta, Koper",
+  },
+  {
+    text: "Po petih letih treningov sem postal inštruktor. Nikoli si nisem mislil, da bom poučeval — a treningi ti dajo toliko, da v nekem trenutku želiš to vrniti naprej.",
+    name: "Matevž D.",
+    detail: "Inštruktor, 5+ let z nami",
+  },
 ];
 
 const faqs = [
   { q: "Ali potrebujem predhodni tečaj?", a: "Ne — na treninge se lahko prijavite brez predhodnega tečaja prostega potapljanja." },
-  { q: "Koliko stane?", a: "Letna članarina: €35 (ŠD Apnea Slovenija). Vadnina: €54–62/mesec, odvisno od lokacije in frekvence. Plačilo v dveh obrokih (60% + 40%)." },
-  { q: "Kdaj potekajo treningi?", a: "Sezona: oktober–junij. Termini: jutranji (7:00) in večerni (17:00–22:00), odvisno od lokacije." },
-  { q: "Koliko krat na teden je optimalno?", a: "Dvakrat tedensko je optimalno — npr. enkrat nadaljevalni, enkrat performance program." },
+  { q: "Koliko stane?", a: "Letna članarina: €35 (ŠD Apnea Slovenija). Vadnina: €54–62/mesec, odvisno od lokacije. Plačilo v dveh obrokih (60% + 40%)." },
+  { q: "Kdaj potekajo treningi?", a: "Sezona: oktober–junij. Termini: jutranji (7:00) in večerni (17:00–22:00), odvisno od lokacije. Podrobne ure so navedene pri vsaki lokaciji." },
+  { q: "Koliko krat na teden je optimalno?", a: "Dvakrat tedensko je optimalno. Lahko kombinirate treninge na različnih lokacijah." },
   { q: "Kakšno opremo potrebujem?", a: "Kratke plavuti, dihalka, športne kopalke, kapa, očala ali maska, utežni pas za vrat. Performance skupina tudi dolge plavuti in neoprensko obleko." },
   { q: "Ali lahko odpovedm sredi sezone?", a: "Odpoved je mogoča do 8. tedna programa. Po tem drugega obroka ni mogoče vrniti." },
   { q: "Me zanima le plavanje — ali so treningi primerni?", a: "Da — treningi kombinirajo plavanje in apnejo. Začetna in nadaljevalna skupina privabljata tudi ljubitelje plavanja." },
+  { q: "Kdo vodi treninge?", a: "Izkušeni trenerji plavanja in inštruktorji prostega potapljanja. Program zasnuje Samo Jeranko. V skupini je povprečno manj kot 5 udeležencev na progo." },
+  { q: "Ali so tudi treningi na prostem (morje)?", a: "Da — v poletnih mesecih organiziramo odprte vode treninge in potapljaške kampe. Informacije prejmete med sezono." },
+];
+
+const trainingPhotos = [
+  { src: "/images/placeholder/tecaj-bazen-samo.png", alt: "Trening v bazenu", aspect: 1.5 },
+  { src: "/images/placeholder/trening-camp.jpg", alt: "Trening camp", aspect: 1.5 },
+  { src: "/images/placeholder/tecaj-skupina.jpg", alt: "Skupina na treningu", aspect: 1.5 },
+  { src: "/images/placeholder/tecaj-bled.png", alt: "Trening na prostem", aspect: 1.5 },
 ];
 
 export default function TreningiPage() {
   return (
     <>
-      {/* Hero */}
+      {/* ============================================
+          HERO
+          ============================================ */}
       <section className="relative w-full min-h-[520px] md:min-h-[600px] flex items-center">
         <Image
-          src="/images/placeholder/trening-camp.jpg"
+          src="/images/placeholder/tecaj-bazen-samo.png"
           alt="Trening prostega potapljanja v bazenu"
           fill
           className="object-cover"
@@ -80,264 +81,305 @@ export default function TreningiPage() {
           <div className="max-w-lg">
             <Overline>Treningi</Overline>
             <h1 className="text-[34px] md:text-[50px] font-bold leading-[1.08] tracking-[-0.02em] text-navy mb-5">
-              Redni vodeni treningi prostega potapljanja
+              Skupnost, ki raste skupaj — vsak teden v bazenu
             </h1>
             <p className="text-[17px] md:text-[19px] text-body leading-[1.6] font-body mb-3">
-              Celoletni strukturirani programi v bazenu — od osnov plavanja do
-              tekmovalnih priprav. Vsak teden, pod vodstvom izkušenih trenerjev,
-              na lokacijah po celi Sloveniji.
+              350+ potapljačev na 7 lokacijah po Sloveniji. Od prvega kraula do
+              tekmovalnih priprav. Pridružite se skupnosti, kjer se treningi
+              spremenijo v prijateljstva, prijateljstva pa v rezultate.
             </p>
             <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
               od €54/mesec + €35 letna članarina
             </p>
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="#programi"
-                className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-              >
-                Programi →
-              </a>
-              <a
-                href="#lokacije"
-                className="border-2 border-navy text-navy px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-navy hover:text-white transition-colors inline-block"
-              >
-                Lokacije →
-              </a>
+            <a
+              href="#prijava"
+              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
+            >
+              Prijava na treninge →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Returning trainees bar */}
+      <section className="bg-gold-pale py-6">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <p className="text-[15px] text-navy font-medium font-body">
+            Že trenirate z nami? Prijave za novo sezono so odprte.
+          </p>
+          <a
+            href="#prijava"
+            className="text-[14px] text-gold font-medium font-body hover:text-gold-hover transition-colors shrink-0"
+          >
+            Prijavite se →
+          </a>
+        </div>
+      </section>
+
+      {/* ============================================
+          WHAT IT FEELS LIKE
+          ============================================ */}
+      <section className="py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+            <div>
+              <Overline>Kako je na treningu</Overline>
+              <SectionHeading className="mb-6">
+                Več kot le vaja dihanja in tehnike
+              </SectionHeading>
+              <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
+                Vsak teden se zberemo v bazenu — 15 minut ogrevanja in dihalnih
+                vaj na suhem, nato 60 minut v vodi. Plavanje, potopi, dihalne
+                serije. Vsak teden malo boljši kot prejšnji.
+              </p>
+              <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
+                A treningi niso le fizika. So ljudje, ki jih srečaš vsak teden
+                ob isti uri v istem bazenu — in ki sčasoma postanejo prijatelji.
+                Nekateri trenirajo z nami že 12 let. Nekateri so postali
+                inštruktorji. Nekateri tekmujejo na državnih prvenstvih.
+              </p>
+
+              <div className="border-l-2 border-gold/40 pl-4">
+                <p className="text-[15px] text-navy/60 italic font-body leading-relaxed">
+                  &ldquo;Začela sem kot popolna začetnica. Danes plavam 150
+                  metrov pod vodo brez plavuti in pomagam voditi treninge.&rdquo;
+                </p>
+                <p className="text-[13px] text-muted-text font-body mt-1">
+                  — Polona, trenerka, 8 let z nami
+                </p>
+              </div>
+            </div>
+            <div className="relative aspect-[4/3]">
+              <Image
+                src="/images/placeholder/trening-camp.jpg"
+                alt="Trening prostega potapljanja"
+                fill
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      <SocialProofBar
-        stats={[
-          { number: "500+", label: "udeležencev letno" },
-          { number: "7+", label: "lokacij" },
-          { number: "4", label: "programi" },
-          { number: "okt–jun", label: "sezona" },
-        ]}
-      />
+      {/* ============================================
+          PROGRAMS — progression, not a menu
+          ============================================ */}
+      <section className="bg-surface py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <Overline>Programi</Overline>
+          <SectionHeading className="mb-6 max-w-2xl">
+            Štiri stopnje — ena pot napredka
+          </SectionHeading>
+          <p className="text-[17px] text-body leading-[1.7] font-body mb-4 max-w-2xl">
+            Ob prijavi izberete skupino glede na vaše izkušnje. Večina
+            začne v začetni skupini in trenira tam vso sezono — pravilno
+            plavanje je osnova vsega.
+          </p>
+          <p className="text-[15px] text-navy font-medium font-body mb-14 max-w-2xl border-l-4 border-gold pl-6">
+            Izjema: če ste v preteklosti aktivno trenirali plavanje, se
+            lahko ob prijavi vključite v nadaljevalno skupino.
+          </p>
 
-      {/* Why trainings */}
-      <Section>
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <Overline>Zakaj treningi?</Overline>
-            <SectionHeading className="mb-6">
-              Z enim samim tečajem ne dosežeš prave sproščenosti pod vodo
-            </SectionHeading>
-            <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
-              Treningi so srce tvojega potapljaškega napredka. S podporo
-              izkušenih trenerjev in rednimi treningi boš prešel od začetne
-              negotovosti do popolnega nadzora. Namesto da se potapljaš z
-              napetostjo, boš užival v vsakem trenutku pod gladino.
-            </p>
-            <p className="text-[17px] text-body leading-[1.7] font-body">
-              Naši treningi niso le vaja dihanja in tehnike. So zaupanje, ki ga
-              gradiš vase. So moč, ki jo čutiš med vsakim potopom.
-            </p>
-          </div>
-          <div className="relative aspect-[4/3]">
-            <Image
-              src="/images/placeholder/tecaj-bazen-samo.png"
-              alt="Trening v bazenu"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </Section>
-
-      {/* Programs */}
-      <Section surface id="programi">
-        <Overline>Programi</Overline>
-        <SectionHeading className="mb-6 max-w-2xl">
-          Štirje programi za vsak nivo
-        </SectionHeading>
-        <p className="text-[17px] text-body leading-[1.7] font-body mb-14 max-w-2xl">
-          Vsak program je strukturiran za drugačen nivo izkušenj. Lahko se
-          odločite za enega ali kombinirate dva za hitrejši napredek.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {programs.map((program) => (
-            <div
-              key={program.title}
-              className="border border-border-custom bg-white p-8"
-            >
-              <h3 className="text-[22px] font-semibold mb-4">
-                {program.title}
-              </h3>
-              <div className="space-y-3 text-[15px] font-body">
-                <div>
-                  <span className="text-muted-text">Za koga: </span>
-                  <span className="text-body">{program.who}</span>
-                </div>
-                <div>
-                  <span className="text-muted-text">Vsebina: </span>
-                  <span className="text-body">{program.what}</span>
-                </div>
-                <div>
-                  <span className="text-muted-text">Predpogoj: </span>
-                  <span className="text-navy font-medium">
-                    {program.prereq}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Session structure */}
-      <Section>
-        <Overline>Kako poteka trening</Overline>
-        <SectionHeading className="mb-10 max-w-2xl">
-          Struktura vadbene ure
-        </SectionHeading>
-        <div className="max-w-2xl space-y-6">
-          <div className="flex gap-5 items-start">
-            <span className="text-[28px] font-bold text-gold font-heading leading-none shrink-0 w-14">
-              15 min
-            </span>
-            <div>
-              <h3 className="text-[17px] font-medium text-navy font-body mb-1">
-                Ogrevanje na suhem
-              </h3>
-              <p className="text-[15px] text-body leading-[1.6] font-body">
-                Raztezanje, dihalne vaje in priprava na vodo.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-5 items-start">
-            <span className="text-[28px] font-bold text-gold font-heading leading-none shrink-0 w-14">
-              60 min
-            </span>
-            <div>
-              <h3 className="text-[17px] font-medium text-navy font-body mb-1">
-                Delo v vodi
-              </h3>
-              <p className="text-[15px] text-body leading-[1.6] font-body">
-                Plavanje, dinamična apneja, podvodno plavanje in specifični
-                seti glede na program. Začetna skupina začne s plavanjem,
-                performance skupina takoj z intenzivnimi potopi.
-              </p>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Locations */}
-      <Section surface id="lokacije">
-        <Overline>Lokacije in termini</Overline>
-        <SectionHeading className="mb-10">
-          Kje potekajo treningi
-        </SectionHeading>
-
-        <div className="divide-y divide-border-custom max-w-3xl">
-          {locations.map((loc) => (
-            <div
-              key={loc.city}
-              className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-            >
-              <div>
-                <p className="text-[17px] font-medium text-navy font-body">
-                  {loc.city}
-                </p>
-                <p className="text-sm text-muted-text font-body">
-                  {loc.venues}
-                </p>
-              </div>
-              <span
-                className={`text-sm font-medium font-body shrink-0 ${
-                  loc.status.includes("Polno")
-                    ? "text-muted-text"
-                    : "text-gold"
-                }`}
+          <div className="space-y-6 max-w-3xl">
+            {[
+              {
+                step: "1",
+                title: "Začetni program",
+                who: "Za vse, ki začenjate — brez predhodnih izkušenj",
+                what: "Tehnika plavanja (kraul, prsno, delfin), osnove zadrževanja diha, varne progresije pod vodo. Prva tretjina sezone: plavanje. Nato: apneja. Po sezoni ali dveh napredujete v nadaljevalno skupino.",
+              },
+              {
+                step: "2",
+                title: "Nadaljevalni program",
+                who: "Za tiste z ustrezno plavalno tehniko",
+                what: "Aerobni in anaerobni trening, CO₂/O₂ tolerance, intenzivnejše podvodno plavanje. Sistematična periodizacija za resen napredek.",
+              },
+              {
+                step: "3",
+                title: "Performance program",
+                who: "Za izkušene potapljače s tekmovalnimi ambicijami",
+                what: "Dolgi potopi s specializiranimi plavutmi, intenzivni seti, individualno spremljanje napredka. Mnogi kombinirajo: enkrat tedensko nadaljevalni, enkrat performance.",
+              },
+              {
+                step: "4",
+                title: "Statična apneja",
+                who: "Za vse — brez predpogojev",
+                what: "Sprostitvene tehnike, prilagajanje na CO₂, progresivni protokoli zadrževanja diha. Lahko kombinirate s katerim koli drugim programom.",
+              },
+            ].map((program) => (
+              <div
+                key={program.step}
+                className="flex gap-6 items-start border-b border-border-custom pb-6"
               >
-                {loc.status}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-10 bg-gold-pale p-8 max-w-3xl">
-          <p className="text-[17px] font-medium text-navy font-body mb-2">
-            Prijave za sezono 2026/27 se odprejo avgusta 2026.
-          </p>
-          <p className="text-[15px] text-body font-body mb-4">
-            Ljubljana se zapolni najhitreje. Če želite biti obveščeni, ko se
-            prijave odprejo, pustite e-mail.
-          </p>
-          {/* Placeholder for Brevo email capture */}
-          <div className="flex gap-3 max-w-md">
-            <input
-              type="email"
-              placeholder="vas@email.si"
-              className="flex-1 border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-            />
-            <button
-              type="button"
-              className="bg-gold text-white px-6 py-3 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0"
-            >
-              Obvesti me →
-            </button>
+                <span className="text-[36px] font-bold text-gold/30 font-heading leading-none shrink-0 w-10">
+                  {program.step}.
+                </span>
+                <div>
+                  <h3 className="text-[20px] font-semibold mb-1">
+                    {program.title}
+                  </h3>
+                  <p className="text-[14px] text-gold font-medium font-body mb-2">
+                    {program.who}
+                  </p>
+                  <p className="text-[15px] text-body leading-[1.6] font-body">
+                    {program.what}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </Section>
+      </section>
 
-      {/* Pricing */}
-      <Section>
-        <Overline>Cenik</Overline>
-        <SectionHeading className="mb-10">
-          Koliko stanejo treningi
-        </SectionHeading>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl">
-          <div className="border border-border-custom p-8">
-            <p className="text-sm text-muted-text font-body mb-1">
-              Letna članarina
-            </p>
-            <p className="text-[36px] font-bold text-navy font-heading leading-none mb-2">
-              €{siteConfig.trainings.membership.price}
-            </p>
-            <p className="text-sm text-muted-text font-body">
-              {siteConfig.trainings.membership.entity} · oktober–oktober
-            </p>
-          </div>
-          <div className="border border-border-custom p-8">
-            <p className="text-sm text-muted-text font-body mb-1">
-              Mesečna vadnina
-            </p>
-            <p className="text-[36px] font-bold text-navy font-heading leading-none mb-2">
-              €54–62
-            </p>
-            <p className="text-sm text-muted-text font-body">
-              Odvisno od lokacije · plačilo v 2 obrokih
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 max-w-3xl">
-          <CheckList
-            items={[
-              "Profesionalno vodstvo (program zasnuje Samo Jeranko)",
-              "Majhne skupine (povprečno pod 5 na progo)",
-              "Oprema ni vključena — priskrbite svojo ali izposodite",
-              "Dvakrat tedensko = optimalen napredek",
-            ]}
-          />
-        </div>
-      </Section>
-
-      <FAQ items={faqs} />
-
-      <FinalCTA
-        heading="Pridružite se 500+ potapljačem na treningih"
-        description="Prijave za sezono 2026/27 se odprejo avgusta. Pustite e-mail in vas obvestimo."
-        buttonText="Lokacije in programi →"
-        buttonHref="#programi"
-        backgroundImage="/images/placeholder/tecaj-bazen-samo.png"
+      {/* ============================================
+          TESTIMONIALS
+          ============================================ */}
+      <Testimonials
+        reviews={reviews}
+        overline="Naši treniranke in treniranki"
+        heading="Zakaj ostanejo"
       />
+
+      {/* ============================================
+          LOCATIONS + SCHEDULE + SIGNUP
+          ============================================ */}
+      <section className="bg-surface py-20 md:py-28" id="prijava">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-[1fr_360px] gap-16">
+            <div>
+              <Overline>Lokacije in urnik</Overline>
+              <SectionHeading className="mb-10">
+                Kje in kdaj potekajo treningi
+              </SectionHeading>
+
+              <div className="divide-y divide-border-custom">
+                {locations.map((loc) => (
+                  <div
+                    key={loc.city}
+                    className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                  >
+                    <div>
+                      <p className="text-[17px] font-medium text-navy font-body">
+                        {loc.city}
+                      </p>
+                      {loc.note && (
+                        <p className="text-sm text-muted-text font-body">
+                          {loc.note}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className={`text-sm font-medium font-body shrink-0 ${
+                        loc.status.includes("Polno")
+                          ? "text-muted-text"
+                          : "text-gold"
+                      }`}
+                    >
+                      {loc.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-8 text-sm text-muted-text font-body">
+                Sezona: oktober–junij. V poletnih mesecih organiziramo tudi
+                treninge na prostem (morje) in potapljaške kampe.
+              </p>
+            </div>
+
+            {/* Pricing + signup card */}
+            <div className="md:sticky md:top-24 self-start space-y-6">
+              <div className="bg-white p-8 border border-border-custom">
+                <Overline>Cenik</Overline>
+                <div className="space-y-4 mb-8">
+                  <div>
+                    <p className="text-[36px] font-bold text-navy font-heading leading-none">
+                      €54–62
+                    </p>
+                    <p className="text-sm text-muted-text font-body">
+                      mesečna vadnina · odvisno od lokacije
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[20px] font-bold text-navy font-heading">
+                      + €{siteConfig.trainings.membership.price}
+                    </p>
+                    <p className="text-sm text-muted-text font-body">
+                      letna članarina ·{" "}
+                      {siteConfig.trainings.membership.entity}
+                    </p>
+                  </div>
+                </div>
+
+                <CheckList
+                  items={[
+                    "Program zasnuje Samo Jeranko",
+                    "Majhne skupine (pod 5 na progo)",
+                    "Plačilo v 2 obrokih",
+                    "Sezona oktober–junij",
+                  ]}
+                />
+
+                {/* Signup placeholder */}
+                <div className="mt-8 pt-6 border-t border-border-custom">
+                  <p className="text-[15px] font-medium text-navy font-body mb-4">
+                    Prijavite se
+                  </p>
+                  <div className="space-y-3">
+                    <label htmlFor="training-email" className="sr-only">E-pošta</label>
+                    <input
+                      id="training-email"
+                      type="email"
+                      placeholder="vas@email.si"
+                      className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
+                    />
+                    <button
+                      type="button"
+                      className="w-full bg-gold text-white py-3 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors"
+                    >
+                      Prijavite se →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-muted-text font-body">
+                Ljubljana se zapolni najhitreje. Prijavite se čim prej.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          PHOTO GALLERY
+          ============================================ */}
+      <section className="py-12">
+        <PhotoGallery photos={trainingPhotos} />
+      </section>
+
+      <FAQ items={faqs} surface />
+
+      {/* ============================================
+          FINAL CTA
+          ============================================ */}
+      <section className="bg-navy py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-[32px] md:text-[40px] font-bold leading-[1.1] tracking-[-0.02em] text-white mb-6 font-heading">
+            Pridružite se 350+ potapljačem v bazenu
+          </h2>
+          <p className="text-[18px] text-white/60 font-body mb-10 max-w-2xl mx-auto">
+            Vsak teden, od oktobra do junija, na 7 lokacijah po Sloveniji.
+            Začnite v začetni skupini — in rastite z nami.
+          </p>
+          <a
+            href="#prijava"
+            className="bg-gold text-white px-10 py-4 text-[16px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
+          >
+            Prijavite se na treninge →
+          </a>
+        </div>
+      </section>
     </>
   );
 }

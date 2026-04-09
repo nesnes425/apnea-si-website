@@ -81,19 +81,29 @@ export const siteConfig = {
 
   // Navigation
   nav: [
-    { label: "Tečaji", href: "/tecaji" },
+    { label: "Začetni tečaj", href: "/tecaji/zacetni" },
     { label: "Treningi", href: "/treningi" },
+    { label: "Predavanja", href: "/predavanja" },
+    { label: "Darilni bon", href: "/darilni-bon" },
     { label: "O nas", href: "/o-nas" },
-    { label: "Novice", href: "/novice" },
+    { label: "FAQ", href: "/vprasanja" },
     { label: "Kontakt", href: "/kontakt" },
   ] as const,
 
   // Footer navigation
   footerNav: {
+    pages: [
+      { label: "Začetni tečaj", href: "/tecaji/zacetni" },
+      { label: "Nadaljevalni tečaj", href: "/tecaji/nadaljevalni" },
+      { label: "Master tečaj", href: "/tecaji/master" },
+      { label: "Treningi", href: "/treningi" },
+      { label: "Predavanja", href: "/predavanja" },
+      { label: "Darilni bon", href: "/darilni-bon" },
+      { label: "Vprašanja", href: "/vprasanja" },
+    ],
     legal: [
       { label: "Zasebnost", href: "/zasebnost" },
       { label: "Pogoji poslovanja", href: "/pogoji" },
-      { label: "Piškotki", href: "#cookie-settings" },
     ],
   },
 } as const;

@@ -6,6 +6,8 @@ import Image from "next/image";
 interface Photo {
   src: string;
   alt: string;
+  /** Aspect ratio as width/height (e.g., 1.5 for landscape, 0.67 for portrait). Defaults to 1.5. */
+  aspect?: number;
 }
 
 export function PhotoGallery({ photos }: { photos: Photo[] }) {
@@ -59,6 +61,10 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
     if (scrollRef.current) scrollRef.current.style.cursor = "grab";
   };
 
+  // Fixed height, width adapts to each photo's aspect ratio
+  const galleryHeight = 280; // px — md height
+  const galleryHeightMobile = 220;
+
   return (
     <div className="relative group">
       {/* Arrow buttons — desktop only */}
@@ -89,27 +95,50 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         ref={scrollRef}
         role="region"
         aria-label="Galerija fotografij"
-        className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x snap-mandatory cursor-grab select-none"
+        className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x snap-mandatory cursor-grab select-none max-w-[100vw]"
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
       >
         <div className="shrink-0 w-[max(0px,calc((100vw-72rem)/2))]" />
-        {photos.map((photo) => (
-          <div
-            key={photo.src}
-            className="shrink-0 w-[300px] md:w-[400px] h-[220px] md:h-[280px] relative snap-start pointer-events-none"
-          >
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              fill
-              className="object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
+        {photos.map((photo) => {
+          const aspect = photo.aspect ?? 1.5;
+          const widthMobile = Math.round(galleryHeightMobile * aspect);
+          const widthDesktop = Math.round(galleryHeight * aspect);
+
+          return (
+            <div
+              key={photo.src}
+              className="shrink-0 relative snap-start pointer-events-none"
+              style={{
+                width: widthDesktop,
+                height: galleryHeight,
+              }}
+            >
+              <style>{`
+                @media (max-width: 767px) {
+                  [data-gallery-item="${photo.src}"] {
+                    width: ${widthMobile}px !important;
+                    height: ${galleryHeightMobile}px !important;
+                  }
+                }
+              `}</style>
+              <div
+                data-gallery-item={photo.src}
+                className="relative w-full h-full"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover"
+                  draggable={false}
+                />
+              </div>
+            </div>
+          );
+        })}
         <div className="shrink-0 w-4" />
       </div>
     </div>

@@ -10,15 +10,17 @@ interface FAQProps {
   items: FAQItem[];
   overline?: string;
   heading?: string;
+  surface?: boolean;
 }
 
 export function FAQ({
   items,
   overline = "Pogosta vprašanja",
   heading = "Imate vprašanje?",
+  surface = false,
 }: FAQProps) {
   return (
-    <section className="py-24">
+    <section className={`py-24 ${surface ? "bg-surface" : ""}`}>
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-14">
           <Overline>{overline}</Overline>

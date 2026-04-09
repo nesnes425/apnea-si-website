@@ -24,10 +24,10 @@ export function Footer() {
           {/* Navigation */}
           <div>
             <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-              Navigacija
+              Strani
             </p>
             <ul className="space-y-2.5">
-              {siteConfig.nav.map((item) => (
+              {siteConfig.footerNav.pages.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -37,6 +37,22 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/o-nas"
+                  className="text-sm text-white/60 hover:text-gold transition-colors font-body"
+                >
+                  O nas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/kontakt"
+                  className="text-sm text-white/60 hover:text-gold transition-colors font-body"
+                >
+                  Kontakt
+                </Link>
+              </li>
             </ul>
           </div>
 

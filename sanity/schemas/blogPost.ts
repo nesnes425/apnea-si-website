@@ -35,6 +35,28 @@ export const blogPost = defineType({
             }),
           ],
         },
+        {
+          type: "object",
+          name: "youtube",
+          title: "YouTube Video",
+          fields: [
+            defineField({
+              name: "videoId",
+              title: "Video ID",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: { videoId: "videoId" },
+            prepare({ videoId }) {
+              return {
+                title: `YouTube: ${videoId}`,
+                subtitle: "Video",
+              };
+            },
+          },
+        },
       ],
     }),
     defineField({

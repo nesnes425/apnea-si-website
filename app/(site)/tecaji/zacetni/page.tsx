@@ -215,7 +215,7 @@ function StoriesSection() {
             <div className="mb-4">
               <Image
                 src={story.icon}
-                alt=""
+                alt={story.title}
                 width={80}
                 height={44}
                 className="opacity-50 h-[44px] w-auto"
