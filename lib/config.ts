@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Apnea Slovenija",
   url: "https://apnea.si",
   email: "info@apnea.si",
-  phone: "+386 40 XXX XXX", // TODO: Get Samo's phone number
+  phone: "+386 41 874 187",
   description:
     "Največja šola prostega potapljanja v Sloveniji. SSI tečaji, treningi in klubsko potapljanje.",
 

@@ -491,25 +491,27 @@ export default function DesignPreview() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/60 to-transparent" />
-        <div className="absolute inset-0 flex items-center">
-          <div className="px-6 md:px-16 max-w-2xl">
-            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-              SSI Freediving Level 1
-            </p>
-            <h1 className="text-[40px] md:text-[56px] font-bold leading-[1.1] tracking-[-0.02em] text-navy mb-6">
-              Začetni tečaj prostega potapljanja
-            </h1>
-            <p className="text-[18px] md:text-[20px] text-body leading-[1.6] font-body mb-8">
-              Potapljanje na vdih ni le šport, temveč način sprostitve in
-              povezovanja z vodo. Spoznajte, zakaj nas navdihuje.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors">
-                Rezervirajte mesto →
-              </button>
-              <button className="border-2 border-navy text-navy px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-navy hover:text-white transition-colors">
-                Več o tečaju
-              </button>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-full max-w-6xl px-6 mx-auto">
+            <div className="max-w-xl">
+              <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
+                SSI Freediving Level 1
+              </p>
+              <h1 className="text-[40px] md:text-[56px] font-bold leading-[1.1] tracking-[-0.02em] text-navy mb-6">
+                Začetni tečaj prostega potapljanja
+              </h1>
+              <p className="text-[18px] md:text-[20px] text-body leading-[1.6] font-body mb-8">
+                Potapljanje na vdih ni le šport, temveč način sprostitve in
+                povezovanja z vodo. Spoznajte, zakaj nas navdihuje.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <button className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors">
+                  Rezervirajte mesto →
+                </button>
+                <button className="border-2 border-navy text-navy px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-navy hover:text-white transition-colors">
+                  Več o tečaju
+                </button>
+              </div>
             </div>
           </div>
         </div>

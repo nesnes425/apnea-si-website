@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lora, Roboto } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
 
 const lora = Lora({
@@ -38,7 +40,9 @@ export default function SiteLayout({
   return (
     <html lang="sl" className={cn(lora.variable, roboto.variable)}>
       <body className="min-h-screen flex flex-col antialiased">
-        {children}
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

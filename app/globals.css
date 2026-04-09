@@ -12,11 +12,11 @@
   --color-gold: #d3a356;
   --color-gold-hover: #c18f3e;
   --color-gold-light: #f5e6c8;
-  --color-gold-pale: #faf4e8;
+  --color-gold-pale: #f8f6f1;
   --color-body: #585a5a;
   --color-muted-text: #8a8d8e;
-  --color-surface: #f7f7f5;
-  --color-border-custom: #e8e8e6;
+  --color-surface: #f5f5f4;
+  --color-border-custom: #e7e7e5;
 
   /* === Fonts === */
   --font-heading: var(--font-lora);
@@ -99,20 +99,25 @@
   --sidebar-ring: #d3a356;
 }
 
-body {
-  font-family: var(--font-body), system-ui, sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), Georgia, serif;
-  color: var(--color-navy);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
+    font-family: var(--font-body), system-ui, sans-serif;
     @apply bg-background text-foreground;
   }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), Georgia, serif;
+    color: var(--color-navy);
+  }
+}
+
+/* Hide scrollbar for gallery */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
