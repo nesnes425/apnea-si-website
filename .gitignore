@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# blog migration temp files (saved HTML exports, generated scripts)
+/temp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
