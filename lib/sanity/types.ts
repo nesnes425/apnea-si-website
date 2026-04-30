@@ -8,6 +8,7 @@ export interface CourseInstance {
   maxSpots: number;
   isFull: boolean;
   notes?: string;
+  brevoListId?: number;
 }
 
 export interface BlogPost {

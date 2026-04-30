@@ -1,5 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { formatCourseDateRange } from "@/lib/utils";
+import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -97,11 +100,6 @@ const faqs = [
     q: "Kako poteka odpoved?",
     a: "Odpoved je mogoča brez stroškov do 10 delovnih dni pred tečajem. Pri poznejši odpovedi se rezervacija šteje za unovčeno.",
   },
-];
-
-const upcomingCourses = [
-  { id: "1", location: "Ljubljana + Krk", startDate: "5.–6. maj (teorija) + 29.–31. maj (morje)", type: "Nadaljevalni", isFull: false },
-  { id: "2", location: "Ljubljana + Krk", startDate: "junij 2026 — termin v potrjevanju", type: "Nadaljevalni", isFull: false },
 ];
 
 const coursePhotos = [
@@ -312,7 +310,9 @@ function CourseStructure() {
   );
 }
 
-function DatesAndBooking() {
+async function DatesAndBooking() {
+  const courses = await getUpcomingCourses("nadaljevalni");
+
   return (
     <section id="termini" className="bg-surface py-24">
       <div className="max-w-6xl mx-auto px-6">
@@ -323,34 +323,47 @@ function DatesAndBooking() {
               Izberite termin
             </SectionHeading>
 
-            <div className="divide-y divide-border-custom">
-              {upcomingCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                    course.isFull ? "opacity-50" : ""
-                  }`}
-                >
-                  <div>
-                    <p className="text-[17px] font-medium text-navy font-body">
-                      {course.startDate}
-                    </p>
-                    <p className="text-sm text-muted-text font-body">
-                      {course.location}
-                    </p>
+            {courses.length === 0 ? (
+              <p className="text-[17px] text-body font-body py-5">
+                Trenutno ni razpisanih terminov. Pišite nam na{" "}
+                <a href={`mailto:${siteConfig.email}`} className="text-gold hover:text-gold-hover transition-colors">
+                  {siteConfig.email}
+                </a>{" "}
+                in vas obvestimo, ko se odprejo prijave.
+              </p>
+            ) : (
+              <div className="divide-y divide-border-custom">
+                {courses.map((course) => (
+                  <div
+                    key={course._id}
+                    className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                      course.isFull ? "opacity-50" : ""
+                    }`}
+                  >
+                    <div>
+                      <p className="text-[17px] font-medium text-navy font-body">
+                        {formatCourseDateRange(course.startDate, course.endDate)}
+                      </p>
+                      <p className="text-sm text-muted-text font-body">
+                        {course.location} · Bazenski del
+                      </p>
+                    </div>
+                    {course.isFull ? (
+                      <span className="text-sm text-muted-text font-body">
+                        Razprodano
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/tecaji/nadaljevalni/prijava?instanceId=${course._id}`}
+                        className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0 inline-block"
+                      >
+                        Rezerviraj →
+                      </Link>
+                    )}
                   </div>
-                  {course.isFull ? (
-                    <span className="text-sm text-muted-text font-body">
-                      Razprodano
-                    </span>
-                  ) : (
-                    <button type="button" className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0">
-                      Rezerviraj →
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <p className="mt-6 text-sm text-muted-text font-body">
               Globinski del poteka na otoku Krku (petek–nedelja). Prevoz in

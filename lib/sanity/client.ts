@@ -7,3 +7,11 @@ export const sanityClient = createClient({
   apiVersion,
   useCdn: true,
 });
+
+export const sanityWriteClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
+});

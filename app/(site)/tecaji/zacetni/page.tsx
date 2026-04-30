@@ -1,5 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { formatCourseDateRange } from "@/lib/utils";
+import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -134,14 +137,6 @@ const faqs = [
     q: "Kdaj in kje poteka globinski del?",
     a: "Globinski del (morje) se izvaja od maja do avgusta. Termin in lokacijo izberete po zaključenem bazenskem delu — imate 8 mesecev časa. Potopi potekajo na slovenski obali.",
   },
-];
-
-// Placeholder — will come from Sanity
-const upcomingCourses = [
-  { id: "1", location: "Ljubljana", startDate: "11.–12. april 2026", type: "Bazenski del", isFull: false },
-  { id: "2", location: "Ljubljana", startDate: "14.–15. april 2026", type: "Bazenski del", isFull: false },
-  { id: "3", location: "Koper", startDate: "22.–23. april 2026", type: "Bazenski del", isFull: true },
-  { id: "4", location: "Ljubljana", startDate: "12.–13. maj 2026", type: "Bazenski del", isFull: false },
 ];
 
 // === Page-specific sections ===
@@ -389,7 +384,9 @@ function CourseStructure() {
   );
 }
 
-function DatesAndBooking() {
+async function DatesAndBooking() {
+  const courses = await getUpcomingCourses("zacetni");
+
   return (
     <section id="termini" className="bg-surface py-24">
       <div className="max-w-6xl mx-auto px-6">
@@ -400,34 +397,47 @@ function DatesAndBooking() {
               Izberite termin
             </SectionHeading>
 
-            <div className="divide-y divide-border-custom">
-              {upcomingCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                    course.isFull ? "opacity-50" : ""
-                  }`}
-                >
-                  <div>
-                    <p className="text-[17px] font-medium text-navy font-body">
-                      {course.startDate}
-                    </p>
-                    <p className="text-sm text-muted-text font-body">
-                      {course.location} · {course.type}
-                    </p>
+            {courses.length === 0 ? (
+              <p className="text-[17px] text-body font-body py-5">
+                Trenutno ni razpisanih terminov. Pišite nam na{" "}
+                <a href={`mailto:${siteConfig.email}`} className="text-gold hover:text-gold-hover transition-colors">
+                  {siteConfig.email}
+                </a>{" "}
+                in vas obvestimo, ko se odprejo prijave.
+              </p>
+            ) : (
+              <div className="divide-y divide-border-custom">
+                {courses.map((course) => (
+                  <div
+                    key={course._id}
+                    className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                      course.isFull ? "opacity-50" : ""
+                    }`}
+                  >
+                    <div>
+                      <p className="text-[17px] font-medium text-navy font-body">
+                        {formatCourseDateRange(course.startDate, course.endDate)}
+                      </p>
+                      <p className="text-sm text-muted-text font-body">
+                        {course.location} · Bazenski del
+                      </p>
+                    </div>
+                    {course.isFull ? (
+                      <span className="text-sm text-muted-text font-body">
+                        Razprodano
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}
+                        className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0 inline-block"
+                      >
+                        Rezerviraj →
+                      </Link>
+                    )}
                   </div>
-                  {course.isFull ? (
-                    <span className="text-sm text-muted-text font-body">
-                      Razprodano
-                    </span>
-                  ) : (
-                    <button type="button" className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0">
-                      Rezerviraj →
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <p className="mt-6 text-sm text-muted-text font-body">
               Globinski del (morje) se izvaja maj–avgust. Termin izberete po

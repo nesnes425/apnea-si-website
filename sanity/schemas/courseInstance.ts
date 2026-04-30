@@ -64,6 +64,13 @@ export const courseInstance = defineType({
       type: "text",
       rows: 3,
     }),
+    defineField({
+      name: "brevoListId",
+      title: "Brevo list ID (auto)",
+      description: "Set automatically by the booking webhook on first booking. Do not edit.",
+      type: "number",
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {

@@ -1,5 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { formatCourseDateRange } from "@/lib/utils";
+import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -98,9 +101,6 @@ const faqs = [
   },
 ];
 
-const upcomingCourses = [
-  { id: "1", location: "Ljubljana + Hrvaška", startDate: "Julij/Avgust 2026 — termin v potrjevanju", type: "Master", isFull: false },
-];
 
 // === Sections ===
 
@@ -297,7 +297,9 @@ function CourseStructure() {
   );
 }
 
-function DatesAndBooking() {
+async function DatesAndBooking() {
+  const courses = await getUpcomingCourses("master");
+
   return (
     <section id="termini" className="bg-surface py-24">
       <div className="max-w-6xl mx-auto px-6">
@@ -308,30 +310,52 @@ function DatesAndBooking() {
               Izberite termin
             </SectionHeading>
 
-            <div className="divide-y divide-border-custom">
-              {upcomingCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                >
-                  <div>
-                    <p className="text-[17px] font-medium text-navy font-body">
-                      {course.startDate}
-                    </p>
-                    <p className="text-sm text-muted-text font-body">
-                      {course.location}
-                    </p>
+            {courses.length === 0 ? (
+              <p className="text-[17px] text-body font-body py-5">
+                Master tečaji se izvedejo po dogovoru, ko se zbere zadostno število
+                prijavljenih. Pišite nam na{" "}
+                <a href={`mailto:${siteConfig.email}`} className="text-gold hover:text-gold-hover transition-colors">
+                  {siteConfig.email}
+                </a>{" "}
+                in vas vključimo v naslednjo skupino.
+              </p>
+            ) : (
+              <div className="divide-y divide-border-custom">
+                {courses.map((course) => (
+                  <div
+                    key={course._id}
+                    className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                      course.isFull ? "opacity-50" : ""
+                    }`}
+                  >
+                    <div>
+                      <p className="text-[17px] font-medium text-navy font-body">
+                        {formatCourseDateRange(course.startDate, course.endDate)}
+                      </p>
+                      <p className="text-sm text-muted-text font-body">
+                        {course.location} · Bazenski del
+                      </p>
+                    </div>
+                    {course.isFull ? (
+                      <span className="text-sm text-muted-text font-body">
+                        Razprodano
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/tecaji/master/prijava?instanceId=${course._id}`}
+                        className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0 inline-block"
+                      >
+                        Rezerviraj →
+                      </Link>
+                    )}
                   </div>
-                  <button type="button" className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0">
-                    Rezerviraj →
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <p className="mt-6 text-sm text-muted-text font-body">
               Natančni datumi in lokacija globinskega dela se potrdijo po zadostnem
-              številu prijav. Kontaktirajte nas za več informacij.
+              številu prijav.
             </p>
           </div>
 
