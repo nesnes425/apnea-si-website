@@ -14,6 +14,7 @@ export const metadata = {
 type Props = {
   searchParams: Promise<{
     payment_intent?: string;
+    payment_intent_client_secret?: string;
     redirect_status?: string;
   }>;
 };
@@ -25,15 +26,22 @@ const courseLabels: Record<string, string> = {
 };
 
 export default async function HvalaPage({ searchParams }: Props) {
-  const { payment_intent, redirect_status } = await searchParams;
+  const { payment_intent, payment_intent_client_secret, redirect_status } = await searchParams;
 
   const succeeded = redirect_status === "succeeded";
   const processing = redirect_status === "processing";
 
+  // Only personalize if BOTH the payment_intent ID and its client_secret are
+  // present and match. The client_secret is cryptographic; without it, the PI ID
+  // alone is insufficient proof that this user owns the payment (PI IDs leak via
+  // referrers, browser history, etc.).
   let intent = null;
-  if (payment_intent) {
+  if (payment_intent && payment_intent_client_secret) {
     try {
-      intent = await stripe.paymentIntents.retrieve(payment_intent);
+      const retrieved = await stripe.paymentIntents.retrieve(payment_intent);
+      if (retrieved.client_secret === payment_intent_client_secret) {
+        intent = retrieved;
+      }
     } catch {
       // intent not found or invalid — render generic confirmation
     }

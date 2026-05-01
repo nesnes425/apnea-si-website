@@ -108,6 +108,20 @@ async function handlePaymentIntentSucceeded(
   const courseEndDate = m.courseEndDate;
   const courseLocation = m.courseLocation;
 
+  const missing: string[] = [];
+  if (!courseType) missing.push("courseType");
+  if (!courseInstanceId) missing.push("courseInstanceId");
+  if (!customerEmail) missing.push("customerEmail");
+  if (!customerName) missing.push("customerName");
+  if (!customerPhone) missing.push("customerPhone");
+  if (!courseStartDate) missing.push("courseStartDate");
+  if (!courseEndDate) missing.push("courseEndDate");
+  if (!courseLocation) missing.push("courseLocation");
+  if (missing.length > 0) {
+    console.warn(`Skipping ${intent.id} — missing metadata fields: ${missing.join(", ")}`);
+    return;
+  }
+  // Type-narrow after presence check.
   if (
     !courseType ||
     !courseInstanceId ||
@@ -118,7 +132,6 @@ async function handlePaymentIntentSucceeded(
     !courseEndDate ||
     !courseLocation
   ) {
-    console.warn(`Skipping ${intent.id} — missing required metadata`, m);
     return;
   }
 
