@@ -11,16 +11,11 @@ import {
 import { bookingConfirmationEmail } from "@/lib/brevo/emails/booking-confirmation";
 import { samoNotificationEmail } from "@/lib/brevo/emails/samo-notification";
 import { siteConfig, type CourseType } from "@/lib/config";
-import { formatCourseDateRange } from "@/lib/utils";
+import { readEnv, readEnvNumber } from "@/lib/env";
+import { formatCourseDateRange, splitName } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const courseLabels: Record<CourseType, string> = {
-  zacetni: "Začetni tečaj prostega potapljanja",
-  nadaljevalni: "Nadaljevalni tečaj prostega potapljanja",
-  master: "Master tečaj prostega potapljanja",
-};
 
 const courseShortLabels: Record<CourseType, string> = {
   zacetni: "Začetni",
@@ -28,17 +23,59 @@ const courseShortLabels: Record<CourseType, string> = {
   master: "Master",
 };
 
-function getAlumniListId(courseType: CourseType): number {
-  const map: Record<CourseType, string> = {
-    zacetni: "BREVO_LIST_ALUMNI_ZACETNI",
-    nadaljevalni: "BREVO_LIST_ALUMNI_NADALJEVALNI",
-    master: "BREVO_LIST_ALUMNI_MASTER",
+const courseTypeToAlumniListEnv: Record<CourseType, string> = {
+  zacetni: "BREVO_LIST_ALUMNI_ZACETNI",
+  nadaljevalni: "BREVO_LIST_ALUMNI_NADALJEVALNI",
+  master: "BREVO_LIST_ALUMNI_MASTER",
+};
+
+function isCourseType(value: string | undefined): value is CourseType {
+  return value !== undefined && value in siteConfig.courses;
+}
+
+type RequiredMetadata = {
+  courseType: CourseType;
+  courseInstanceId: string;
+  customerEmail: string;
+  customerName: string;
+  customerPhone: string;
+  courseStartDate: string;
+  courseEndDate: string;
+  courseLocation: string;
+};
+
+function validateMetadata(
+  m: Stripe.Metadata,
+  intentId: string
+): RequiredMetadata | null {
+  const required = [
+    "courseInstanceId",
+    "customerEmail",
+    "customerName",
+    "customerPhone",
+    "courseStartDate",
+    "courseEndDate",
+    "courseLocation",
+  ] as const;
+  const missing = required.filter((k) => !m[k]);
+  if (missing.length > 0) {
+    console.warn(`Skipping ${intentId} — missing metadata fields: ${missing.join(", ")}`);
+    return null;
+  }
+  if (!isCourseType(m.courseType)) {
+    console.warn(`Skipping ${intentId} — unknown courseType: ${m.courseType}`);
+    return null;
+  }
+  return {
+    courseType: m.courseType,
+    courseInstanceId: m.courseInstanceId,
+    customerEmail: m.customerEmail,
+    customerName: m.customerName,
+    customerPhone: m.customerPhone,
+    courseStartDate: m.courseStartDate,
+    courseEndDate: m.courseEndDate,
+    courseLocation: m.courseLocation,
   };
-  const value = process.env[map[courseType]];
-  if (!value) throw new Error(`Missing ${map[courseType]} env var`);
-  const id = Number(value);
-  if (!Number.isFinite(id)) throw new Error(`${map[courseType]} is not a number`);
-  return id;
 }
 
 function buildSlotListName(
@@ -62,11 +99,7 @@ async function findOrCreateSlotList(params: {
     return instance.brevoListId;
   }
 
-  const folderId = Number(process.env.BREVO_FOLDER_TECAJNIKI);
-  if (!Number.isFinite(folderId)) {
-    throw new Error("BREVO_FOLDER_TECAJNIKI is not a valid number");
-  }
-
+  const folderId = readEnvNumber("BREVO_FOLDER_TECAJNIKI");
   const name = buildSlotListName(
     params.courseType,
     params.startDateISO,
@@ -83,13 +116,6 @@ async function findOrCreateSlotList(params: {
   return listId;
 }
 
-function splitName(fullName: string): { first: string; last: string } {
-  const parts = fullName.trim().split(/\s+/);
-  const first = parts[0] ?? "";
-  const last = parts.slice(1).join(" ");
-  return { first, last };
-}
-
 async function handlePaymentIntentSucceeded(
   intent: Stripe.PaymentIntent
 ): Promise<void> {
@@ -99,92 +125,56 @@ async function handlePaymentIntentSucceeded(
   }
 
   const m = intent.metadata ?? {};
-  const courseType = m.courseType as CourseType | undefined;
-  const courseInstanceId = m.courseInstanceId;
-  const customerEmail = m.customerEmail;
-  const customerName = m.customerName;
-  const customerPhone = m.customerPhone;
-  const courseStartDate = m.courseStartDate;
-  const courseEndDate = m.courseEndDate;
-  const courseLocation = m.courseLocation;
+  const data = validateMetadata(m, intent.id);
+  if (!data) return;
 
-  const missing: string[] = [];
-  if (!courseType) missing.push("courseType");
-  if (!courseInstanceId) missing.push("courseInstanceId");
-  if (!customerEmail) missing.push("customerEmail");
-  if (!customerName) missing.push("customerName");
-  if (!customerPhone) missing.push("customerPhone");
-  if (!courseStartDate) missing.push("courseStartDate");
-  if (!courseEndDate) missing.push("courseEndDate");
-  if (!courseLocation) missing.push("courseLocation");
-  if (missing.length > 0) {
-    console.warn(`Skipping ${intent.id} — missing metadata fields: ${missing.join(", ")}`);
-    return;
-  }
-  // Type-narrow after presence check.
-  if (
-    !courseType ||
-    !courseInstanceId ||
-    !customerEmail ||
-    !customerName ||
-    !customerPhone ||
-    !courseStartDate ||
-    !courseEndDate ||
-    !courseLocation
-  ) {
-    return;
-  }
-
-  if (!(courseType in courseLabels)) {
-    console.warn(`Skipping ${intent.id} — unknown courseType: ${courseType}`);
-    return;
-  }
-
-  const dateRange = formatCourseDateRange(courseStartDate, courseEndDate);
-  const courseName = courseLabels[courseType];
+  const dateRange = formatCourseDateRange(data.courseStartDate, data.courseEndDate);
+  const courseName = siteConfig.courses[data.courseType].fullName;
   const priceInEuros = (intent.amount ?? 0) / 100;
-  const { first, last } = splitName(customerName);
+  const { first, last } = splitName(data.customerName);
 
   const slotListId = await findOrCreateSlotList({
-    instanceId: courseInstanceId,
-    courseType,
-    startDateISO: courseStartDate,
-    location: courseLocation,
+    instanceId: data.courseInstanceId,
+    courseType: data.courseType,
+    startDateISO: data.courseStartDate,
+    location: data.courseLocation,
   });
-  const alumniListId = getAlumniListId(courseType);
-
-  await upsertContact({
-    email: customerEmail,
-    firstName: first,
-    lastName: last,
-    phone: customerPhone,
-    listIds: [slotListId, alumniListId],
-  });
+  const alumniListId = readEnvNumber(courseTypeToAlumniListEnv[data.courseType]);
 
   const customerEmailContent = bookingConfirmationEmail({
-    customerName,
-    customerEmail,
+    customerName: data.customerName,
+    customerEmail: data.customerEmail,
     courseName,
     dateRange,
-    location: courseLocation,
+    location: data.courseLocation,
     priceInEuros,
     paymentIntentId: intent.id,
   });
 
   const samoEmailContent = samoNotificationEmail({
-    customerName,
-    customerEmail,
-    customerPhone,
+    customerName: data.customerName,
+    customerEmail: data.customerEmail,
+    customerPhone: data.customerPhone,
     courseName,
     dateRange,
-    location: courseLocation,
+    location: data.courseLocation,
     priceInEuros,
     paymentIntentId: intent.id,
   });
 
+  // Contact upsert and emails are independent; run in parallel to stay under
+  // Stripe's 5s retry budget. PI metadata update is sequential after — only
+  // mark as processed once everything above succeeded.
   await Promise.all([
+    upsertContact({
+      email: data.customerEmail,
+      firstName: first,
+      lastName: last,
+      phone: data.customerPhone,
+      listIds: [slotListId, alumniListId],
+    }),
     sendTransactionalEmail({
-      to: { email: customerEmail, name: customerName },
+      to: { email: data.customerEmail, name: data.customerName },
       subject: customerEmailContent.subject,
       text: customerEmailContent.text,
       html: customerEmailContent.html,
@@ -195,7 +185,7 @@ async function handlePaymentIntentSucceeded(
       subject: samoEmailContent.subject,
       text: samoEmailContent.text,
       html: samoEmailContent.html,
-      replyTo: { email: customerEmail, name: customerName },
+      replyTo: { email: data.customerEmail, name: data.customerName },
     }),
   ]);
 
@@ -210,8 +200,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!webhookSecret) {
+  let webhookSecret: string;
+  try {
+    webhookSecret = readEnv("STRIPE_WEBHOOK_SECRET");
+  } catch {
     return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
   }
 
@@ -232,7 +224,6 @@ export async function POST(request: Request) {
         await handlePaymentIntentSucceeded(event.data.object);
         break;
       default:
-        // Ignore other events
         break;
     }
   } catch (err) {

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/config";
+import { siteConfig, type CourseType } from "@/lib/config";
 import { stripe } from "@/lib/stripe/client";
-import { formatCourseDateRange } from "@/lib/utils";
+import { formatCourseDateRange, splitName } from "@/lib/utils";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,9 @@ type Props = {
   }>;
 };
 
-const courseLabels: Record<string, string> = {
-  zacetni: "Začetni tečaj prostega potapljanja",
-  nadaljevalni: "Nadaljevalni tečaj prostega potapljanja",
-  master: "Master tečaj prostega potapljanja",
-};
+function isCourseType(value: string | undefined): value is CourseType {
+  return value !== undefined && value in siteConfig.courses;
+}
 
 export default async function HvalaPage({ searchParams }: Props) {
   const { payment_intent, payment_intent_client_secret, redirect_status } = await searchParams;
@@ -32,10 +30,9 @@ export default async function HvalaPage({ searchParams }: Props) {
   const succeeded = redirect_status === "succeeded";
   const processing = redirect_status === "processing";
 
-  // Only personalize if BOTH the payment_intent ID and its client_secret are
-  // present and match. The client_secret is cryptographic; without it, the PI ID
-  // alone is insufficient proof that this user owns the payment (PI IDs leak via
-  // referrers, browser history, etc.).
+  // Personalize only when the PaymentIntent's client_secret query param matches
+  // the retrieved intent. PI IDs alone leak via referrers/history and aren't
+  // proof of ownership; the client_secret is cryptographic.
   let intent = null;
   if (payment_intent && payment_intent_client_secret) {
     try {
@@ -49,14 +46,16 @@ export default async function HvalaPage({ searchParams }: Props) {
   }
 
   const meta = intent?.metadata ?? {};
-  const courseType = meta.courseType as string | undefined;
-  const courseName = courseType ? courseLabels[courseType] : null;
+  const courseName = isCourseType(meta.courseType)
+    ? siteConfig.courses[meta.courseType].fullName
+    : null;
   const dateRange =
     meta.courseStartDate && meta.courseEndDate
       ? formatCourseDateRange(meta.courseStartDate, meta.courseEndDate)
       : null;
-  const location = meta.courseLocation as string | undefined;
-  const customerName = meta.customerName as string | undefined;
+  const location = meta.courseLocation;
+  const customerName = meta.customerName;
+  const firstName = customerName ? splitName(customerName).first : "";
 
   if (!succeeded && !processing) {
     return (
@@ -80,7 +79,7 @@ export default async function HvalaPage({ searchParams }: Props) {
       <div className="max-w-3xl mx-auto px-6">
         <Overline>Prijava potrjena</Overline>
         <SectionHeading className="mb-6">
-          {customerName ? `Hvala, ${customerName.split(" ")[0]}!` : "Hvala za prijavo!"}
+          {firstName ? `Hvala, ${firstName}!` : "Hvala za prijavo!"}
         </SectionHeading>
 
         {processing && (
@@ -91,14 +90,14 @@ export default async function HvalaPage({ searchParams }: Props) {
 
         <div className="bg-white border border-border-custom p-8 mb-10">
           {courseName && (
-            <p className="text-sm text-muted-text font-body uppercase tracking-wider mb-2">
-              Vaš tečaj
-            </p>
-          )}
-          {courseName && (
-            <p className="text-[22px] font-semibold text-navy font-heading mb-1">
-              {courseName}
-            </p>
+            <>
+              <p className="text-sm text-muted-text font-body uppercase tracking-wider mb-2">
+                Vaš tečaj
+              </p>
+              <p className="text-[22px] font-semibold text-navy font-heading mb-1">
+                {courseName}
+              </p>
+            </>
           )}
           {(dateRange || location) && (
             <p className="text-[17px] text-body font-body">

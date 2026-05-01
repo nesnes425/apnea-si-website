@@ -1,10 +1,7 @@
-const BREVO_API = "https://api.brevo.com/v3";
+import { readEnv } from "@/lib/env";
 
-function readEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing ${name} environment variable`);
-  return value;
-}
+const BREVO_API = "https://api.brevo.com/v3";
+const REQUEST_TIMEOUT_MS = 4000;
 
 function authHeaders() {
   return {
@@ -21,6 +18,7 @@ async function brevoFetch<T = unknown>(
   const res = await fetch(`${BREVO_API}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...(init.headers ?? {}) },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
 
   if (!res.ok) {
@@ -32,8 +30,6 @@ async function brevoFetch<T = unknown>(
   return (await res.json()) as T;
 }
 
-// === Lists ===
-
 export async function createList(params: {
   name: string;
   folderId: number;
@@ -44,8 +40,6 @@ export async function createList(params: {
   });
   return result.id;
 }
-
-// === Contacts ===
 
 export async function upsertContact(params: {
   email: string;
@@ -68,8 +62,6 @@ export async function upsertContact(params: {
     }),
   });
 }
-
-// === Transactional emails ===
 
 export async function sendTransactionalEmail(params: {
   to: { email: string; name?: string };

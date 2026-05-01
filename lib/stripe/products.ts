@@ -1,28 +1,16 @@
-import { siteConfig, type CourseType } from "@/lib/config";
+import { readEnv } from "@/lib/env";
+import type { CourseType } from "@/lib/config";
 
-function readEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing ${name} environment variable`);
-  }
-  return value;
-}
-
-export const stripePriceIds = {
-  zacetni: () => readEnv("STRIPE_PRICE_ZACETNI"),
-  nadaljevalni: () => readEnv("STRIPE_PRICE_NADALJEVALNI"),
-  master: () => readEnv("STRIPE_PRICE_MASTER"),
-  giftZacetni: () => readEnv("STRIPE_PRICE_GIFT_ZACETNI"),
+const courseTypeToEnvVar: Record<CourseType, string> = {
+  zacetni: "STRIPE_PRICE_ZACETNI",
+  nadaljevalni: "STRIPE_PRICE_NADALJEVALNI",
+  master: "STRIPE_PRICE_MASTER",
 };
 
 export function getCoursePriceId(courseType: CourseType): string {
-  return stripePriceIds[courseType]();
+  return readEnv(courseTypeToEnvVar[courseType]);
 }
 
-export function getCoursePriceInCents(courseType: CourseType): number {
-  return siteConfig.courses[courseType].priceInCents;
-}
-
-export function getCourseFullName(courseType: CourseType): string {
-  return siteConfig.courses[courseType].fullName;
+export function getGiftVoucherPriceId(): string {
+  return readEnv("STRIPE_PRICE_GIFT_ZACETNI");
 }

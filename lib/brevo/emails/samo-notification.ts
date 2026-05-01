@@ -1,3 +1,5 @@
+import { escapeHtml } from "@/lib/utils";
+
 export type SamoNotificationData = {
   customerName: string;
   customerEmail: string;
@@ -12,6 +14,7 @@ export type SamoNotificationData = {
 export function samoNotificationEmail(d: SamoNotificationData) {
   const subject = `Nova prijava: ${d.customerName} — ${d.courseName}, ${d.dateRange}`;
   const stripeUrl = `https://dashboard.stripe.com/payments/${d.paymentIntentId}`;
+  const phoneHref = d.customerPhone.replace(/\s/g, "");
 
   const text = `Nova prijava na tečaj.
 
@@ -42,7 +45,7 @@ Stripe Dashboard: ${stripeUrl}`;
     <p style="margin:16px 0 0;"><strong>Stranka:</strong><br>
     ${escapeHtml(d.customerName)}<br>
     <a href="mailto:${escapeHtml(d.customerEmail)}" style="color:#d3a356;">${escapeHtml(d.customerEmail)}</a><br>
-    <a href="tel:${escapeHtml(d.customerPhone.replace(/\s/g, ""))}" style="color:#d3a356;">${escapeHtml(d.customerPhone)}</a></p>
+    <a href="tel:${escapeHtml(phoneHref)}" style="color:#d3a356;">${escapeHtml(d.customerPhone)}</a></p>
 
     <p style="margin:16px 0 0;"><strong>Plačilo:</strong> €${d.priceInEuros} — potrjeno<br>
     <span style="color:#8a8377;font-size:13px;">Stripe ID: ${escapeHtml(d.paymentIntentId)}</span></p>
@@ -55,13 +58,4 @@ Stripe Dashboard: ${stripeUrl}`;
 </html>`;
 
   return { subject, text, html };
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }

@@ -1,9 +1,9 @@
 "use server";
 
 import { stripe } from "./client";
-import { getCoursePriceInCents, getCourseFullName } from "./products";
 import { getCourseInstance } from "@/lib/sanity/queries";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
+import { siteConfig } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 
 export type CreateBookingResult =
@@ -27,13 +27,12 @@ export async function createBookingPaymentIntent(
     return { ok: false, error: "Termin je razprodan. Izberite drug termin." };
   }
 
-  const amount = getCoursePriceInCents(instance.courseType);
-  const courseName = getCourseFullName(instance.courseType);
+  const course = siteConfig.courses[instance.courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
-  const description = `${courseName} — ${instance.location}, ${dateRange}`;
+  const description = `${course.fullName} — ${instance.location}, ${dateRange}`;
 
   const intent = await stripe.paymentIntents.create({
-    amount,
+    amount: course.priceInCents,
     currency: "eur",
     automatic_payment_methods: { enabled: true },
     receipt_email: data.email,

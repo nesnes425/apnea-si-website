@@ -20,7 +20,7 @@ function getStripeInstance(): Stripe {
 export const stripe = new Proxy({} as Stripe, {
   get(_target, prop) {
     const instance = getStripeInstance();
-    const value = Reflect.get(instance, prop);
+    const value = Reflect.get(instance, prop, instance);
     return typeof value === "function" ? value.bind(instance) : value;
   },
 });

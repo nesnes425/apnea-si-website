@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/config";
+import { escapeHtml, splitName } from "@/lib/utils";
 
 export type BookingConfirmationData = {
   customerName: string;
@@ -11,10 +12,10 @@ export type BookingConfirmationData = {
 };
 
 export function bookingConfirmationEmail(d: BookingConfirmationData) {
-  const firstName = d.customerName.split(" ")[0] ?? d.customerName;
+  const { first: firstName } = splitName(d.customerName);
   const subject = `Potrjeno: ${d.courseName}, ${d.dateRange}`;
 
-  const text = `Pozdravljeni, ${firstName},
+  const text = `Pozdravljeni, ${firstName || d.customerName},
 
 vaša prijava na ${d.courseName} je potrjena. Veselimo se srečanja na bazenskem delu tečaja, kjer izveste tudi vse o globinskem delu.
 
@@ -46,7 +47,7 @@ Apnea Slovenija`;
 <html lang="sl">
 <body style="margin:0;padding:24px;background:#f7f5f2;color:#33404f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.6;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;padding:32px 28px;">
-    <p>Pozdravljeni, <strong>${escapeHtml(firstName)}</strong>,</p>
+    <p>Pozdravljeni, <strong>${escapeHtml(firstName || d.customerName)}</strong>,</p>
     <p>vaša prijava na <strong>${escapeHtml(d.courseName)}</strong> je potrjena. Veselimo se srečanja na bazenskem delu tečaja, kjer izveste tudi vse o globinskem delu.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
@@ -86,13 +87,4 @@ Apnea Slovenija`;
 </html>`;
 
   return { subject, text, html };
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }

@@ -11,11 +11,9 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
   instanceId: string;
-  courseLabel: string;
-  dateRange: string;
-  location: string;
-  priceInEuros: number;
 };
+
+type IntentState = { clientSecret: string; email: string };
 
 const stripePromise = getStripe();
 
@@ -31,46 +29,31 @@ const elementsAppearance: Appearance = {
   },
 };
 
-export function BookingFlow(props: Props) {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [customerEmail, setCustomerEmail] = useState<string | null>(null);
+export function BookingFlow({ instanceId }: Props) {
+  const [intent, setIntent] = useState<IntentState | null>(null);
 
-  if (clientSecret) {
+  if (intent) {
     return (
       <Elements
         stripe={stripePromise}
-        options={{ clientSecret, appearance: elementsAppearance, locale: "sl" }}
+        options={{ clientSecret: intent.clientSecret, appearance: elementsAppearance, locale: "sl" }}
       >
-        <PaymentStep customerEmail={customerEmail ?? ""} />
+        <PaymentStep customerEmail={intent.email} />
       </Elements>
     );
   }
 
-  return (
-    <DetailsStep
-      instanceId={props.instanceId}
-      courseLabel={props.courseLabel}
-      dateRange={props.dateRange}
-      location={props.location}
-      priceInEuros={props.priceInEuros}
-      onIntentCreated={(secret, email) => {
-        setCustomerEmail(email);
-        setClientSecret(secret);
-      }}
-    />
-  );
+  return <DetailsStep instanceId={instanceId} onIntentCreated={setIntent} />;
 }
 
 // === Step 1: customer details ===
 
-type DetailsStepProps = Props & {
-  onIntentCreated: (clientSecret: string, email: string) => void;
+type DetailsStepProps = {
+  instanceId: string;
+  onIntentCreated: (intent: IntentState) => void;
 };
 
-function DetailsStep({
-  instanceId,
-  onIntentCreated,
-}: DetailsStepProps) {
+function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -85,7 +68,7 @@ function DetailsStep({
       fullName: String(formData.get("fullName") ?? ""),
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
-      acceptTerms: formData.get("acceptTerms") === "on" ? true : (false as unknown as true),
+      acceptTerms: formData.get("acceptTerms") === "on",
       instanceId,
     };
 
@@ -94,7 +77,7 @@ function DetailsStep({
       const fieldErrors: Record<string, string> = {};
       for (const issue of parsed.error.issues) {
         const key = String(issue.path[0] ?? "");
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+        fieldErrors[key] ??= issue.message;
       }
       setErrors(fieldErrors);
       return;
@@ -108,7 +91,7 @@ function DetailsStep({
       setServerError(result.error);
       return;
     }
-    onIntentCreated(result.clientSecret, parsed.data.email);
+    onIntentCreated({ clientSecret: result.clientSecret, email: parsed.data.email });
   }
 
   return (

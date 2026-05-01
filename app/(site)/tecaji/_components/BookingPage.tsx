@@ -40,15 +40,7 @@ export async function BookingPage({ courseType, instanceId }: Props) {
         <SectionHeading className="mb-10">{course.fullName}</SectionHeading>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
-          <div>
-            <BookingFlow
-              instanceId={instance._id}
-              courseLabel={course.name}
-              dateRange={dateRange}
-              location={instance.location}
-              priceInEuros={course.price}
-            />
-          </div>
+          <BookingFlow instanceId={instance._id} />
 
           <aside className="md:sticky md:top-24 self-start">
             <div className="bg-white p-8 border border-border-custom">
