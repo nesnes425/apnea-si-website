@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Pogosta vprašanja",
@@ -153,12 +154,9 @@ export default function VprasanjaPage() {
             </a>
             .
           </p>
-          <Link
-            href="/kontakt"
-            className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-          >
-            Kontaktni obrazec →
-          </Link>
+          <Button asChild>
+            <Link href="/kontakt">Kontaktni obrazec →</Link>
+          </Button>
         </div>
       </section>
     </>

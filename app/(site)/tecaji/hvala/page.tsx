@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe/client";
 import { formatCourseDateRange } from "@/lib/utils";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Hvala — Prijava potrjena",
@@ -66,12 +67,9 @@ export default async function HvalaPage({ searchParams }: Props) {
           <p className="text-[17px] text-body font-body leading-[1.7] mb-8">
             Plačilo ni uspelo. Poskusite znova ali nas kontaktirajte, če težava ostaja.
           </p>
-          <Link
-            href="/tecaji/zacetni#termini"
-            className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-          >
-            ← Nazaj na tečaj
-          </Link>
+          <Button asChild>
+            <Link href="/tecaji/zacetni#termini">← Nazaj na tečaj</Link>
+          </Button>
         </div>
       </section>
     );

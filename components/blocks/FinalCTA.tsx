@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 interface FinalCTAProps {
   heading: string;
@@ -31,12 +32,9 @@ export function FinalCTA({
         <p className="text-[18px] md:text-[20px] text-white/70 font-body mb-10 max-w-2xl mx-auto">
           {description}
         </p>
-        <a
-          href={buttonHref}
-          className="bg-gold text-white px-10 py-4 text-[16px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-        >
-          {buttonText}
-        </a>
+        <Button asChild size="xl">
+          <a href={buttonHref}>{buttonText}</a>
+        </Button>
       </div>
     </section>
   );

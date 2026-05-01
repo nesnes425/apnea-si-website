@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -154,12 +155,9 @@ export default function TecajiPage() {
                     Vse vključeno
                   </p>
                 </div>
-                <Link
-                  href={course.href}
-                  className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block text-center"
-                >
-                  Več o tečaju →
-                </Link>
+                <Button asChild className="text-center">
+                  <Link href={course.href}>Več o tečaju →</Link>
+                </Button>
               </div>
             </div>
           ))}
@@ -176,12 +174,9 @@ export default function TecajiPage() {
             Podarite izkušnjo prostega potapljanja. Darilni bon velja 1 leto
             in je na voljo za vse tečaje.
           </p>
-          <Link
-            href="/darilni-bon"
-            className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-          >
-            Darilni bon →
-          </Link>
+          <Button asChild>
+            <Link href="/darilni-bon">Darilni bon →</Link>
+          </Button>
         </div>
       </Section>
 

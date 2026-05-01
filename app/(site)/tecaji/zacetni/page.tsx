@@ -3,6 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
+import { Button } from "@/components/ui/button";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -169,12 +170,9 @@ function Hero() {
             €{siteConfig.courses.zacetni.price}
           </p>
           <div className="mb-10">
-            <a
-              href="#termini"
-              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-            >
-              Rezervirajte mesto →
-            </a>
+            <Button asChild>
+              <a href="#termini">Rezervirajte mesto →</a>
+            </Button>
           </div>
 
           <div className="border-l-2 border-gold/40 pl-4">
@@ -427,12 +425,11 @@ async function DatesAndBooking() {
                         Razprodano
                       </span>
                     ) : (
-                      <Link
-                        href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}
-                        className="bg-gold text-white px-6 py-2.5 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0 inline-block"
-                      >
-                        Rezerviraj →
-                      </Link>
+                      <Button asChild size="sm">
+                        <Link href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}>
+                          Rezerviraj →
+                        </Link>
+                      </Button>
                     )}
                   </div>
                 ))}

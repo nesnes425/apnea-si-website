@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
@@ -91,12 +92,9 @@ export default function TreningiPage() {
             <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
               od €54/mesec + €35 letna članarina
             </p>
-            <a
-              href="#prijava"
-              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-            >
-              Prijava na treninge →
-            </a>
+            <Button asChild>
+              <a href="#prijava">Prijava na treninge →</a>
+            </Button>
           </div>
         </div>
       </section>
@@ -372,12 +370,9 @@ export default function TreningiPage() {
             Vsak teden, od oktobra do junija, na 7 lokacijah po Sloveniji.
             Začnite v začetni skupini — in rastite z nami.
           </p>
-          <a
-            href="#prijava"
-            className="bg-gold text-white px-10 py-4 text-[16px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-          >
-            Prijavite se na treninge →
-          </a>
+          <Button asChild size="xl">
+            <a href="#prijava">Prijavite se na treninge →</a>
+          </Button>
         </div>
       </section>
     </>

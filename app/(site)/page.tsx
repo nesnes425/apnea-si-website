@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
 
@@ -31,12 +32,9 @@ export default function HomePage() {
               Odkrijte mir, ki ga najdete le pod morsko gladino — z največjo
               šolo prostega potapljanja v Sloveniji.
             </p>
-            <Link
-              href="/tecaji/zacetni"
-              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block shrink-0"
-            >
-              Rezervirajte mesto →
-            </Link>
+            <Button asChild>
+              <Link href="/tecaji/zacetni">Rezervirajte mesto →</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -92,12 +90,9 @@ export default function HomePage() {
                   </p>
                 ))}
               </div>
-              <Link
-                href="/tecaji/zacetni"
-                className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block self-start"
-              >
-                Več o tečaju →
-              </Link>
+              <Button asChild className="self-start">
+                <Link href="/tecaji/zacetni">Več o tečaju →</Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -137,12 +132,9 @@ export default function HomePage() {
                 </span>
                 <span className="text-sm text-white/50 font-body">/mesec</span>
               </div>
-              <Link
-                href="/treningi"
-                className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block self-start"
-              >
-                Več o treningih →
-              </Link>
+              <Button asChild className="self-start">
+                <Link href="/treningi">Več o treningih →</Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -336,12 +328,9 @@ export default function HomePage() {
               placeholder="vas@email.si"
               className="flex-1 border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
             />
-            <button
-              type="button"
-              className="bg-gold text-white px-6 py-3 text-[14px] font-medium font-body hover:bg-gold-hover transition-colors shrink-0"
-            >
+            <Button type="button" size="sm" className="py-3">
               Prijavite se →
-            </button>
+            </Button>
           </div>
           <p className="text-xs text-muted-text font-body mt-4">
             Brezplačen vodič + novice o tečajih in treningih. Brez spama.

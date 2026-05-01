@@ -6,6 +6,8 @@ import type { Appearance } from "@stripe/stripe-js";
 import { getStripe } from "@/lib/stripe/client-side";
 import { createBookingPaymentIntent } from "@/lib/stripe/actions";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   instanceId: string;
@@ -111,50 +113,33 @@ function DetailsStep({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-      <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-navy font-body mb-2">
-          Ime in priimek
-        </label>
-        <input
-          id="fullName"
-          name="fullName"
-          type="text"
-          autoComplete="name"
-          required
-          className="w-full px-4 py-3 border border-border-custom bg-white text-navy font-body focus:outline-none focus:border-gold transition-colors"
-        />
-        {errors.fullName && <p className="text-sm text-red-700 mt-1 font-body">{errors.fullName}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-navy font-body mb-2">
-          E-pošta
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          className="w-full px-4 py-3 border border-border-custom bg-white text-navy font-body focus:outline-none focus:border-gold transition-colors"
-        />
-        {errors.email && <p className="text-sm text-red-700 mt-1 font-body">{errors.email}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-navy font-body mb-2">
-          Telefon
-        </label>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          required
-          className="w-full px-4 py-3 border border-border-custom bg-white text-navy font-body focus:outline-none focus:border-gold transition-colors"
-        />
-        {errors.phone && <p className="text-sm text-red-700 mt-1 font-body">{errors.phone}</p>}
-      </div>
+      <Input
+        label="Ime in priimek"
+        id="fullName"
+        name="fullName"
+        type="text"
+        autoComplete="name"
+        required
+        error={errors.fullName}
+      />
+      <Input
+        label="E-pošta"
+        id="email"
+        name="email"
+        type="email"
+        autoComplete="email"
+        required
+        error={errors.email}
+      />
+      <Input
+        label="Telefon"
+        id="phone"
+        name="phone"
+        type="tel"
+        autoComplete="tel"
+        required
+        error={errors.phone}
+      />
 
       <div className="pt-2">
         <label className="flex items-start gap-3 cursor-pointer">
@@ -176,22 +161,18 @@ function DetailsStep({
             .
           </span>
         </label>
-        {errors.acceptTerms && <p className="text-sm text-red-700 mt-1 font-body">{errors.acceptTerms}</p>}
+        {errors.acceptTerms && <p className="text-sm text-red-700 mt-1 font-body" role="alert">{errors.acceptTerms}</p>}
       </div>
 
       {serverError && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body">
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body" role="alert">
           {serverError}
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors w-full md:w-auto disabled:opacity-60 disabled:cursor-not-allowed"
-      >
+      <Button type="submit" disabled={submitting} fullWidth className="md:w-auto">
         {submitting ? "Pripravljam plačilo…" : "Naprej k plačilu →"}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -238,18 +219,14 @@ function PaymentStep({ customerEmail }: { customerEmail: string }) {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body">
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body" role="alert">
           {error}
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={!stripe || submitting}
-        className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors w-full disabled:opacity-60 disabled:cursor-not-allowed"
-      >
+      <Button type="submit" disabled={!stripe || submitting} fullWidth>
         {submitting ? "Plačujem…" : "Plačaj in rezerviraj →"}
-      </button>
+      </Button>
     </form>
   );
 }

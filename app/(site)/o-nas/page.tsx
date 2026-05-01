@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 
@@ -337,12 +338,9 @@ export default function ONasPage() {
             začnete — postanete del zgodbe, ki raste že 15 let.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/tecaji"
-              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-            >
-              Tečaji →
-            </a>
+            <Button asChild>
+              <a href="/tecaji">Tečaji →</a>
+            </Button>
             <a
               href="/treningi"
               className="border-2 border-white/30 text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:border-white/60 transition-colors inline-block"

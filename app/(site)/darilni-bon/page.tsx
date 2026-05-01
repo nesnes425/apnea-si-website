@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
@@ -74,12 +75,9 @@ export default function DarilniBonPage() {
             <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
               €{siteConfig.courses.zacetni.price}
             </p>
-            <a
-              href="#nakup"
-              className="bg-gold text-white px-8 py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-            >
-              Kupite darilni bon →
-            </a>
+            <Button asChild>
+              <a href="#nakup">Kupite darilni bon →</a>
+            </Button>
           </div>
         </div>
       </section>
@@ -310,12 +308,9 @@ export default function DarilniBonPage() {
             Prejemnik bo zadržal dih več kot 2 minuti, se potopil pod morsko
             gladino — in vam bo hvaležen za vedno.
           </p>
-          <a
-            href="#nakup"
-            className="bg-gold text-white px-10 py-4 text-[16px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors inline-block"
-          >
-            Kupite darilni bon →
-          </a>
+          <Button asChild size="xl">
+            <a href="#nakup">Kupite darilni bon →</a>
+          </Button>
         </div>
       </section>
     </>
