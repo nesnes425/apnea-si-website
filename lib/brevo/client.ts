@@ -63,13 +63,24 @@ export async function upsertContact(params: {
   });
 }
 
+export type EmailAttachment = {
+  name: string; // filename, e.g. "darilni-bon.pdf"
+  contentBase64: string; // base64-encoded file contents
+};
+
 export async function sendTransactionalEmail(params: {
   to: { email: string; name?: string };
   subject: string;
   text: string;
   html: string;
   replyTo?: { email: string; name?: string };
+  attachments?: EmailAttachment[];
 }): Promise<void> {
+  const attachment = params.attachments?.map((a) => ({
+    name: a.name,
+    content: a.contentBase64,
+  }));
+
   await brevoFetch("/smtp/email", {
     method: "POST",
     body: JSON.stringify({
@@ -82,6 +93,7 @@ export async function sendTransactionalEmail(params: {
       textContent: params.text,
       htmlContent: params.html,
       replyTo: params.replyTo,
+      attachment,
     }),
   });
 }

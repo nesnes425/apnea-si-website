@@ -76,7 +76,7 @@ export default function DarilniBonPage() {
               €{siteConfig.courses.zacetni.price}
             </p>
             <Button asChild>
-              <a href="#nakup">Kupite darilni bon →</a>
+              <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
             </Button>
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function DarilniBonPage() {
             gladino — in vam bo hvaležen za vedno.
           </p>
           <Button asChild size="xl">
-            <a href="#nakup">Kupite darilni bon →</a>
+            <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
           </Button>
         </div>
       </section>

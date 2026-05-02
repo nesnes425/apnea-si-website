@@ -10,9 +10,13 @@ import {
 } from "@/lib/brevo/client";
 import { bookingConfirmationEmail } from "@/lib/brevo/emails/booking-confirmation";
 import { samoNotificationEmail } from "@/lib/brevo/emails/samo-notification";
+import { voucherBuyerEmail } from "@/lib/brevo/emails/voucher-buyer";
+import { voucherRecipientEmail } from "@/lib/brevo/emails/voucher-recipient";
 import { siteConfig, type CourseType } from "@/lib/config";
 import { readEnv, readEnvNumber } from "@/lib/env";
 import { formatCourseDateRange, splitName } from "@/lib/utils";
+import { voucherCodeFromPaymentIntentId, voucherValidUntil } from "@/lib/voucher-code";
+import { renderVoucherPdfBase64 } from "@/lib/voucher-pdf/Voucher";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -194,6 +198,126 @@ async function handlePaymentIntentSucceeded(
   });
 }
 
+// === Gift voucher branch ===
+
+const slMonths = [
+  "januar", "februar", "marec", "april", "maj", "junij",
+  "julij", "avgust", "september", "oktober", "november", "december",
+];
+
+function formatSlDate(d: Date): string {
+  return `${d.getDate()}. ${slMonths[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+type GiftVoucherMetadata = {
+  buyerName: string;
+  buyerEmail: string;
+  recipientName: string;
+  recipientEmail: string;
+  message: string;
+};
+
+function validateGiftVoucherMetadata(
+  m: Stripe.Metadata,
+  intentId: string
+): GiftVoucherMetadata | null {
+  const required = ["buyerName", "buyerEmail", "recipientName", "recipientEmail"] as const;
+  const missing = required.filter((k) => !m[k]);
+  if (missing.length > 0) {
+    console.warn(`Skipping gift voucher ${intentId} — missing metadata: ${missing.join(", ")}`);
+    return null;
+  }
+  return {
+    buyerName: m.buyerName,
+    buyerEmail: m.buyerEmail,
+    recipientName: m.recipientName,
+    recipientEmail: m.recipientEmail,
+    message: m.message ?? "",
+  };
+}
+
+async function handleGiftVoucherSucceeded(intent: Stripe.PaymentIntent): Promise<void> {
+  if (intent.metadata?.emailSent === "true") {
+    console.log(`Skipping voucher ${intent.id} — already processed`);
+    return;
+  }
+
+  const data = validateGiftVoucherMetadata(intent.metadata ?? {}, intent.id);
+  if (!data) return;
+
+  const courseName = siteConfig.giftVoucher.fullName;
+  const priceInEuros = (intent.amount ?? 0) / 100;
+  const voucherCode = voucherCodeFromPaymentIntentId(intent.id);
+  const purchaseDate = new Date((intent.created ?? Math.floor(Date.now() / 1000)) * 1000);
+  const validUntil = voucherValidUntil(purchaseDate);
+  const validUntilLabel = formatSlDate(validUntil);
+
+  const pdfBase64 = await renderVoucherPdfBase64({
+    voucherCode,
+    recipientName: data.recipientName,
+    buyerName: data.buyerName,
+    message: data.message || undefined,
+    courseName,
+    validUntil,
+    purchaseDate,
+  });
+
+  const buyerContent = voucherBuyerEmail({
+    buyerName: data.buyerName,
+    recipientName: data.recipientName,
+    recipientEmail: data.recipientEmail,
+    courseName,
+    voucherCode,
+    priceInEuros,
+    paymentIntentId: intent.id,
+    validUntilLabel,
+  });
+
+  const recipientContent = voucherRecipientEmail({
+    buyerName: data.buyerName,
+    recipientName: data.recipientName,
+    message: data.message || undefined,
+    courseName,
+    voucherCode,
+    validUntilLabel,
+  });
+
+  const attachment = [
+    { name: `darilni-bon-${voucherCode}.pdf`, contentBase64: pdfBase64 },
+  ];
+
+  await Promise.all([
+    sendTransactionalEmail({
+      to: { email: data.buyerEmail, name: data.buyerName },
+      subject: buyerContent.subject,
+      text: buyerContent.text,
+      html: buyerContent.html,
+      replyTo: { email: siteConfig.email, name: "Apnea Slovenija" },
+      attachments: attachment,
+    }),
+    sendTransactionalEmail({
+      to: { email: data.recipientEmail, name: data.recipientName },
+      subject: recipientContent.subject,
+      text: recipientContent.text,
+      html: recipientContent.html,
+      replyTo: { email: data.buyerEmail, name: data.buyerName },
+      attachments: attachment,
+    }),
+  ]);
+
+  await stripe.paymentIntents.update(intent.id, {
+    metadata: { ...intent.metadata, emailSent: "true" },
+  });
+}
+
+async function handlePaymentIntentSucceededDispatch(intent: Stripe.PaymentIntent): Promise<void> {
+  if (intent.metadata?.type === "gift_voucher") {
+    await handleGiftVoucherSucceeded(intent);
+  } else {
+    await handlePaymentIntentSucceeded(intent);
+  }
+}
+
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
@@ -221,7 +345,7 @@ export async function POST(request: Request) {
   try {
     switch (event.type) {
       case "payment_intent.succeeded":
-        await handlePaymentIntentSucceeded(event.data.object);
+        await handlePaymentIntentSucceededDispatch(event.data.object);
         break;
       default:
         break;
