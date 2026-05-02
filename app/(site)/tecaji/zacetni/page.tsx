@@ -4,6 +4,7 @@ import { siteConfig } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
+import { CourseJsonLd } from "@/components/seo/StructuredData";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -508,6 +509,12 @@ async function DatesAndBooking() {
 export default function ZacetniTecajPage() {
   return (
     <>
+      <CourseJsonLd
+        name={siteConfig.courses.zacetni.fullName}
+        description="SSI Freediving Level 1 — tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 10x medaljer s svetovnih prvenstev."
+        url="https://apnea.si/tecaji/zacetni"
+        priceInEuros={siteConfig.courses.zacetni.price}
+      />
       <Hero />
       <SocialProofBar />
       <StoriesSection />

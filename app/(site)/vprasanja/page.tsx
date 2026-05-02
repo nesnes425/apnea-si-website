@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import { FAQPageJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata = {
   title: "Pogosta vprašanja",
@@ -55,8 +56,11 @@ const sections = [
 ];
 
 export default function VprasanjaPage() {
+  const allFaqs = sections.flatMap((s) => s.faqs);
+
   return (
     <>
+      <FAQPageJsonLd items={allFaqs} />
       {/* Header with section navigation */}
       <section className="py-16 md:py-20">
         <div className="max-w-3xl mx-auto px-6">

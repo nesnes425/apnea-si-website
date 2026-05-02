@@ -4,10 +4,12 @@ import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
+import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
 
 export default function HomePage() {
   return (
     <>
+      <LocalBusinessJsonLd />
       {/* ============================================
           1. HERO — image breathes, text below, CTA
           ============================================ */}

@@ -4,6 +4,7 @@ import { siteConfig } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
+import { CourseJsonLd } from "@/components/seo/StructuredData";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -434,6 +435,12 @@ async function DatesAndBooking() {
 export default function NadaljevalniTecajPage() {
   return (
     <>
+      <CourseJsonLd
+        name={siteConfig.courses.nadaljevalni.fullName}
+        description="SSI Freediving Level 2 — tečaj za izkušene potapljače. Frenzel izenačevanje, ciljna globina 25–35 m. Vodi Samo Jeranko."
+        url="https://apnea.si/tecaji/nadaljevalni"
+        priceInEuros={siteConfig.courses.nadaljevalni.price}
+      />
       <Hero />
       <SocialProofBar />
       <WhyAdvanced />

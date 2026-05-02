@@ -4,6 +4,7 @@ import { siteConfig } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
+import { CourseJsonLd } from "@/components/seo/StructuredData";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -399,6 +400,12 @@ async function DatesAndBooking() {
 export default function MasterTecajPage() {
   return (
     <>
+      <CourseJsonLd
+        name={siteConfig.courses.master.fullName}
+        description="SSI Freediving Level 3 — najvišja stopnja. Mouthfill izenačevanje, ciljna globina 30–40 m, vključeni 2 vodena treninga. Vodi Samo Jeranko."
+        url="https://apnea.si/tecaji/master"
+        priceInEuros={siteConfig.courses.master.price}
+      />
       <Hero />
       <SocialProofBar />
       <WhyMaster />

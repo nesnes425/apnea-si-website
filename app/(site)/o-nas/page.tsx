@@ -3,6 +3,7 @@ import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
+import { LocalBusinessJsonLd, PersonSamoJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata = {
   title: "O nas",
@@ -44,6 +45,8 @@ const communityStories = [
 export default function ONasPage() {
   return (
     <>
+      <LocalBusinessJsonLd />
+      <PersonSamoJsonLd />
       {/* ============================================
           SECTION 1: OPENING — editorial, not template
           ============================================ */}
