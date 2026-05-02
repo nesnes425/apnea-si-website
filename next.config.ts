@@ -38,10 +38,6 @@ const manualRedirects: { source: string; destination: string }[] = [
   { source: "/404-2/", destination: "/" },
   { source: "/no-access", destination: "/" },
   { source: "/no-access/", destination: "/" },
-
-  // /prosto-potapljanje/ — placeholder until the SEO authority page exists
-  { source: "/prosto-potapljanje", destination: "/tecaji/zacetni" },
-  { source: "/prosto-potapljanje/", destination: "/tecaji/zacetni" },
 ];
 
 // === Path-pattern redirects ===

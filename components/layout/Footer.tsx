@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
+import { CookieSettingsLink } from "@/components/blocks/CookieSettingsLink";
 
 export function Footer() {
   return (
@@ -129,6 +130,11 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <CookieSettingsLink className="text-sm text-white/40 hover:text-white/60 transition-colors font-body cursor-pointer">
+                  Nastavitve piškotkov
+                </CookieSettingsLink>
+              </li>
             </ul>
           </div>
         </div>

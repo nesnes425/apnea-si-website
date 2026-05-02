@@ -3,6 +3,7 @@ import { Lora, Roboto } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CookieConsent } from "@/components/blocks/CookieConsent";
 import "../globals.css";
 
 const lora = Lora({
@@ -56,6 +57,7 @@ export default function SiteLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <CookieConsent />
       </body>
     </html>
   );
