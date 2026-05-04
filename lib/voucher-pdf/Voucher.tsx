@@ -1,16 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
-import { Document, Page, Text, View, StyleSheet, pdf } from "@react-pdf/renderer";
+import path from "node:path";
+import { Document, Page, Text, View, StyleSheet, Font, pdf } from "@react-pdf/renderer";
 
 // Brand-aligned placeholder design — clean, on-brand, prints OK.
 // To redesign later: replace this component with a layout matching the new
 // physical voucher; the API (data shape, code, validity) doesn't need to change.
+
+// Register Roboto for full Slovenian character support (č, š, ž).
+// PDF standard fonts (Helvetica/Times/Courier) only support WinAnsiEncoding.
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: path.join(process.cwd(), "public/fonts/Roboto-Regular.ttf") },
+    {
+      src: path.join(process.cwd(), "public/fonts/Roboto-Bold.ttf"),
+      fontWeight: "bold",
+    },
+  ],
+});
 
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#181E25", // navy-dark
     color: "#ffffff",
     padding: 56,
-    fontFamily: "Helvetica",
+    fontFamily: "Roboto",
   },
   brandRow: {
     flexDirection: "row",
@@ -23,7 +37,7 @@ const styles = StyleSheet.create({
     color: "#d3a356",
     letterSpacing: 4,
     textTransform: "uppercase",
-    fontFamily: "Helvetica-Bold",
+    fontWeight: "bold",
   },
   meta: {
     fontSize: 10,
@@ -37,11 +51,11 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     textTransform: "uppercase",
     marginBottom: 14,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: "bold",
   },
   title: {
     fontSize: 38,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: "bold",
     lineHeight: 1.1,
     marginBottom: 24,
   },
@@ -52,14 +66,13 @@ const styles = StyleSheet.create({
   },
   recipientName: {
     fontSize: 26,
-    fontFamily: "Helvetica-Bold",
+    fontWeight: "bold",
     color: "#d3a356",
     marginBottom: 38,
   },
   message: {
     fontSize: 12,
-    color: "#ffffff",
-    fontStyle: "italic",
+    color: "rgba(255,255,255,0.92)",
     borderLeft: "2pt solid #d3a356",
     paddingLeft: 14,
     marginBottom: 38,
