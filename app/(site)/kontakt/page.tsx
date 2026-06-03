@@ -1,11 +1,43 @@
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
-import { Button } from "@/components/ui/button";
+import { ContactForm } from "./ContactForm";
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.51 1.49-3.9 3.78-3.9 1.1 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12Z" />
+    </svg>
+  );
+}
 
 export const metadata = {
   title: "Kontakt",
   description:
-    "Kontaktirajte Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
+    "Stopi v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
 };
 
 export default function KontaktPage() {
@@ -23,10 +55,10 @@ export default function KontaktPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/30 to-transparent" />
         <div className="relative w-full max-w-6xl px-6 mx-auto pb-12 md:pb-16">
           <h1 className="text-[36px] md:text-[48px] font-bold leading-[1.08] tracking-[-0.02em] text-white font-heading">
-            Pišite nam
+            Piši nam
           </h1>
           <p className="text-[17px] text-white/70 font-body mt-3 max-w-lg">
-            Z veseljem odgovorimo na vaša vprašanja in vam pomagamo pri prvih
+            Z veseljem odgovorimo na tvoja vprašanja in ti pomagamo pri prvih
             korakih v svet prostega potapljanja.
           </p>
         </div>
@@ -49,9 +81,6 @@ export default function KontaktPage() {
                   >
                     {siteConfig.email}
                   </a>
-                  <p className="text-[15px] text-muted-text font-body mt-2">
-                    Za vprašanja o tečajih, treningih in prijave
-                  </p>
                 </div>
 
                 <div>
@@ -64,9 +93,6 @@ export default function KontaktPage() {
                   >
                     {siteConfig.phone}
                   </a>
-                  <p className="text-[15px] text-muted-text font-body mt-2">
-                    Za nujna vprašanja ali spremembe rezervacij
-                  </p>
                 </div>
 
                 <div>
@@ -86,22 +112,24 @@ export default function KontaktPage() {
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
                     Sledite nam
                   </p>
-                  <div className="flex gap-6">
+                  <div className="flex gap-5">
                     <a
                       href={siteConfig.social.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[15px] text-navy font-medium font-body hover:text-gold transition-colors"
+                      aria-label="Instagram"
+                      className="text-navy hover:text-gold transition-colors"
                     >
-                      Instagram
+                      <InstagramIcon className="w-6 h-6" />
                     </a>
                     <a
                       href={siteConfig.social.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[15px] text-navy font-medium font-body hover:text-gold transition-colors"
+                      aria-label="Facebook"
+                      className="text-navy hover:text-gold transition-colors"
                     >
-                      Facebook
+                      <FacebookIcon className="w-6 h-6" />
                     </a>
                   </div>
                 </div>
@@ -110,79 +138,11 @@ export default function KontaktPage() {
 
             {/* Right: form */}
             <div>
-              <h2 className="text-[24px] md:text-[28px] font-semibold mb-2">
-                Pošljite nam sporočilo
+              <h2 className="text-[24px] md:text-[28px] font-semibold mb-8">
+                Pošlji nam sporočilo
               </h2>
-              <p className="text-[15px] text-muted-text font-body mb-8">
-                Odgovorimo v roku 1–2 delovnih dni.
-              </p>
 
-              <form className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-navy font-body mb-2"
-                    >
-                      Ime in priimek
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder="Ime in priimek"
-                      className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-navy font-body mb-2"
-                    >
-                      E-pošta *
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      required
-                      placeholder="vas@email.si"
-                      className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium text-navy font-body mb-2"
-                  >
-                    Zadeva
-                  </label>
-                  <input
-                    id="subject"
-                    type="text"
-                    placeholder="Npr. Vprašanje o začetnem tečaju"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-navy font-body mb-2"
-                  >
-                    Sporočilo *
-                  </label>
-                  <textarea
-                    id="message"
-                    required
-                    rows={6}
-                    placeholder="Vaše sporočilo..."
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors resize-none"
-                  />
-                </div>
-
-                <Button type="submit">Pošlji sporočilo →</Button>
-              </form>
+              <ContactForm />
             </div>
           </div>
         </div>

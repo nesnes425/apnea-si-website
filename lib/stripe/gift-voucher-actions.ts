@@ -16,7 +16,7 @@ export async function createGiftVoucherPaymentIntent(
 ): Promise<CreateGiftVoucherResult> {
   const parsed = giftVoucherFormSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Podatki niso popolni. Preverite obrazec." };
+    return { ok: false, error: "Podatki niso popolni. Preveri obrazec." };
   }
   const data = parsed.data;
   const voucher = siteConfig.giftVoucher;
@@ -34,14 +34,13 @@ export async function createGiftVoucherPaymentIntent(
       buyerName: data.buyerName,
       buyerEmail: data.buyerEmail,
       recipientName: data.recipientName,
-      recipientEmail: data.recipientEmail,
       // Stripe metadata caps each value at 500 chars; schema already enforces 500.
       message: data.message ?? "",
     },
   });
 
   if (!intent.client_secret) {
-    return { ok: false, error: "Napaka pri ustvarjanju plačila. Poskusite znova." };
+    return { ok: false, error: "Napaka pri ustvarjanju plačila. Poskusi znova." };
   }
 
   return {

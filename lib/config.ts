@@ -20,7 +20,7 @@ export const siteConfig = {
 
   // Social links
   social: {
-    instagram: "https://www.instagram.com/samojeranko/",
+    instagram: "https://www.instagram.com/apnea.si/",
     facebook: "https://www.facebook.com/apnea.si",
     linkedin: "https://www.linkedin.com/in/samo-jeranko-745272a0",
   },

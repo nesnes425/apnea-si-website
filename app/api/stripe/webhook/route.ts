@@ -11,7 +11,6 @@ import {
 import { bookingConfirmationEmail } from "@/lib/brevo/emails/booking-confirmation";
 import { samoNotificationEmail } from "@/lib/brevo/emails/samo-notification";
 import { voucherBuyerEmail } from "@/lib/brevo/emails/voucher-buyer";
-import { voucherRecipientEmail } from "@/lib/brevo/emails/voucher-recipient";
 import { siteConfig, type CourseType } from "@/lib/config";
 import { readEnv, readEnvNumber } from "@/lib/env";
 import { formatCourseDateRange, splitName } from "@/lib/utils";
@@ -213,7 +212,6 @@ type GiftVoucherMetadata = {
   buyerName: string;
   buyerEmail: string;
   recipientName: string;
-  recipientEmail: string;
   message: string;
 };
 
@@ -221,7 +219,7 @@ function validateGiftVoucherMetadata(
   m: Stripe.Metadata,
   intentId: string
 ): GiftVoucherMetadata | null {
-  const required = ["buyerName", "buyerEmail", "recipientName", "recipientEmail"] as const;
+  const required = ["buyerName", "buyerEmail", "recipientName"] as const;
   const missing = required.filter((k) => !m[k]);
   if (missing.length > 0) {
     console.warn(`Skipping gift voucher ${intentId} — missing metadata: ${missing.join(", ")}`);
@@ -231,7 +229,6 @@ function validateGiftVoucherMetadata(
     buyerName: m.buyerName,
     buyerEmail: m.buyerEmail,
     recipientName: m.recipientName,
-    recipientEmail: m.recipientEmail,
     message: m.message ?? "",
   };
 }
@@ -265,7 +262,6 @@ async function handleGiftVoucherSucceeded(intent: Stripe.PaymentIntent): Promise
   const buyerContent = voucherBuyerEmail({
     buyerName: data.buyerName,
     recipientName: data.recipientName,
-    recipientEmail: data.recipientEmail,
     courseName,
     voucherCode,
     priceInEuros,
@@ -273,37 +269,16 @@ async function handleGiftVoucherSucceeded(intent: Stripe.PaymentIntent): Promise
     validUntilLabel,
   });
 
-  const recipientContent = voucherRecipientEmail({
-    buyerName: data.buyerName,
-    recipientName: data.recipientName,
-    message: data.message || undefined,
-    courseName,
-    voucherCode,
-    validUntilLabel,
+  await sendTransactionalEmail({
+    to: { email: data.buyerEmail, name: data.buyerName },
+    subject: buyerContent.subject,
+    text: buyerContent.text,
+    html: buyerContent.html,
+    replyTo: { email: siteConfig.email, name: "Apnea Slovenija" },
+    attachments: [
+      { name: `darilni-bon-${voucherCode}.pdf`, contentBase64: pdfBase64 },
+    ],
   });
-
-  const attachment = [
-    { name: `darilni-bon-${voucherCode}.pdf`, contentBase64: pdfBase64 },
-  ];
-
-  await Promise.all([
-    sendTransactionalEmail({
-      to: { email: data.buyerEmail, name: data.buyerName },
-      subject: buyerContent.subject,
-      text: buyerContent.text,
-      html: buyerContent.html,
-      replyTo: { email: siteConfig.email, name: "Apnea Slovenija" },
-      attachments: attachment,
-    }),
-    sendTransactionalEmail({
-      to: { email: data.recipientEmail, name: data.recipientName },
-      subject: recipientContent.subject,
-      text: recipientContent.text,
-      html: recipientContent.html,
-      replyTo: { email: data.buyerEmail, name: data.buyerName },
-      attachments: attachment,
-    }),
-  ]);
 
   await stripe.paymentIntents.update(intent.id, {
     metadata: { ...intent.metadata, emailSent: "true" },

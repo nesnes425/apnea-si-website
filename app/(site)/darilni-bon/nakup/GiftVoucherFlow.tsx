@@ -63,7 +63,6 @@ function DetailsStep({ onIntentCreated }: DetailsStepProps) {
       buyerName: String(formData.get("buyerName") ?? ""),
       buyerEmail: String(formData.get("buyerEmail") ?? ""),
       recipientName: String(formData.get("recipientName") ?? ""),
-      recipientEmail: String(formData.get("recipientEmail") ?? ""),
       message: String(formData.get("message") ?? ""),
       acceptTerms: formData.get("acceptTerms") === "on",
     };
@@ -93,22 +92,25 @@ function DetailsStep({ onIntentCreated }: DetailsStepProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8" noValidate>
       <div>
-        <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Vaši podatki</h3>
+        <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Tvoji podatki</h3>
         <div className="space-y-6">
-          <Input label="Vaše ime in priimek" id="buyerName" name="buyerName" type="text"
+          <Input label="Tvoje ime in priimek" id="buyerName" name="buyerName" type="text"
             autoComplete="name" required error={errors.buyerName} />
-          <Input label="Vaš e-naslov" id="buyerEmail" name="buyerEmail" type="email"
-            autoComplete="email" required error={errors.buyerEmail} />
+          <div>
+            <Input label="E-naslov, na katerega pošljemo bon" id="buyerEmail" name="buyerEmail" type="email"
+              autoComplete="email" required error={errors.buyerEmail} />
+            <p className="text-xs text-muted-text font-body mt-2">
+              Bon prejmeš ti — natisneš ga ali ga preposlaš obdarjencu, ko ti ustreza.
+            </p>
+          </div>
         </div>
       </div>
 
       <div>
-        <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Podatki obdarjenca</h3>
+        <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Obdarjenec</h3>
         <div className="space-y-6">
           <Input label="Ime in priimek obdarjenca" id="recipientName" name="recipientName"
             type="text" required error={errors.recipientName} />
-          <Input label="E-naslov obdarjenca" id="recipientEmail" name="recipientEmail"
-            type="email" required error={errors.recipientEmail} />
 
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-navy font-body mb-2">
@@ -124,7 +126,7 @@ function DetailsStep({ onIntentCreated }: DetailsStepProps) {
             />
             {errors.message && <p className="text-sm text-red-700 mt-1 font-body" role="alert">{errors.message}</p>}
             <p className="text-xs text-muted-text font-body mt-2">
-              Sporočilo se izpiše na bonu in v e-pošti, ki jo prejme obdarjenec.
+              Sporočilo se izpiše na bonu.
             </p>
           </div>
         </div>

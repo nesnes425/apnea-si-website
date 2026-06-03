@@ -4,7 +4,6 @@ import { escapeHtml, splitName } from "@/lib/utils";
 export type VoucherBuyerEmailData = {
   buyerName: string;
   recipientName: string;
-  recipientEmail: string;
   courseName: string;
   voucherCode: string;
   priceInEuros: number;
@@ -15,6 +14,9 @@ export type VoucherBuyerEmailData = {
 export function voucherBuyerEmail(d: VoucherBuyerEmailData) {
   const { first: firstName } = splitName(d.buyerName);
   const subject = `Vaš darilni bon je pripravljen — ${d.courseName}`;
+
+  const nextStepText = `Bon je v priponki tega e-poštnega sporočila. Lahko ga natisnete in izročite osebno ali preposlate naprej obdarjencu, ko vam ustreza.`;
+  const nextStepHtml = nextStepText;
 
   const text = `Pozdravljeni, ${firstName || d.buyerName},
 
@@ -31,7 +33,7 @@ Plačano: €${d.priceInEuros}
 
 KAJ SLEDI
 
-Bon smo poslali tudi neposredno na e-naslov obdarjenca (${d.recipientEmail}). Če ga raje natisnete in osebno izročite, je PDF priložen tudi tej e-pošti.
+${nextStepText}
 
 Ko se obdarjenec odloči, kdaj želi tečaj, naj nam piše na ${siteConfig.email} in navede kodo bona — termin uredimo skupaj.
 
@@ -63,7 +65,7 @@ Apnea Slovenija`;
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
     <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Kaj sledi</p>
-    <p>Bon smo poslali tudi neposredno na e-naslov obdarjenca (<strong>${escapeHtml(d.recipientEmail)}</strong>). Če ga raje natisnete in osebno izročite, je PDF priložen tudi tej e-pošti.</p>
+    <p>${nextStepHtml}</p>
     <p>Ko se obdarjenec odloči, kdaj želi tečaj, naj nam piše na <a href="mailto:${siteConfig.email}" style="color:#d3a356;text-decoration:none;">${siteConfig.email}</a> in navede kodo bona — termin uredimo skupaj.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
