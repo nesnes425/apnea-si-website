@@ -10,6 +10,7 @@ const staticRoutes: { path: string; changeFrequency: MetadataRoute.Sitemap[numbe
   { path: "/tecaji/nadaljevalni", changeFrequency: "monthly", priority: 0.8 },
   { path: "/tecaji/master", changeFrequency: "monthly", priority: 0.8 },
   { path: "/treningi", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/prosto-potapljanje", changeFrequency: "monthly", priority: 0.8 },
   { path: "/darilni-bon", changeFrequency: "monthly", priority: 0.7 },
   { path: "/predavanja", changeFrequency: "monthly", priority: 0.6 },
   { path: "/o-nas", changeFrequency: "monthly", priority: 0.7 },

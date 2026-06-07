@@ -70,11 +70,11 @@ async function checkSitemap() {
     totalUrls: urls.length,
     hasHome: urls.includes(`${expectedHost}/`),
     hasTrainings: urls.includes(`${expectedHost}/treningi`),
+    hasProstoPotapljanje: urls.includes(`${expectedHost}/prosto-potapljanje`),
     hasBeginnerCourse: urls.includes(`${expectedHost}/tecaji/zacetni`),
     hasNews: urls.includes(`${expectedHost}/novice`),
     hasBlogPost: urls.some((u) => u.includes("/novice/reportaza-apnea-si-challenge-2026")),
     excludesDesignPreview: !urls.includes(`${expectedHost}/design-preview`),
-    excludesProstoPlaceholder: !urls.includes(`${expectedHost}/prosto-potapljanje`),
   };
 }
 
