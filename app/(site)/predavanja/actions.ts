@@ -2,7 +2,10 @@
 
 import { readEnv } from "@/lib/env";
 import { sendTransactionalEmail } from "@/lib/brevo/client";
-import { contactMessageEmail } from "@/lib/brevo/emails/contact-message";
+import {
+  speakingInquiryConfirmationEmail,
+  speakingInquiryNotificationEmail,
+} from "@/lib/brevo/emails/speaking-inquiry";
 
 export type SpeakingInquiryState = {
   status: "idle" | "success" | "error";
@@ -42,36 +45,37 @@ export async function submitSpeakingInquiry(
     return { status: "error", message: "Vsebina je predolga." };
   }
 
-  const internalMessage = [
-    "Novo povpraševanje za predavanje Sama Jeranka.",
-    "",
-    `Ime: ${name}`,
-    `E-pošta: ${email}`,
-    `Podjetje / organizacija: ${company}`,
-    `Datum dogodka: ${eventDate || "(ni navedeno)"}`,
-    `Format: ${format || "(ni navedeno)"}`,
-    `Število udeležencev: ${attendees || "(ni navedeno)"}`,
-    "",
-    "Sporočilo:",
+  const inquiry = {
+    name,
+    email,
+    company,
+    eventDate,
+    format,
+    attendees,
     message,
-  ].join("\n");
+  };
 
   try {
     const notify = readEnv("BREVO_NOTIFY_EMAIL");
-    const { subject, text, html } = contactMessageEmail({
-      name,
-      email,
-      subject: `Predavanje / delavnica: ${company}`,
-      message: internalMessage,
-    });
+    const notification = speakingInquiryNotificationEmail(inquiry);
+    const confirmation = speakingInquiryConfirmationEmail(inquiry);
 
-    await sendTransactionalEmail({
-      to: { email: notify },
-      subject,
-      text,
-      html,
-      replyTo: { email, name },
-    });
+    await Promise.all([
+      sendTransactionalEmail({
+        to: { email: notify },
+        subject: notification.subject,
+        text: notification.text,
+        html: notification.html,
+        replyTo: { email, name },
+      }),
+      sendTransactionalEmail({
+        to: { email, name },
+        subject: confirmation.subject,
+        text: confirmation.text,
+        html: confirmation.html,
+        replyTo: { email: notify },
+      }),
+    ]);
 
     return { status: "success" };
   } catch (err) {

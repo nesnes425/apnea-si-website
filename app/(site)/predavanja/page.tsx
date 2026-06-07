@@ -277,7 +277,7 @@ export default function PredavanjaPage() {
 
             <div>
               <SpeakingInquiryForm />
-              <p className="text-sm text-muted-text font-body">
+              <p className="mt-5 text-sm text-muted-text font-body">
                 Ali pokličite{" "}
                 <a
                   href={`tel:${siteConfig.phone.replace(/\s/g, "")}`}
