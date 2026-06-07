@@ -8,6 +8,13 @@ export const sanityClient = createClient({
   useCdn: true,
 });
 
+export const sanityFreshClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+});
+
 export const sanityWriteClient = createClient({
   projectId,
   dataset,

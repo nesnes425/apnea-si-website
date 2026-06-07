@@ -1,5 +1,12 @@
-import { sanityClient } from "./client";
-import type { CourseInstance, BlogPost } from "./types";
+import { sanityClient, sanityFreshClient } from "./client";
+import type {
+  BlogPost,
+  CourseInstance,
+  TrainingGroup,
+  TrainingProgram,
+  TrainingSettings,
+  TrainingVenue,
+} from "./types";
 
 // === Course Instances ===
 
@@ -100,5 +107,80 @@ export async function getRelatedPosts(
       _id, title, slug, featuredImage { asset->, alt }, publishedAt, categories
     }`,
     { currentId, limit }
+  );
+}
+
+// === Trainings ===
+
+const trainingGroupProjection = `{
+  _id,
+  _rev,
+  _type,
+  weekday,
+  startTime,
+  endTime,
+  capacity,
+  confirmedSpots,
+  holds,
+  startDateOverride,
+  endDateOverride,
+  pricingOverride,
+  trainerName,
+  notes,
+  brevoListId,
+  confirmedPaymentIntentIds,
+  active,
+  "venue": venue->{
+    _id, _type, name, city, slug, description, address,
+    image { asset->, alt },
+    defaultStartDate, defaultEndDate, defaultPricing, sortOrder, active
+  },
+  "program": program->{
+    _id, _type, name, slug, shortDescription, description,
+    placementGuidance, equipment, image { asset->, alt }, sortOrder, active
+  },
+  "activeHoldCount": count(coalesce(holds, [])[expiresAt > now()]),
+  "availableSpots": capacity - coalesce(confirmedSpots, 0) - count(coalesce(holds, [])[expiresAt > now()]),
+  "isFull": capacity - coalesce(confirmedSpots, 0) - count(coalesce(holds, [])[expiresAt > now()]) <= 0
+}`;
+
+export async function getTrainingSettings(): Promise<TrainingSettings | null> {
+  return sanityFreshClient.fetch(
+    `*[_type == "trainingSettings"][0] {
+      _id, _type, seasonLabel, applicationsOpen, membershipFee, holdMinutes
+    }`
+  );
+}
+
+export async function getTrainingPrograms(): Promise<TrainingProgram[]> {
+  return sanityFreshClient.fetch(
+    `*[_type == "trainingProgram" && active == true] | order(sortOrder asc) {
+      _id, _type, name, slug, shortDescription, description, placementGuidance,
+      equipment, image { asset->, alt }, sortOrder, active
+    }`
+  );
+}
+
+export async function getTrainingVenues(): Promise<TrainingVenue[]> {
+  return sanityFreshClient.fetch(
+    `*[_type == "trainingVenue" && active == true] | order(sortOrder asc) {
+      _id, _type, name, city, slug, description, address,
+      image { asset->, alt },
+      defaultStartDate, defaultEndDate, defaultPricing, sortOrder, active
+    }`
+  );
+}
+
+export async function getTrainingGroups(): Promise<TrainingGroup[]> {
+  return sanityFreshClient.fetch(
+    `*[_type == "trainingGroup" && active == true && venue->active == true && program->active == true]
+      | order(venue->sortOrder asc, weekday asc, startTime asc) ${trainingGroupProjection}`
+  );
+}
+
+export async function getTrainingGroup(id: string): Promise<TrainingGroup | null> {
+  return sanityFreshClient.fetch(
+    `*[_type == "trainingGroup" && _id == $id][0] ${trainingGroupProjection}`,
+    { id }
   );
 }

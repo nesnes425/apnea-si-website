@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/trainings/cleanup-holds",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
