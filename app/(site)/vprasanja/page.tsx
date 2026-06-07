@@ -40,7 +40,7 @@ const sections = [
       { q: "Ali potrebujem predhodno izkušnjo?", a: "Za začetno skupino ne. Za nadaljevalno in performance skupino morate obvladati osnove plavanja." },
       { q: "Ali je tečaj pogoj za treninge?", a: "Ne — na treninge se lahko prijavite brez predhodnega tečaja." },
       { q: "Ali lahko menjam skupino sredi sezone?", a: "Da — če ugotovite, da je vaš nivo previsok ali prenizek." },
-      { q: "Kako lahko odpovedm treninge?", a: "Odpoved je mogoča do 8. tedna programa. Po tem drugega obroka ni mogoče vrniti." },
+      { q: "Kako lahko odpovem treninge?", a: "Odpoved je mogoča do 8. tedna programa. Po tem drugega obroka ni mogoče vrniti." },
     ],
   },
   {

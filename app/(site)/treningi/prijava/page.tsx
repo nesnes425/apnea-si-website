@@ -43,9 +43,9 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
               Rezervirajte mesto v skupini
             </h1>
             <p className="mb-8 text-body">
-              Po oddaji podatkov bomo mesto zadržali {settings?.holdMinutes ?? 15} minut.
-              Nato boste na isti strani poravnali letno članarino, s čimer
-              dokončno rezervirate izbrano mesto.
+              Po oddaji podatkov bomo mesto v izbrani skupini zadržali{" "}
+              {settings?.holdMinutes ?? 15} minut. Nato na isti strani plačate
+              letno članarino, s čimer dokončno rezervirate svoje mesto.
             </p>
             <TrainingSignupForm
               groupId={group._id}
@@ -85,7 +85,8 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
                   <dd className="font-semibold text-navy">{membershipFee} €</dd>
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-muted-text">
-                  Plačilo letne članarine rezervira vaše mesto v izbrani skupini.
+                  S plačilom letne članarine potrdite članstvo v ŠD Apnea
+                  Slovenija in rezervirate mesto v izbrani skupini.
                 </p>
               </div>
             </dl>

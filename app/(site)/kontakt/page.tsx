@@ -37,7 +37,7 @@ function FacebookIcon({ className }: { className?: string }) {
 export const metadata = {
   title: "Kontakt",
   description:
-    "Stopi v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
+    "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
 };
 
 export default function KontaktPage() {
@@ -58,7 +58,7 @@ export default function KontaktPage() {
             Piši nam
           </h1>
           <p className="text-[17px] text-white/70 font-body mt-3 max-w-lg">
-            Z veseljem odgovorimo na tvoja vprašanja in ti pomagamo pri prvih
+            Z veseljem odgovorimo na vaša vprašanja in vam pomagamo pri prvih
             korakih v svet prostega potapljanja.
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function KontaktPage() {
             {/* Right: form */}
             <div>
               <h2 className="text-[24px] md:text-[28px] font-semibold mb-8">
-                Pošlji nam sporočilo
+                Pošljite nam sporočilo
               </h2>
 
               <ContactForm />

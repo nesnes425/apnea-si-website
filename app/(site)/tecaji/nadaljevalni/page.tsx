@@ -11,14 +11,13 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
-import { Testimonials } from "@/components/blocks/Testimonials";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 
 export const metadata = {
   title: "Nadaljevalni tečaj prostega potapljanja — SSI Level 2",
   description:
-    "Poglobite znanje prostega potapljanja. Frenzel izenačevanje, potopi do 35m. SSI Level 2 certifikat. €415.",
+    "Poglobite znanje prostega potapljanja. Frenzel izenačevanje, potopi do 35 m. SSI Level 2 certifikat. 415 €.",
 };
 
 // === Data ===
@@ -59,24 +58,6 @@ const coursePhases = [
   },
 ];
 
-const reviews = [
-  {
-    text: "Po začetnem tečaju sem vedel, da hočem več. Nadaljevalni tečaj ti odpre povsem novo dimenzijo — Frenzel tehnika spremeni vse. Na 30 metrih se počutiš kot doma.",
-    name: "Luka M.",
-    detail: "Nadaljevalni tečaj, Ljubljana",
-  },
-  {
-    text: "Samo je neverjeten mentor. Potrpežljivo me je vodil čez Frenzel, dokler ni kliknilo. Globinski del na Krku je bil nepozaben — čista voda, fantastična ekipa.",
-    name: "Ana P.",
-    detail: "Nadaljevalni tečaj, Krk",
-  },
-  {
-    text: "Mislil sem, da je 20 metrov moja meja. Po nadaljevalnem tečaju sem se udobno potapljal na 32 metrov. Razlika je v tehniki, ne v kondiciji.",
-    name: "Gregor T.",
-    detail: "Nadaljevalni tečaj, Ljubljana",
-  },
-];
-
 const faqs = [
   {
     q: "Kakšen je predpogoj za nadaljevalni tečaj?",
@@ -92,7 +73,7 @@ const faqs = [
   },
   {
     q: "Kje poteka globinski del?",
-    a: "Globinski del se izvaja na Hrvaškem — običajno na otoku Krku. Voda je čista in topla, pogoji so idealni za globinsko delo. Poteka čez vikend (petek–nedelja).",
+    a: "Globinski del se izvaja na Hrvaškem, običajno na otoku Krku. Voda je čista in topla, pogoji so idealni za globinsko delo. Poteka čez vikend (petek–nedelja).",
   },
   {
     q: "Kaj moram prinesti s seboj?",
@@ -138,22 +119,12 @@ function Hero() {
             modrina spremeni v temno modro.
           </p>
           <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
-            €{siteConfig.courses.nadaljevalni.price}
+            {siteConfig.courses.nadaljevalni.price} €
           </p>
           <div className="mb-10">
             <Button asChild>
               <a href="#termini">Rezervirajte mesto →</a>
             </Button>
-          </div>
-
-          <div className="border-l-2 border-gold/40 pl-4">
-            <p className="text-[15px] text-navy/60 italic font-body leading-relaxed">
-              &ldquo;Na 30 metrih se počutiš kot doma. Frenzel tehnika spremeni
-              vse.&rdquo;
-            </p>
-            <p className="text-[13px] text-muted-text font-body mt-1">
-              — Luka M., udeleženec nadaljevalnega tečaja
-            </p>
           </div>
         </div>
       </div>
@@ -446,12 +417,11 @@ export default function NadaljevalniTecajPage() {
       <WhyAdvanced />
       <OutcomePromise />
       <CourseStructure />
-      <Testimonials reviews={reviews} />
       <DatesAndBooking />
       <FAQ items={faqs} />
       <FinalCTA
         heading="Odkrijte, kaj se skriva pod 30 metri"
-        description={`Nadaljevalni tečaj prostega potapljanja — Frenzel, prosti pad, globine do 35m. €${siteConfig.courses.nadaljevalni.price}.`}
+        description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m. ${siteConfig.courses.nadaljevalni.price} €.`}
         backgroundImage="/images/placeholder/prosto-potapljanje-depth.jpg"
       />
     </>

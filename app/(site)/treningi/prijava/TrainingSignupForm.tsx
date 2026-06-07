@@ -58,7 +58,7 @@ export function TrainingSignupForm({
         <a className="font-medium text-gold underline" href="mailto:info@apnea.si">
           info@apnea.si
         </a>
-        , da skupaj poiščemo primerno skupino.
+        , da preverimo, katera skupina bi bila za vas primerna.
       </div>
     );
   }
@@ -234,8 +234,8 @@ function PaymentStep({
       <div>
         <h2 className="mb-2 text-[22px] font-semibold text-navy">Plačilo članarine</h2>
         <p className="mb-6 text-sm leading-relaxed text-muted-text">
-          S plačilom letne članarine {membershipFee} € dokončno rezervirate mesto
-          v izbrani skupini. Plačilo poteka varno preko Stripe.
+          S plačilom letne članarine v višini {membershipFee} € dokončno
+          rezervirate mesto v izbrani skupini. Plačilo poteka varno prek Stripe.
         </p>
         <PaymentElement />
       </div>

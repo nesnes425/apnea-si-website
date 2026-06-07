@@ -76,8 +76,8 @@ export default function PogojiPage() {
               </h2>
               <p>
                 <strong>Nakup:</strong> Tečaj ali delavnico je mogoče naročiti
-                po prejemu računa s strani ponudnika. Po plačilu se rezervira
-                prost termin. Rezerviran termin se šteje za unovčeno
+                prek spletne strani ali po dogovoru s ponudnikom. Po plačilu se
+                rezervira prost termin. Rezerviran termin se šteje za unovčeno
                 dobroimetje, če rezervacija NI pravočasno odpovedana.
               </p>
 

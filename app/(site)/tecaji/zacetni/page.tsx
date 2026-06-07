@@ -16,9 +16,9 @@ import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 
 export const metadata = {
-  title: "Začetni tečaj prostega potapljanja — SSI Level 1",
+  title: "Začetni tečaj prostega potapljanja | SSI Level 1",
   description:
-    "Naučite se prostega potapljanja z 10-kratnim svetovnim prvakov. Potopite se do 20m, zadržite dih 3 minute. SSI Level 1 certifikat. €395.",
+    "Naučite se prostega potapljanja s Samom Jerankom. Potopite se do 20 m, zadržite dih več kot 2 minuti in odkrijte nov način doživljanja morja. SSI Level 1 certifikat. 395 €.",
 };
 
 // === Page-specific data ===
@@ -37,22 +37,22 @@ const stories = [
   {
     icon: "/images/icons/fish.webp",
     title: "Postani boljši podvodni ribič",
-    text: "Navdihujejo vas posnetki podvodnega ribolova, a veste, da bi morali za resne potope najprej obvladati osnove? Tečaj vas nauči pravilne tehnike potapljanja, zadrževanja diha in varnosti — da se pod vodo počutite samozavestno in ostanete dlje.",
+    text: "Navdihujejo vas posnetki podvodnega ribolova, a veste, da bi za mirne in učinkovite potope potrebovali boljšo osnovo? Na tečaju se naučite tehnike potapljanja, zadrževanja diha in gibanja pod vodo, da se v morju počutite bolj samozavestno in ostanete dlje.",
   },
   {
     icon: "/images/icons/shell.webp",
     title: "Otroku prinesi zaklad z morskega dna",
-    text: "Otrok opazi čudovito školjko na dnu. Vi se potopite, jo poberete in postanete junak dneva. Tečaj vas usposobi, da to naredite varno in z lahkoto — in kmalu vas vpraša: \"Me naučiš tudi mene?\"",
+    text: "Otrok opazi čudovito školjko na dnu. Vi se potopite, jo poberete in mu pokažete, da morje ni samo nekaj, kar opazujemo z gladine. Tečaj vam da znanje, da takšni trenutki postanejo dostopni.",
   },
   {
     icon: "/images/icons/dolphin.webp",
     title: "Plavaj z delfini in raziskuj morje",
-    text: "Maldiví, Tenerife, Hrvaška — podvodni svet čaka. Toda brez pravilne tehnike ostanete na površini. Tečaj vam da osnove, da se pod vodo sprostite, pravilno potapljate in uživate v vsakem potopu brez bolečin v ušesih.",
+    text: "Maldivi, Tenerife, Hrvaška. Podvodni svet čaka. Toda brez pravilne tehnike ostanete na površini. Tečaj vam da osnove, da se pod vodo sprostite, pravilno potapljate in uživate v vsakem potopu brez bolečin v ušesih.",
   },
   {
     icon: "/images/icons/keys.webp",
     title: "Reši, kar pade v vodo",
-    text: "Ključi, očala, GoPro — vsako poletje kdo kaj izgubi v morju. Z osnovami prostega potapljanja to ni več problem. Le telefona vam verjetno ne bo uspelo rešiti.",
+    text: "Ključi, očala, GoPro. Vsako poletje kdo kaj izgubi v morju. Z osnovami prostega potapljanja to ni več problem. Le telefona vam verjetno ne bo uspelo rešiti.",
   },
 ];
 
@@ -73,8 +73,8 @@ const coursePhases = [
     title: "Bazen",
     duration: "3 ure",
     items: [
-      "Statična apneja — zadrževanje diha",
-      "Dinamična apneja — plavanje pod vodo",
+      "Statična apneja: zadrževanje diha",
+      "Dinamična apneja: plavanje pod vodo",
       "Pravilna tehnika potapljanja",
       "Video analiza vaših potopov",
     ],
@@ -99,12 +99,12 @@ const reviews = [
     detail: "Začetni tečaj, Ljubljana",
   },
   {
-    text: "To je bil najbolj kakovosten tečaj, kar sem jih kadarkoli obiskovala. Teorija je bila jasna, bazen fantastičen, morje pa nepozabno. Zadržala sem dih 2:45 in se potopila na 16 metrov — na začetnem tečaju!",
+    text: "To je bil najbolj kakovosten tečaj, kar sem jih kadarkoli obiskovala. Teorija je bila jasna, bazen fantastičen, morje pa nepozabno. Zadržala sem dih 2:45 in se potopila na 16 metrov, na začetnem tečaju!",
     name: "Kaja C.",
     detail: "Začetni tečaj, Koper",
   },
   {
-    text: "Samo je izjemen inštruktor. Potrpežljiv, natančen in prilagaja pristop vsakemu posamezniku. Tečaj ni le fizična disciplina — je tudi mentalna. Po tečaju sem se vpisal na treninge in ne obžalujem.",
+    text: "Samo je izjemen inštruktor. Potrpežljiv, natančen in prilagaja pristop vsakemu posamezniku. Tečaj ni le fizična disciplina, ampak tudi zelo zanimiva izkušnja z lastnim telesom in morjem. Po tečaju sem se vpisal na treninge in ne obžalujem.",
     name: "Aljaž K.",
     detail: "Začetni tečaj, Ljubljana",
   },
@@ -117,7 +117,7 @@ const faqs = [
   },
   {
     q: "Moram znati dobro plavati?",
-    a: "Morate znati preplavati 200 metrov na površini — to je edini pogoj. Ne potrebujete izkušenj s potapljanjem ali kakršnih koli predhodnih znanj.",
+    a: "Morate znati preplavati 200 metrov na površini. To je edini pogoj. Ne potrebujete izkušenj s potapljanjem ali kakršnih koli predhodnih znanj.",
   },
   {
     q: "Kakšna kondicija je potrebna?",
@@ -137,7 +137,7 @@ const faqs = [
   },
   {
     q: "Kdaj in kje poteka globinski del?",
-    a: "Globinski del (morje) se izvaja od maja do avgusta. Termin in lokacijo izberete po zaključenem bazenskem delu — imate 8 mesecev časa. Potopi potekajo na slovenski obali.",
+    a: "Globinski del (morje) se izvaja od maja do avgusta. Termin in lokacijo izberete po zaključenem bazenskem delu, za izvedbo pa imate 8 mesecev časa.",
   },
 ];
 
@@ -164,8 +164,8 @@ function Hero() {
           </h1>
           <p className="text-[17px] md:text-[19px] text-body leading-[1.6] font-body mb-3">
             Začetni tečaj prostega potapljanja vas popelje od prvega
-            zadrževanja diha do samozavestnega potapljanja v morju — varno,
-            strokovno in v majhnih skupinah.
+            zadrževanja diha do občutka, da se pod morsko gladino znajdete
+            mirno, samozavestno in z dobrim znanjem.
           </p>
           <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
             €{siteConfig.courses.zacetni.price}
@@ -182,7 +182,7 @@ function Hero() {
               izjemen inštruktor.&rdquo;
             </p>
             <p className="text-[13px] text-muted-text font-body mt-1">
-              — Aljaž K., {siteConfig.stats.googleReviews} ocen na Google (
+              Aljaž K., {siteConfig.stats.googleReviews} ocen na Google (
               {siteConfig.stats.googleRating} ★)
             </p>
           </div>
@@ -197,7 +197,7 @@ function StoriesSection() {
     <Section>
       <Overline>V kateri zgodbi se najdete?</Overline>
       <SectionHeading className="mb-16 max-w-2xl">
-        Prosto potapljanje ni samo šport — je način, kako doživite morje
+        Prosto potapljanje ni samo šport, ampak nov način doživljanja morja
       </SectionHeading>
 
       <div className="grid md:grid-cols-2 gap-x-16 gap-y-0">
@@ -248,7 +248,7 @@ function OutcomePromise() {
               </p>
               <p className="text-[17px] text-body leading-[1.6] font-body mt-3">
                 95% udeležencev zadrži dih več kot 2 minuti med mirnim ležanjem
-                na vodi — že na prvi uri v bazenu.
+                na vodi, že na prvi uri v bazenu.
               </p>
               <p className="text-[15px] text-muted-text font-body mt-1 italic">
                 Najboljši zadržijo dih tudi več kot 4 minute.
@@ -260,7 +260,7 @@ function OutcomePromise() {
                 15 m
               </p>
               <p className="text-[17px] text-body leading-[1.6] font-body mt-3">
-                60% udeležencev se udobno potopi globlje kot 15 metrov — že na
+                60% udeležencev se udobno potopi globlje kot 15 metrov, že na
                 drugi dan globinskega dela tečaja.
               </p>
               <p className="text-[15px] text-muted-text font-body mt-1 italic">
@@ -290,7 +290,7 @@ function Instructor() {
         <div className="relative aspect-[4/5] md:aspect-[3/4]">
           <Image
             src="/images/placeholder/samo-portrait.jpg"
-            alt="Samo Jeranko — inštruktor prostega potapljanja"
+            alt="Samo Jeranko, inštruktor prostega potapljanja"
             fill
             className="object-cover"
           />
@@ -300,7 +300,7 @@ function Instructor() {
           <SectionHeading className="mb-6">Samo Jeranko</SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-10">
             Eden najboljših potapljačev na svetu in izkušen inštruktor, ki je v
-            zadnjih 15 letih naučil prostega potapljanja več kot 2000 ljudi — od
+            zadnjih 15 letih naučil prostega potapljanja več kot 2000 ljudi, od
             popolnih začetnikov do tekmovalcev. Zna razložiti vse na preprost in
             umirjen način.
           </p>
@@ -450,7 +450,7 @@ async function DatesAndBooking() {
                 {[
                   "Prejmete potrditveni e-mail z vsemi podrobnostmi.",
                   "1 teden pred tečajem prejmete navodila za pripravo.",
-                  "Pridete na tečaj — vse ostalo uredimo mi.",
+              "Pridete na tečaj, za ostalo poskrbimo mi.",
                 ].map((step, i) => (
                   <li
                     key={i}
@@ -511,7 +511,7 @@ export default function ZacetniTecajPage() {
     <>
       <CourseJsonLd
         name={siteConfig.courses.zacetni.fullName}
-        description="SSI Freediving Level 1 — tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 10x medaljer s svetovnih prvenstev."
+        description="SSI Freediving Level 1: tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 10x medaljer s svetovnih prvenstev."
         url="https://apnea.si/tecaji/zacetni"
         priceInEuros={siteConfig.courses.zacetni.price}
       />
@@ -525,8 +525,8 @@ export default function ZacetniTecajPage() {
       <DatesAndBooking />
       <FAQ items={faqs} />
       <FinalCTA
-        heading="Potopite se do 20 metrov, zadržite dih 3 minute"
-        description={`Odkrijte svet pod morsko gladino z najboljšim inštruktorjem v Sloveniji. Začetni tečaj prostega potapljanja — €${siteConfig.courses.zacetni.price}.`}
+        heading="Odkrijte, kaj zmorete pod morsko gladino"
+        description={`Začetni tečaj prostega potapljanja vas nauči osnov, s katerimi morje doživite drugače. Cena tečaja je ${siteConfig.courses.zacetni.price} €.`}
       />
     </>
   );

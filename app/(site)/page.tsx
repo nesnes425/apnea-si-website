@@ -26,16 +26,16 @@ export default function HomePage() {
 
         <div className="max-w-6xl mx-auto px-6 py-12 md:py-16">
           <h1 className="text-[36px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-navy font-heading max-w-3xl mb-6">
-            Odkrijte svet pod gladino
+            Odkrijte svet pod gladino na en vdih
           </h1>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <p className="text-[17px] md:text-[20px] text-body leading-[1.6] font-body max-w-xl">
-              Zadržite dih več kot 2 minuti. Potopite se do 20 metrov.
-              Odkrijte mir, ki ga najdete le pod morsko gladino — z največjo
-              šolo prostega potapljanja v Sloveniji.
+              Naučite se prostega potapljanja v največji šoli v Sloveniji.
+              Od prvega zadrževanja diha do potopov v morju, kjer odkrijete
+              tišino, mir in občutek, da zmorete veliko več, kot ste mislili.
             </p>
             <Button asChild>
-              <Link href="/tecaji/zacetni">Rezervirajte mesto →</Link>
+              <Link href="/tecaji">Oglejte si tečaje →</Link>
             </Button>
           </div>
         </div>
@@ -62,16 +62,16 @@ export default function HomePage() {
                 Začetni tečaj
               </p>
               <h2 className="text-[26px] md:text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] mb-3">
-                Potopite se do 20 metrov na en sam vdih
+                Naučite se potopiti mirno, samozavestno in z užitkom
               </h2>
               <p className="text-[16px] text-body leading-[1.7] font-body mb-5">
                 Od prvega zadrževanja diha do samozavestnega potapljanja v
-                morju. Teorija, bazen, morje — vse pod vodstvom 10-kratnega
-                svetovnega prvaka.
+                morju. Teorija, bazen in morski del, vse pod vodstvom Sama
+                Jeranka in ekipe izkušenih inštruktorjev.
               </p>
               <div className="flex items-baseline gap-4 mb-5">
                 <span className="text-[28px] font-bold text-navy font-heading">
-                  €{siteConfig.courses.zacetni.price}
+                  {siteConfig.courses.zacetni.price} €
                 </span>
                 <span className="text-sm text-muted-text font-body">
                   SSI Level 1 · vse vključeno
@@ -81,7 +81,7 @@ export default function HomePage() {
                 {[
                   "95% udeležencev zadrži dih več kot 2 minuti",
                   "Potopi do 20 metrov v morju",
-                  "Majhne skupine — 1 inštruktor na 4",
+                  "Majhne skupine, 1 inštruktor na 4",
                 ].map((item) => (
                   <p
                     key={item}
@@ -121,16 +121,16 @@ export default function HomePage() {
                 Treningi
               </p>
               <h2 className="text-[26px] md:text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] text-white mb-3">
-                350+ potapljačev vsak teden v bazenu
+                Ostanite povezani z morjem tudi med letom
               </h2>
               <p className="text-[16px] text-white/70 leading-[1.7] font-body mb-5">
-                Celoletni vodeni treningi na 7 lokacijah po Sloveniji.
-                Nekateri trenirajo z nami že 12 let — prišli so na trening,
-                ostali so za vedno.
+                Celoletni vodeni treningi v Ljubljani, Novi Gorici, Velenju,
+                Novem mestu in Kopru. Redna vadba vam pomaga ohraniti tehniko,
+                napredovati in ostati del skupnosti prostih potapljačev.
               </p>
               <div className="flex items-baseline gap-4 mb-6">
                 <span className="text-[28px] font-bold text-gold font-heading">
-                  od €54
+                  od 54 €
                 </span>
                 <span className="text-sm text-white/50 font-body">/mesec</span>
               </div>
@@ -166,9 +166,6 @@ export default function HomePage() {
               { text: "Zelo strokovno izpeljan tečaj. Zelo priporočam. Izveš veliko uporabnih stvari.", name: "Peter Pajk" },
               { text: "Odličen tečaj z vrhunsko ekipo – strokovno, sproščeno in z veliko prakse. Res prava izkušnja, ki jo priporočam vsakemu.", name: "Mitja Mohorič" },
               { text: "Hvala za vso znanje, pomoč in podporo pri srkanju novega znanja pri potopih na vdih. Resnično profesionalci na vseh področjih. Ekipa kapo dol.", name: "david kozjek" },
-              { text: "Najboljši tečaj, kar sem ga kadarkoli obiskoval. Samo je izjemen inštruktor.", name: "Aljaž K." },
-              { text: "Prišla sem s strahom pred globino. Odšla sem z željo po naslednjem potopu.", name: "Eva Tomazin" },
-              { text: "Naučila sem se pravilno dihati — ne le za potapljanje, za življenje. Po tečaju sem se vpisala na treninge.", name: "Nina M." },
             ].map((review, i) => (
               <div
                 key={i}
@@ -237,13 +234,14 @@ export default function HomePage() {
                 drugimi.&rdquo;
               </h2>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
-                <strong className="text-navy">Samo Jeranko</strong> — 10-kratni
-                svetovni prvak, 2 svetovna rekorda, SSI Instructor Trainer. V
+                <strong className="text-navy">Samo Jeranko</strong> je eden
+                najuspešnejših slovenskih prostih potapljačev, nosilec 10
+                medalj s svetovnih prvenstev in SSI Instructor Trainer. V
                 zadnjih 15 letih je naučil prostega potapljanja več kot 2000
                 ljudi in zgradil največjo šolo v Sloveniji.
               </p>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
-                Preko{" "}
+                Prek{" "}
                 <a
                   href="https://freedive-training.com"
                   target="_blank"
@@ -311,13 +309,13 @@ export default function HomePage() {
             Brezplačni vodič + novice
           </p>
           <SectionHeading center className="mb-4">
-            Prijavite se na novice in prejmite naš najbolj bran vodič
+            Prijavite se na novice in prejmite vodič za izenačevanje pritiska
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
             <strong className="text-navy">
               Kako pravilno izenačiti pritisk v ušesih
             </strong>{" "}
-            — Valsalva in Frenzel tehnika, razloženi preprosto, korak za
+            : Valsalva in Frenzel tehnika, razloženi preprosto, korak za
             korakom. Prejmite vodič brezplačno ob prijavi na naše novice.
           </p>
           <div className="flex gap-3 max-w-md mx-auto">

@@ -15,14 +15,14 @@ import { TrainingScheduleSelector } from "./TrainingScheduleSelector";
 export const metadata = {
   title: "Treningi prostega potapljanja",
   description:
-    "Celoletni vodeni treningi prostega potapljanja na 7 lokacijah po Sloveniji. Od začetnikov do tekmovalcev. Sezona oktober–junij. Pridružite se 350+ potapljačem.",
+    "Celoletni vodeni treningi prostega potapljanja na 7 lokacijah po Sloveniji. Za vse, ki želijo bolje plavati pod vodo, napredovati v apneji in ostati povezani z morjem tudi izven poletja.",
 };
 
 export const revalidate = 60;
 
 const reviews = [
   {
-    text: "Treningi so postali del mojega tedna, ki ga ne bi zamenjala za nič. Začela sem kot popolna začetnica — danes plavam pod vodo 100 metrov in hodim na državna prvenstva. Ekipa je fantastična.",
+    text: "Treningi so postali del mojega tedna, ki ga ne bi zamenjala za nič. Začela sem kot popolna začetnica, danes pa plavam pod vodo 100 metrov in hodim na državna prvenstva. Ekipa je fantastična.",
     name: "Maja L.",
     detail: "Trenira 4 leta, Ljubljana",
   },
@@ -32,22 +32,22 @@ const reviews = [
     detail: "Trenira 3 leta, Koper",
   },
   {
-    text: "Po petih letih treningov sem postal inštruktor. Nikoli si nisem mislil, da bom poučeval — a treningi ti dajo toliko, da v nekem trenutku želiš to vrniti naprej.",
+    text: "Po petih letih treningov sem postal inštruktor. Nikoli si nisem mislil, da bom poučeval, ampak treningi ti dajo toliko, da v nekem trenutku želiš to predati naprej.",
     name: "Matevž D.",
     detail: "Inštruktor, 5+ let z nami",
   },
 ];
 
 const faqs = [
-  { q: "Ali potrebujem predhodni tečaj?", a: "Ne — na treninge se lahko prijavite brez predhodnega tečaja prostega potapljanja." },
-  { q: "Koliko stane?", a: "Letna članarina: €35 (ŠD Apnea Slovenija). Vadnina: €54–62/mesec, odvisno od lokacije. Plačilo v dveh obrokih (60% + 40%)." },
+  { q: "Ali potrebujem predhodni tečaj?", a: "Ne. Na treninge se lahko prijavite tudi brez predhodnega tečaja prostega potapljanja." },
+  { q: "Koliko stane?", a: "Letna članarina znaša 35 € in se plača ob prijavi. Vadnina je 54–62 €/mesec, odvisno od lokacije, in se poravna v dveh obrokih." },
   { q: "Kdaj potekajo treningi?", a: "Sezona: oktober–junij. Termini: jutranji (7:00) in večerni (17:00–22:00), odvisno od lokacije. Podrobne ure so navedene pri vsaki lokaciji." },
   { q: "Koliko krat na teden je optimalno?", a: "Dvakrat tedensko je optimalno. Lahko kombinirate treninge na različnih lokacijah." },
-  { q: "Kakšno opremo potrebujem?", a: "Kratke plavuti, dihalka, športne kopalke, kapa, očala ali maska, utežni pas za vrat. Performance skupina tudi dolge plavuti in neoprensko obleko." },
-  { q: "Ali lahko odpovedm sredi sezone?", a: "Odpoved je mogoča do 8. tedna programa. Po tem drugega obroka ni mogoče vrniti." },
-  { q: "Me zanima le plavanje — ali so treningi primerni?", a: "Da — treningi kombinirajo plavanje in apnejo. Začetna in nadaljevalna skupina privabljata tudi ljubitelje plavanja." },
+  { q: "Kakšno opremo potrebujem?", a: "Potrebujete kratke plavuti, dihalko, športne kopalke, kapo, očala ali masko ter utežni pas za vrat. Performance skupina uporablja tudi dolge plavuti in neoprensko obleko." },
+  { q: "Ali lahko odpovem sredi sezone?", a: "Odpoved je mogoča do 8. tedna programa. Po tem drugega obroka ni mogoče vrniti." },
+  { q: "Zanima me predvsem plavanje. Ali so treningi primerni?", a: "Da. Treningi združujejo plavanje in apnejo, zato so začetne in nadaljevalne skupine primerne tudi za ljudi, ki želijo predvsem izboljšati plavalno tehniko." },
   { q: "Kdo vodi treninge?", a: "Izkušeni trenerji plavanja in inštruktorji prostega potapljanja. Program zasnuje Samo Jeranko. V skupini je povprečno manj kot 5 udeležencev na progo." },
-  { q: "Ali so tudi treningi na prostem (morje)?", a: "Da — v poletnih mesecih organiziramo odprte vode treninge in potapljaške kampe. Informacije prejmete med sezono." },
+  { q: "Ali so tudi treningi na prostem (morje)?", a: "Da. V poletnih mesecih organiziramo treninge v odprti vodi in potapljaške kampe. Informacije prejmete med sezono." },
 ];
 
 const trainingPhotos = [
@@ -82,18 +82,19 @@ export default async function TreningiPage() {
           <div className="max-w-lg">
             <Overline>Treningi</Overline>
             <h1 className="mb-5 text-[34px] font-bold leading-[1.08] tracking-[-0.02em] text-navy md:text-[50px]">
-              Skupnost, ki raste skupaj — vsak teden v bazenu
+              Ostanite povezani z morjem tudi med letom
             </h1>
             <p className="mb-3 text-[17px] leading-[1.6] text-body md:text-[19px]">
-              350+ potapljačev na 7 lokacijah po Sloveniji. Od prvega kraula do
-              tekmovalnih priprav. Pridružite se skupnosti, kjer se treningi
-              spremenijo v prijateljstva, prijateljstva pa v rezultate.
+              Treningi prostega potapljanja za vse, ki želite bolje plavati pod
+              vodo, ostati dlje na enem vdihu, napredovati po tečaju ali se v
+              morju počutiti bolj doma. Vsak teden, v majhnih skupinah, na 7
+              lokacijah po Sloveniji.
             </p>
             <p className="mb-8 text-[20px] font-semibold text-navy md:text-[22px]">
-              od €54/mesec + €{membershipFee} letna članarina
+              od 54 €/mesec + {membershipFee} € letne članarine
             </p>
             <Button asChild>
-              <a href="#prijava">Prijava na treninge →</a>
+              <a href="#prijava">Poiščite svojo skupino →</a>
             </Button>
           </div>
         </div>
@@ -104,7 +105,7 @@ export default async function TreningiPage() {
           <p className="text-[15px] font-medium text-navy">
             {applicationsOpen
               ? `Prijave za sezono ${settings?.seasonLabel ?? ""} so odprte.`
-              : "Spletne prijave so trenutno zaprte. Za vključitev med sezono nam pišite."}
+              : "Spletne prijave so trenutno zaprte. Za vključitev med sezono nam pišite na info@apnea.si."}
           </p>
           <a
             href={applicationsOpen ? "#prijava" : `mailto:${siteConfig.email}?subject=Prijava na treninge`}
@@ -120,24 +121,25 @@ export default async function TreningiPage() {
           <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
             <div>
               <Overline>Kako je na treningu</Overline>
-              <SectionHeading className="mb-6">Več kot le vaja dihanja in tehnike</SectionHeading>
+              <SectionHeading className="mb-6">Začnete zaradi morja. Ostanete zaradi napredka.</SectionHeading>
               <p className="mb-6 text-[17px] leading-[1.7] text-body">
-                Vsak teden se zberemo v bazenu — 15 minut ogrevanja in dihalnih
-                vaj na suhem, nato 60 minut v vodi. Plavanje, potopi, dihalne
-                serije. Vsak teden malo boljši kot prejšnji.
+                Nekateri pridejo po začetnem tečaju, ker nočejo, da prosto
+                potapljanje ostane samo ena poletna izkušnja. Drugi želijo
+                izboljšati podvodni ribolov, bolj mirno raziskovati morje ali
+                končno zgraditi občutek, da se pod gladino znajdejo z lahkoto.
               </p>
               <p className="mb-8 text-[17px] leading-[1.7] text-body">
-                A treningi niso le fizika. So ljudje, ki jih srečaš vsak teden
-                ob isti uri v istem bazenu — in ki sčasoma postanejo prijatelji.
-                Nekateri trenirajo z nami že 12 let. Nekateri so postali
-                inštruktorji. Nekateri tekmujejo na državnih prvenstvih.
+                Potem se zgodi nekaj drugega: napredek postane zelo konkreten.
+                Prvih 25 metrov pod vodo, nato 50, potem še več. Boljša tehnika,
+                mirnejše dihanje, več zaupanja v telo. In ker se vsak teden
+                srečujete z istimi ljudmi, trening sčasoma postane tudi ekipa.
               </p>
               <div className="border-l-2 border-gold/40 pl-4">
                 <p className="text-[15px] italic leading-relaxed text-navy/60">
-                  &ldquo;Začela sem kot popolna začetnica. Danes plavam 150
-                  metrov pod vodo brez plavuti in pomagam voditi treninge.&rdquo;
+                  &ldquo;Začela sem kot popolna začetnica. Danes plavam 150 metrov
+                  pod vodo brez plavuti in pomagam voditi treninge.&rdquo;
                 </p>
-                <p className="mt-1 text-[13px] text-muted-text">— Polona, trenerka, 8 let z nami</p>
+                <p className="mt-1 text-[13px] text-muted-text">Polona, trenerka, 8 let z nami</p>
               </div>
             </div>
             <div className="relative aspect-[4/3]">
@@ -156,10 +158,12 @@ export default async function TreningiPage() {
       <section className="bg-surface py-20 md:py-28" id="programi">
         <div className="mx-auto max-w-6xl px-6">
           <Overline>Programi</Overline>
-          <SectionHeading className="mb-6 max-w-2xl">Štiri stopnje — ena pot napredka</SectionHeading>
+          <SectionHeading className="mb-6 max-w-2xl">Program za vsako stopnjo znanja</SectionHeading>
           <p className="mb-4 max-w-2xl text-[17px] leading-[1.7] text-body">
-            Ob prijavi izberete skupino glede na vaše izkušnje. Večina začne v
-            začetni skupini in trenira tam vso sezono — pravilno plavanje je osnova vsega.
+            Ob prijavi izberete skupino glede na svoje izkušnje in cilj. Če še
+            nimate veliko podvodne kilometrine, začnete v začetni skupini. Če
+            že dobro plavate ali ste že opravili tečaj, lahko poiščemo skupino,
+            kjer boste napredovali naprej.
           </p>
           <p className="mb-14 max-w-2xl border-l-4 border-gold pl-6 text-[15px] font-medium text-navy">
             Izjema: če ste v preteklosti aktivno trenirali plavanje, se lahko ob
@@ -167,10 +171,10 @@ export default async function TreningiPage() {
           </p>
           <div className="max-w-3xl space-y-6">
             {[
-              { step: "1", title: "Začetni program", who: "Za vse, ki začenjate — brez predhodnih izkušenj", what: "Tehnika plavanja (kraul, prsno, delfin), osnove zadrževanja diha, varne progresije pod vodo. Prva tretjina sezone: plavanje. Nato: apneja. Po sezoni ali dveh napredujete v nadaljevalno skupino." },
-              { step: "2", title: "Nadaljevalni program", who: "Za tiste z ustrezno plavalno tehniko", what: "Aerobni in anaerobni trening, CO₂/O₂ tolerance, intenzivnejše podvodno plavanje. Sistematična periodizacija za resen napredek." },
-              { step: "3", title: "Performance program", who: "Za izkušene potapljače s tekmovalnimi ambicijami", what: "Dolgi potopi s specializiranimi plavutmi, intenzivni seti, individualno spremljanje napredka. Mnogi kombinirajo: enkrat tedensko nadaljevalni, enkrat performance." },
-              { step: "4", title: "Statična apneja", who: "Za vse — brez predpogojev", what: "Sprostitvene tehnike, prilagajanje na CO₂, progresivni protokoli zadrževanja diha. Lahko kombinirate s katerim koli drugim programom." },
+              { step: "1", title: "Začetni program", who: "Za vse, ki želite zgraditi osnovo", what: "Tehnika plavanja, osnove zadrževanja diha in postopno privajanje na gibanje pod vodo. V prvem delu sezone je poudarek na plavanju, nato postopoma dodajamo apnejo. Po eni ali dveh sezonah lahko napredujete v nadaljevalno skupino." },
+              { step: "2", title: "Nadaljevalni program", who: "Za tiste, ki že imate dobro plavalno tehniko", what: "Več podvodnega plavanja, bolj strukturirane dihalne serije in trening, ki gradi zmožnost za daljše, bolj mirne potope. Primeren je za vse, ki želijo resneje napredovati v vodi." },
+              { step: "3", title: "Performance program", who: "Za izkušene potapljače in tekmovalce", what: "Daljši potopi s specializiranimi plavutmi, intenzivnejši seti in bolj individualno spremljanje napredka. Mnogi kombinirajo en nadaljevalni in en performance trening na teden." },
+              { step: "4", title: "Statična apneja", who: "Za vse, ki želite napredovati v zadrževanju diha", what: "Sprostitvene tehnike, prilagajanje na CO₂ in postopni protokoli zadrževanja diha. Program lahko kombinirate s katerim koli drugim treningom." },
             ].map((program) => (
               <div key={program.step} className="flex items-start gap-6 border-b border-border-custom pb-6">
                 <span className="w-10 shrink-0 text-[36px] font-bold leading-none text-gold/30">{program.step}.</span>
@@ -185,7 +189,7 @@ export default async function TreningiPage() {
         </div>
       </section>
 
-      <Testimonials reviews={reviews} overline="Naši treniranke in treniranki" heading="Zakaj ostanejo" />
+      <Testimonials reviews={reviews} overline="Naši člani" heading="Zakaj ostanejo" />
 
       <section className="bg-surface py-20 md:py-28" id="prijava">
         <div className="mx-auto max-w-6xl px-6">
@@ -193,7 +197,8 @@ export default async function TreningiPage() {
           <SectionHeading className="mb-4">Kje in kdaj potekajo treningi</SectionHeading>
           <p className="mb-12 max-w-3xl text-[17px] leading-[1.7] text-body">
             Najprej izberite mesto in bazen, nato poiščite skupino, ki ustreza
-            vašemu znanju in urniku. Mesto rezervirate s plačilom letne članarine {membershipFee} €.
+            vašemu znanju in urniku. Mesto v skupini rezervirate s plačilom
+            letne članarine v višini {membershipFee} €.
           </p>
           <TrainingScheduleSelector groups={groups} applicationsOpen={applicationsOpen} membershipFee={membershipFee} />
         </div>
@@ -208,14 +213,15 @@ export default async function TreningiPage() {
       <section className="bg-navy py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-6 text-center">
           <h2 className="mb-6 text-[32px] font-bold leading-[1.1] tracking-[-0.02em] text-white md:text-[40px]">
-            Pridružite se 350+ potapljačem v bazenu
+            Naj prosto potapljanje ne ostane samo poletna izkušnja
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-[18px] text-white/60">
-            Vsak teden, od oktobra do junija, na 7 lokacijah po Sloveniji.
-            Začnite v začetni skupini — in rastite z nami.
+            Če želite pod vodo napredovati, potrebujete več kot občasni potop
+            na morju. Potrebujete ritem, trenerja in skupino, ki vas vsak teden
+            pripelje malo dlje.
           </p>
           <Button asChild size="xl">
-            <a href="#prijava">Prijavite se na treninge →</a>
+            <a href="#prijava">Poiščite svojo skupino →</a>
           </Button>
         </div>
       </section>

@@ -41,7 +41,7 @@ export default async function TrainingThankYouPage({ searchParams }: Props) {
           </h1>
           <p className="mb-8 text-[17px] leading-relaxed text-body">
             {succeeded
-              ? "Plačilo letne članarine je uspelo. Potrditev in vse podrobnosti boste prejeli po e-pošti."
+              ? "Plačilo letne članarine je uspelo. Potrditev prijave in vse podrobnosti boste prejeli po e-pošti."
               : "Plačilo se še obdeluje. Potrditev boste prejeli po e-pošti takoj, ko bo zaključeno."}
           </p>
           {metadata?.trainingProgram && (

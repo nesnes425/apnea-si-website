@@ -8,6 +8,7 @@ export const metadata = {
   title: "Prosto potapljanje",
   description:
     "Prosto potapljanje — kaj je in kako začeti. Spoznajte šport, kjer se z enim vdihom potopite v globino.",
+  robots: { index: false, follow: true },
 };
 
 export default function ProstoPotapljanjePage() {

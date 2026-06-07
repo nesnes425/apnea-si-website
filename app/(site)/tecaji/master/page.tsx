@@ -11,13 +11,12 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
-import { Testimonials } from "@/components/blocks/Testimonials";
 import { CheckList } from "@/components/blocks/CheckList";
 
 export const metadata = {
   title: "Master tečaj prostega potapljanja — SSI Level 3",
   description:
-    "Obvladajte Mouthfill izenačevanje in dosezite 30–40m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. €550.",
+    "Obvladajte Mouthfill izenačevanje in dosezite 30–40 m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. 550 €.",
 };
 
 // === Data ===
@@ -58,24 +57,6 @@ const coursePhases = [
   },
 ];
 
-const reviews = [
-  {
-    text: "Master tečaj je bil vrhunec mojega potapljaškega razvoja. Mouthfill mi je odprl globine, ki sem jih prej le sanjal. 38 metrov — brez napora, brez bolečin.",
-    name: "Boštjan P.",
-    detail: "Master tečaj",
-  },
-  {
-    text: "Sama ne moreš opisati z besedami. Način, kako poučuje na tej ravni — kombinacija tehničnega znanja in umirjenosti — je edinstven. Najboljša investicija v moj šport.",
-    name: "Nina S.",
-    detail: "Master tečaj",
-  },
-  {
-    text: "Po master tečaju sem se prvič počutil res samostojnega v globini. Razumeš svoje telo, razumeš morje. To ni več tečaj — to je transformacija.",
-    name: "Matej R.",
-    detail: "Master tečaj",
-  },
-];
-
 const faqs = [
   {
     q: "Kakšen je predpogoj za master tečaj?",
@@ -95,7 +76,7 @@ const faqs = [
   },
   {
     q: "Kje poteka globinski del?",
-    a: "Globinski del poteka na lokacijah z ustrezno globino — običajno na Hrvaškem. Natančna lokacija je potrjena ob prijavi.",
+    a: "Globinski del poteka na lokacijah z ustrezno globino, običajno na Hrvaškem. Natančna lokacija je potrjena ob prijavi.",
   },
   {
     q: "Kako poteka odpoved?",
@@ -131,21 +112,12 @@ function Hero() {
             najboljših. Po tečaju prejmete 2 brezplačna vodena treninga.
           </p>
           <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
-            €{siteConfig.courses.master.price}
+            {siteConfig.courses.master.price} €
           </p>
           <div className="mb-10">
             <Button asChild>
               <a href="#termini">Rezervirajte mesto →</a>
             </Button>
-          </div>
-
-          <div className="border-l-2 border-gold/40 pl-4">
-            <p className="text-[15px] text-navy/60 italic font-body leading-relaxed">
-              &ldquo;To ni več tečaj — to je transformacija.&rdquo;
-            </p>
-            <p className="text-[13px] text-muted-text font-body mt-1">
-              — Matej R., udeleženec master tečaja
-            </p>
           </div>
         </div>
       </div>
@@ -411,12 +383,11 @@ export default function MasterTecajPage() {
       <WhyMaster />
       <OutcomePromise />
       <CourseStructure />
-      <Testimonials reviews={reviews} />
       <DatesAndBooking />
       <FAQ items={faqs} />
       <FinalCTA
         heading="Globina, ki jo razumete. Ne le dosežete."
-        description={`Master tečaj prostega potapljanja — Mouthfill, 30–40m, 2 vodena treninga. €${siteConfig.courses.master.price}.`}
+        description={`Master tečaj prostega potapljanja: Mouthfill, 30–40 m, 2 vodena treninga. ${siteConfig.courses.master.price} €.`}
         backgroundImage="/images/placeholder/prosto-potapljanje-depth.jpg"
       />
     </>

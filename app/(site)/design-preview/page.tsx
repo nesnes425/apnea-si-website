@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+export const metadata = {
+  title: "Design Preview",
+  robots: { index: false, follow: false },
+};
+
 const colors = [
   { name: "navy", hex: "#33404f", label: "Headings, buttons" },
   { name: "navy-dark", hex: "#181E25", label: "Footer, nav bg" },

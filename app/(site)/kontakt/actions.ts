@@ -26,7 +26,7 @@ export async function submitContactForm(
   const message = String(formData.get("message") ?? "").trim();
 
   if (!EMAIL_RE.test(email)) {
-    return { status: "error", message: "Prosim vnesi veljaven e-poštni naslov." };
+    return { status: "error", message: "Prosim vnesite veljaven e-poštni naslov." };
   }
   if (message.length < 5) {
     return { status: "error", message: "Sporočilo je prekratko." };
@@ -57,7 +57,7 @@ export async function submitContactForm(
     console.error("Contact form submission failed:", err);
     return {
       status: "error",
-      message: "Oprosti, sporočila ni bilo mogoče poslati. Poskusi znova ali nam piši na info@apnea.si.",
+      message: "Sporočila ni bilo mogoče poslati. Poskusite znova ali nam pišite na info@apnea.si.",
     };
   }
 }

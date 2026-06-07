@@ -5,11 +5,12 @@ import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 import { FAQ } from "@/components/blocks/FAQ";
+import { SpeakingInquiryForm } from "./SpeakingInquiryForm";
 
 export const metadata = {
   title: "Predavanja za podjetja",
   description:
-    "Samo Jeranko — TEDx govornik, 10x svetovni prvak. Predavanja o dihanju, stresu in vrhunski pripravljenosti. Za podjetja, ekipe in dogodke.",
+    "Samo Jeranko, TEDx govornik in eden najuspešnejših slovenskih prostih potapljačev. Predavanja o dihanju, stresu in pripravi na zahtevne trenutke.",
 };
 
 const eventPhotos = [
@@ -30,7 +31,7 @@ const faqs = [
   },
   {
     q: "V katerem jeziku poteka?",
-    a: "Slovensko ali angleško — Samo govori oba jezika tekoče.",
+    a: "Slovensko ali angleško. Samo govori oba jezika tekoče.",
   },
   {
     q: "Koliko stane?",
@@ -38,7 +39,7 @@ const faqs = [
   },
   {
     q: "Ali vključuje praktične vaje?",
-    a: "Da — pri delavnicah Samo vodi udeležence skozi dihalne tehnike, ki jih lahko uporabijo takoj. Keynote je bolj osredotočen na zgodbo in navdih.",
+    a: "Da. Pri delavnicah Samo vodi udeležence skozi dihalne tehnike, ki jih lahko uporabijo takoj. Keynote je bolj osredotočen na zgodbo in navdih.",
   },
 ];
 
@@ -60,14 +61,14 @@ export default function PredavanjaPage() {
         <div className="relative w-full max-w-6xl px-6 mx-auto py-20">
           <div className="max-w-xl">
             <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-              TEDx govornik · 10x svetovni prvak
+              TEDx govornik · 10 medalj s svetovnih prvenstev
             </p>
             <h1 className="text-[40px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] text-white font-heading mb-6">
               Samo Jeranko
             </h1>
             <p className="text-[18px] md:text-[22px] text-white/70 leading-[1.5] font-body mb-10">
               Predavanja in delavnice o dihanju, stresu in pripravljenosti na
-              vrhunske trenutke — za podjetja, ekipe in dogodke.
+              zahtevne trenutke, za podjetja, ekipe in dogodke.
             </p>
             <Button asChild>
               <a href="#kontakt">Povpraševanje →</a>
@@ -83,11 +84,11 @@ export default function PredavanjaPage() {
         <div className="max-w-6xl mx-auto px-6">
           <Overline>Kaj pridobi vaša ekipa</Overline>
           <SectionHeading className="mb-6 max-w-2xl">
-            Ne le predavanje — orodje, ki ga odnesejo s seboj
+            Ne le predavanje, ampak orodje, ki ga odnesejo s seboj
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-16 max-w-2xl">
-            Samo ne govori iz teorije. Govori iz izkušnje — iz globin, kjer je
-            vsak dih odločitev, iz tekmovanj, kjer je pritisk resnični.
+            Samo ne govori iz teorije. Govori iz izkušnje globokih potopov, kjer
+            je vsak dih del priprave, in iz tekmovanj, kjer je pritisk resničen.
             Udeleženci odidejo z dihalnimi tehnikami, ki jih lahko uporabijo
             pred naslednjim sestankom, nastopom ali tekmo.
           </p>
@@ -109,7 +110,7 @@ export default function PredavanjaPage() {
               </p>
               <p className="text-[15px] text-navy font-medium font-body">
                 Vaša ekipa bo razumela, kako upravljati stres v kritičnih
-                trenutkih — in dobila konkreten pristop, ki deluje.
+                trenutkih, in dobila konkreten pristop, ki ga lahko uporabi.
               </p>
             </div>
 
@@ -126,11 +127,11 @@ export default function PredavanjaPage() {
               </p>
               <p className="text-[16px] text-body leading-[1.7] font-body mb-6">
                 Kombinacija predavanja in praktičnih dihalnih vaj. Udeleženci
-                sami izkusijo, kako dihanje vpliva na telo in um — in se
+                sami izkusijo, kako dihanje vpliva na telo in um, ter se
                 naučijo tehnik, ki jih lahko uporabijo takoj.
               </p>
               <p className="text-[15px] text-navy font-medium font-body">
-                Idealno za team building, ki ni le zabava — ampak dejansko
+                Idealno za team building, ki ni le zabava, ampak dejansko
                 izboljša delovanje ekipe.
               </p>
             </div>
@@ -188,15 +189,15 @@ export default function PredavanjaPage() {
             {[
               {
                 title: "Moč dihanja v zahtevnih trenutkih",
-                text: "Kako dihalne tehnike iz prostega potapljanja pomagajo pri obvladovanju stresa, osredotočenosti in odločanju pod pritiskom. Od tekmovanj na 100m globine do poslovnih pogajanj — mehanizem je enak.",
+                text: "Kako dihalne tehnike iz prostega potapljanja pomagajo pri obvladovanju stresa, osredotočenosti in odločanju pod pritiskom. Od tekmovanj na 100 m globine do poslovnih pogajanj je osnovni mehanizem zelo podoben.",
               },
               {
                 title: "Priprava na vrhunski trenutek",
-                text: "Od svetovnih prvenstev do poslovnih predstavitev — kako se pripraviti na trenutek, ko morate podati najboljše. Mentalna priprava, vizualizacija in sproščanje, ki ga Samo uporablja pred vsakim tekmovalnim potopom.",
+                text: "Od svetovnih prvenstev do poslovnih predstavitev: kako se pripraviti na trenutek, ko morate podati najboljše. Mentalna priprava, vizualizacija in sproščanje, ki ga Samo uporablja pred vsakim tekmovalnim potopom.",
               },
               {
-                title: "Preseganje lastnih meja",
-                text: "Kaj nas potapljanje na 100+ metrov globine nauči o naših zmožnostih. Kako prepoznati razliko med strahom in dejansko mejo — in kako jo varno, korak za korakom, premakniti.",
+                title: "Mirnost pod pritiskom",
+                text: "Kaj nas potapljanje na 100+ metrov globine nauči o zbranosti, strahu in odločitvah pod pritiskom. Kako prepoznati razliko med resnično mejo in trenutkom, ko potrebujemo boljšo pripravo.",
               },
             ].map((topic, i) => (
               <div key={topic.title} className="flex gap-6 items-start">
@@ -274,101 +275,8 @@ export default function PredavanjaPage() {
               </div>
             </div>
 
-            <form className="space-y-5">
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="sp-name" className="block text-sm font-medium text-navy font-body mb-2">
-                    Ime in priimek *
-                  </label>
-                  <input
-                    id="sp-name"
-                    type="text"
-                    required
-                    placeholder="Ime in priimek"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="sp-email" className="block text-sm font-medium text-navy font-body mb-2">
-                    E-pošta *
-                  </label>
-                  <input
-                    id="sp-email"
-                    type="email"
-                    required
-                    placeholder="vas@podjetje.si"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="sp-company" className="block text-sm font-medium text-navy font-body mb-2">
-                    Podjetje / organizacija
-                  </label>
-                  <input
-                    id="sp-company"
-                    type="text"
-                    placeholder="Naziv podjetja"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="sp-date" className="block text-sm font-medium text-navy font-body mb-2">
-                    Datum dogodka
-                  </label>
-                  <input
-                    id="sp-date"
-                    type="text"
-                    placeholder="Npr. junij 2026"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="sp-format" className="block text-sm font-medium text-navy font-body mb-2">
-                    Format
-                  </label>
-                  <select
-                    id="sp-format"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy bg-white focus:outline-none focus:border-gold transition-colors"
-                  >
-                    <option value="">Izberite format</option>
-                    <option value="keynote">Keynote (45–60 min)</option>
-                    <option value="workshop">Delavnica (2–3 ure)</option>
-                    <option value="other">Drugo</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="sp-attendees" className="block text-sm font-medium text-navy font-body mb-2">
-                    Št. udeležencev
-                  </label>
-                  <input
-                    id="sp-attendees"
-                    type="text"
-                    placeholder="Npr. 50"
-                    className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="sp-message" className="block text-sm font-medium text-navy font-body mb-2">
-                  Sporočilo
-                </label>
-                <textarea
-                  id="sp-message"
-                  rows={4}
-                  placeholder="Povejte nam več o vašem dogodku..."
-                  className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors resize-none"
-                />
-              </div>
-
-              <Button type="submit">Pošlji povpraševanje →</Button>
-
+            <div>
+              <SpeakingInquiryForm />
               <p className="text-sm text-muted-text font-body">
                 Ali pokličite{" "}
                 <a
@@ -378,7 +286,7 @@ export default function PredavanjaPage() {
                   {siteConfig.phone}
                 </a>
               </p>
-            </form>
+            </div>
           </div>
         </div>
       </section>

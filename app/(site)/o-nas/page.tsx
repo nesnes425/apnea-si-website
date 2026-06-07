@@ -20,7 +20,7 @@ const communityStories = [
     years: "8 let z nami",
     image: "/images/placeholder/tecaj-skupina.jpg",
     story:
-      "Prišla je kot navdušenka, ki je želela poskusiti potapljanje v bazenu. Danes plava 150 metrov pod vodo brez plavuti, kar je blizu najboljšim na svetu. Postala je trenerka, ki vodi skupine v bazenu, pomaga pri organizaciji kluba in je prisotna na vsakem tekmovanju. Polona je duša in obraz našega kluba.",
+      "Prišla je kot navdušenka, ki je želela poskusiti potapljanje v bazenu. Danes plava 150 metrov pod vodo brez plavuti in je ena tistih ljudi, ki najbolje pokažejo, kam lahko pripelje redna vadba. Postala je trenerka, ki vodi skupine v bazenu, pomaga pri organizaciji kluba in je prisotna na tekmovanjih.",
   },
   {
     name: "Matevž",
@@ -28,7 +28,7 @@ const communityStories = [
     years: "6 let z nami",
     image: "/images/placeholder/tecaj-bazen-samo.png",
     story:
-      "Začel je v bazenu, potem je opravil inštruktorski tečaj in danes pomaga voditi tečaje. Srečaš ga lahko tako na bazenu kot na našem vsakoletnem trening-kampu. Brez Matevža Samovi tečaji enostavno ne bi potekali tako gladko.",
+      "Začel je v bazenu, potem opravil inštruktorski tečaj in danes pomaga voditi tečaje. Srečate ga lahko tako na bazenu kot na našem vsakoletnem trening kampu. Brez Matevža Samovi tečaji ne bi potekali tako mirno in gladko.",
   },
   {
     name: "Simon",
@@ -36,7 +36,7 @@ const communityStories = [
     years: "12+ let z nami",
     image: "/images/placeholder/trening-camp.jpg",
     story:
-      "Simon je eden redkih, ki so bili tu od prve sezone. Že 12 let trenira, napreduje in pomaga. Postal je inštruktor in danes soustvarja tečaje skupaj s Samom. Našega kluba si brez Simona ne moremo predstavljati.",
+      "Simon je eden tistih, ki so bili tu že od prvih sezon. Že več kot 12 let trenira, napreduje in pomaga drugim. Postal je inštruktor in danes soustvarja tečaje skupaj s Samom.",
   },
 ];
 
@@ -74,34 +74,32 @@ export default function ONasPage() {
           <div className="grid md:grid-cols-[1fr_380px] gap-16 items-start">
             <div>
               <p className="text-[20px] md:text-[22px] text-navy leading-[1.6] font-body mb-8">
-                Sama Jeranka je voda privlačila, odkar pomni. Zato je nenehno padal v morje, bazen ali
-                jezero. Treniral je plavanje, a na koncu vsakega treninga si je
-                želel vsaj enkrat zaplavati pod vodo. Čim dlje.
+                Sama Jeranka je voda privlačila, odkar pomni. Kot otrok je
+                nenehno iskal priložnost, da skoči v morje, bazen ali jezero.
+                Treniral je plavanje, a na koncu vsakega treninga si je želel
+                še vsaj enkrat zaplavati pod vodo. Čim dlje.
               </p>
 
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
                 Kasneje je odkril prosto potapljanje in podvodni ribolov in se
-                v oba športa takoj zaljubil.
-                Študiral je strojništvo, a morje
-                ga je neprestano vleklo k sebi.
-                Leta 2008 je prvič tekmoval in
-                že takoj so začele prihajati medalje. Osvojil je 10 medalj na
-                svetovnih prvenstvih, 2 svetovna rekorda in 19 državnih
-                rekordov.
+                v oba takoj zaljubil. Študiral je strojništvo, a morje ga je
+                neprestano vleklo k sebi. Leta 2008 je prvič tekmoval in hitro
+                so začele prihajati medalje. Osvojil je 10 medalj na svetovnih
+                prvenstvih in postavil 19 državnih rekordov.
               </p>
 
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
-                A seveda potovanja na Bahame in v Egipt niso zastonj, zato je
-                Samo začel učiti prosto potapljanje in prodajati ulovljene
-                ribe, da je zaslužil za potovanja. Tako je začel tišino,
-                zaupanje v lastno telo in ljubezen do morja deliti z drugimi in leta 2010 se je rodilo društvo Apnea Slovenija.
+                Potovanja na Bahame in v Egipt niso bila poceni, zato je Samo
+                začel učiti prosto potapljanje in s tem financirati svoja
+                tekmovanja. Tako je začel tišino, zaupanje v lastno telo in
+                ljubezen do morja deliti z drugimi. Leta 2010 se je rodilo
+                društvo Apnea Slovenija.
               </p>
 
               <p className="text-[17px] text-body leading-[1.7] font-body">
-                Na začetku jih je le 10 treniralo v bazenu Tivoli v Ljubljani. Danes
-                pa več kot 350 ljudi trenira vsak teden, na 7 lokacijah po
-                Sloveniji. In Samo? Še vedno tekmuje, še vedno uči, prek
-                znamke{" "}
+                Na začetku je v bazenu Tivoli v Ljubljani treniralo 10 ljudi.
+                Danes več kot 350 ljudi trenira vsak teden na več lokacijah po
+                Sloveniji. Samo še vedno tekmuje in uči, prek znamke{" "}
                 <a
                   href="https://freedive-training.com"
                   target="_blank"
@@ -111,7 +109,7 @@ export default function ONasPage() {
                   Freedive Training
                 </a>{" "}
                 pa trenira tudi druge vrhunske potapljače po svetu. Nekateri
-                med njimi so že postali svetovni prvaki in rekorderji.
+                med njimi so dosegli rezultate v samem svetovnem vrhu.
               </p>
             </div>
 
@@ -127,7 +125,7 @@ export default function ONasPage() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { number: "10x", label: "medalja na SP" },
-                  { number: "2", label: "svetovna rekorda" },
+                  { number: "19", label: "državnih rekordov" },
                   { number: "-110m", label: "osebni rekord" },
                   { number: "8 min", label: "statična apneja" },
                 ].map((stat) => (
@@ -171,8 +169,8 @@ export default function ONasPage() {
 
           <div className="max-w-2xl mx-auto text-center">
             <p className="text-[18px] md:text-[20px] text-white/80 leading-[1.6] font-body">
-              Povpraševanje vsako leto raste, saj naši člani
-              privabijo še prijatelje, znance in družinske člane.
+              Povpraševanje vsako leto raste predvsem zato, ker naši člani
+              pripeljejo prijatelje, znance in družinske člane.
             </p>
           </div>
         </div>
@@ -188,10 +186,10 @@ export default function ONasPage() {
             Prišli so na tečaj, ostali so za vedno.
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-16 max-w-2xl">
-            Ko se pridružiš Apnea Sloveniji, se ne vpišeš le na trening
-            prostega potapljanja, temveč postaneš del naše skupnosti. Od prvega
+            Ko se pridružite Apnea Sloveniji, se ne vpišete le na trening
+            prostega potapljanja, temveč postanete del skupnosti. Od prvega
             zadrževanja diha do državnih prvenstev in od navdušenca do
-            inštruktorja.
+            inštruktorja, tu se zgodbe pogosto nadaljujejo več let.
           </p>
 
           <div className="space-y-16">
@@ -225,38 +223,20 @@ export default function ONasPage() {
             ))}
           </div>
 
-          {/* More community mentions */}
-          <div className="mt-20 border-t border-border-custom pt-12">
-            <h3 className="text-[22px] font-semibold mb-6">
-              In še toliko drugih zgodb...
+          <div className="mt-20 bg-surface px-8 py-10 md:px-12 md:py-12">
+            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
+              Skupnost
+            </p>
+            <h3 className="text-[26px] md:text-[32px] font-semibold leading-[1.15] tracking-[-0.01em] mb-4 max-w-2xl">
+              Zgodbe se pri nas pogosto nadaljujejo več let.
             </h3>
-            <div className="grid md:grid-cols-2 gap-x-16 gap-y-4 max-w-4xl">
-              {[
-                {
-                  name: "Luka",
-                  note: "Ko se je Samo spoznaval s potapljanjem, ga je Luka učil. Danes pa ga Samo trenira in mu pomaga do rezultatov, ki si jih Luka ni mogel niti predstavljati.",
-                },
-                {
-                  name: "Japec",
-                  note: "Star je več kot 70 let, Samov nekdanji šef in še vedno se potaplja tako v morju kot v bazenu (potopi se več kot 90 m globoko!). Japec nam dokazuje, da za prosto potapljanje ni nikoli prepozno.",
-                },
-                {
-                  name: "Naše inštruktorice",
-                  note: "Več žensk, ki so začele kot navdušenke in danes vodijo tečaje in treninge. Sagalra, ki nas navdušuje s svojimi izjavami, Anja, ki vedno vodi jogo in dihalne vaje. Pa še bi lahko naštevali.",
-                },
-                {
-                  name: "Skupina, ki trenira skupaj že 8 let",
-                  note: "Ista ura, isti bazen, isti ljudje. Postali so prijatelji.",
-                },
-              ].map((item) => (
-                <div key={item.name} className="py-3">
-                  <p className="text-[15px] font-body">
-                    <strong className="text-navy">{item.name}:</strong>{" "}
-                    <span className="text-body">{item.note}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
+            <p className="text-[17px] text-body leading-[1.7] font-body max-w-3xl">
+              Nekdo pride zaradi tečaja, drugi zaradi treninga, tretji zato,
+              ker bi rad v morju končno naredil nekaj več kot plaval po
+              gladini. Čez čas iz tega nastanejo redna vadba, prijateljstva,
+              trening kampi, tekmovanja in ljudje, ki začnejo pomagati novim
+              članom.
+            </p>
           </div>
         </div>
       </section>
@@ -274,9 +254,9 @@ export default function ONasPage() {
               </SectionHeading>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
                 Vsako leto se naši člani udeležijo državnih prvenstev in vsako
-                leto se domov vrnejo z medaljami in rekordi. To niso
-                profesionalci, to so ljudje, ki so začeli pri nas, trenirali
-                več let zapored in prerasli v tekmovalce.
+                leto se domov vrnejo z medaljami in rekordi. To niso nujno
+                ljudje, ki so začeli kot profesionalci. Veliko jih je začelo
+                pri nas, treniralo več let zapored in preraslo v tekmovalce.
               </p>
 
               <div className="grid grid-cols-2 gap-6">
@@ -339,8 +319,8 @@ export default function ONasPage() {
             Pridruži se nam
           </h2>
           <p className="text-[18px] text-white/60 font-body mb-10 max-w-2xl mx-auto">
-            Začni s tečajem ali se vpiši na treninge. Ne glede na to, kje
-            začneš, postaneš del zgodbe, ki raste že 15 let.
+            Začnite s tečajem ali se vpišite na treninge. Ne glede na to, kje
+            začnete, postanete del zgodbe, ki raste že več kot 15 let.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild>

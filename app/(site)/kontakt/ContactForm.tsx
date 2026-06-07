@@ -42,7 +42,15 @@ function SubmitButton() {
   );
 }
 
-export function ContactForm() {
+type ContactFormProps = {
+  subjectPlaceholder?: string;
+  messagePlaceholder?: string;
+};
+
+export function ContactForm({
+  subjectPlaceholder = "Npr. Vprašanje o začetnem tečaju",
+  messagePlaceholder = "Vaše sporočilo...",
+}: ContactFormProps) {
   const [state, formAction] = useActionState(submitContactForm, INITIAL);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -59,7 +67,7 @@ export function ContactForm() {
           Hvala za sporočilo.
         </p>
         <p className="text-[15px] text-body font-body">
-          Odgovorimo ti v kratkem.
+          Odgovorimo vam v kratkem.
         </p>
       </div>
     );
@@ -103,7 +111,7 @@ export function ContactForm() {
             type="email"
             required
             maxLength={200}
-            placeholder="tvoj@email.si"
+            placeholder="vas@email.si"
             className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
           />
         </div>
@@ -121,7 +129,7 @@ export function ContactForm() {
           name="subject"
           type="text"
           maxLength={200}
-          placeholder="Npr. Vprašanje o začetnem tečaju"
+          placeholder={subjectPlaceholder}
           className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
         />
       </div>
@@ -139,7 +147,7 @@ export function ContactForm() {
           required
           rows={6}
           maxLength={5000}
-          placeholder="Tvoje sporočilo..."
+          placeholder={messagePlaceholder}
           className="w-full border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors resize-none"
         />
       </div>

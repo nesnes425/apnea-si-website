@@ -28,6 +28,41 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-8">
           {siteConfig.nav.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const children = "children" in item ? item.children : undefined;
+            if (children) {
+              return (
+                <div key={item.href} className="group relative">
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-1 text-[15px] tracking-[0.03em] font-body transition-colors ${
+                      isActive
+                        ? "text-gold font-medium"
+                        : "text-white/80 hover:text-gold"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                  <div className="invisible absolute left-0 top-full min-w-56 translate-y-3 border border-white/10 bg-navy-dark py-3 opacity-0 shadow-lg transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    {children.map((child) => {
+                      const childActive = pathname === child.href;
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={`block px-5 py-2.5 text-[14px] font-body transition-colors ${
+                            childActive
+                              ? "text-gold font-medium"
+                              : "text-white/80 hover:text-gold"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
             return (
               <Link
                 key={item.href}
@@ -68,6 +103,43 @@ export function Header() {
           <div className="px-6 py-6 flex flex-col gap-1">
             {siteConfig.nav.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              const children = "children" in item ? item.children : undefined;
+              if (children) {
+                return (
+                  <div key={item.href} className="py-2">
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block py-2 text-[16px] font-body transition-colors ${
+                        isActive
+                          ? "text-gold font-medium"
+                          : "text-white/80 hover:text-gold"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                    <div className="mt-1 flex flex-col border-l border-white/10 pl-4">
+                      {children.map((child) => {
+                        const childActive = pathname === child.href;
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setMobileOpen(false)}
+                            className={`py-2 text-[14px] font-body transition-colors ${
+                              childActive
+                                ? "text-gold font-medium"
+                                : "text-white/60 hover:text-gold"
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={item.href}

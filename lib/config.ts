@@ -118,7 +118,15 @@ export const siteConfig = {
 
   // Navigation
   nav: [
-    { label: "Začetni tečaj", href: "/tecaji/zacetni" },
+    {
+      label: "Tečaji",
+      href: "/tecaji",
+      children: [
+        { label: "Začetni tečaj", href: "/tecaji/zacetni" },
+        { label: "Nadaljevalni tečaj", href: "/tecaji/nadaljevalni" },
+        { label: "Master tečaj", href: "/tecaji/master" },
+      ],
+    },
     { label: "Treningi", href: "/treningi" },
     { label: "Predavanja", href: "/predavanja" },
     { label: "Darilni bon", href: "/darilni-bon" },

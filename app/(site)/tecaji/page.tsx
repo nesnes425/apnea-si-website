@@ -11,7 +11,7 @@ import { CheckList } from "@/components/blocks/CheckList";
 export const metadata = {
   title: "Tečaji prostega potapljanja",
   description:
-    "SSI certificirani tečaji prostega potapljanja v Sloveniji. Začetni (€395), nadaljevalni (€415) in master (€550). Od začetnika do 40m globine.",
+    "SSI certificirani tečaji prostega potapljanja v Sloveniji. Od prvega potopa na en vdih do naprednih tehnik izenačevanja in globine. Začetni, nadaljevalni in master tečaj.",
 };
 
 const courses = [
@@ -20,10 +20,10 @@ const courses = [
     overline: "SSI Freediving Level 1",
     title: "Začetni tečaj",
     description:
-      "Od prvega zadrževanja diha do samozavestnega potapljanja v morju. Naučite se osnov prostega potapljanja — varno, strokovno in v majhnih skupinah.",
-    depth: "do 20m",
-    hours: "6h teorije + 3h bazen + 6h morje",
-    prereq: "Brez predznanja — znati morate le plavati 200m",
+      "Za vse, ki želite pod morsko gladino doživeti več kot samo pogled s površine. Naučite se zadrževanja diha, izenačevanja, tehnike potopa in osnov, s katerimi se v vodi počutite mirno in samozavestno.",
+    depth: "do 20 m",
+    hours: "6 h teorije + 3 h bazen + 6 h morje",
+    prereq: "Brez predznanja, znati morate plavati 200 m",
     includes: [
       "SSI Freediving Level 1 certifikat",
       "Digitalno učno gradivo",
@@ -38,9 +38,9 @@ const courses = [
     overline: "SSI Freediving Level 2",
     title: "Nadaljevalni tečaj",
     description:
-      "Frenzel izenačevanje, prosti pad in globine do 35 metrov. Za tiste, ki ste po začetnem tečaju odkrili, da želite več.",
-    depth: "25–35m",
-    hours: "8h teorije + 3h bazen + 8h morje",
+      "Za tiste, ki ste po začetnem tečaju ugotovili, da želite globlje, mirneje in z boljšo tehniko. Naučite se Frenzel izenačevanja, prostega pada in dela na globinah, kjer se prosto potapljanje odpre na novo.",
+    depth: "25–35 m",
+    hours: "8 h teorije + 3 h bazen + 8 h morje",
     prereq: "Opravljen začetni tečaj (Level 1)",
     includes: [
       "SSI Freediving Level 2 certifikat",
@@ -56,9 +56,9 @@ const courses = [
     overline: "SSI Freediving Level 3",
     title: "Master tečaj",
     description:
-      "Mouthfill izenačevanje, najnaprednejše tehnike in globine do 40 metrov. Plus 2 brezplačna vodena treninga po zaključku.",
-    depth: "30–40m",
-    hours: "10h teorije + 3h bazen + 12h morje",
+      "Za izkušene potapljače, ki želijo razumeti napredne tehnike in se pripraviti na globine do 40 metrov. Mouthfill izenačevanje, več globinskega dela in 2 vodena treninga po zaključku.",
+    depth: "30–40 m",
+    hours: "10 h teorije + 3 h bazen + 12 h morje",
     prereq: "Opravljen nadaljevalni tečaj (Level 2)",
     includes: [
       "SSI Freediving Level 3 certifikat",
@@ -79,16 +79,17 @@ export default function TecajiPage() {
         <div className="max-w-2xl">
           <Overline>Tečaji prostega potapljanja</Overline>
           <h1 className="text-[36px] md:text-[52px] font-bold leading-[1.08] tracking-[-0.02em] text-navy mb-6">
-            Od prvega vdiha do 40 metrov globine
+            Naučite se prostega potapljanja, od prvega potopa do naprednih globin
           </h1>
           <p className="text-[17px] md:text-[20px] text-body leading-[1.6] font-body">
-            Trije SSI certificirani tečaji — vsak gradi na prejšnjem. Začnete
-            brez predznanja, končate z veščinami, ki jih ima le peščica
-            potapljačev. Vse pod vodstvom{" "}
+            Če želite bolje doživeti morje, napredovati v podvodnem ribolovu
+            ali končno ugotoviti, kaj vaše telo zmore na en vdih, začnite tukaj.
+            Tečaji so SSI certificirani in jih vodi{" "}
             <strong className="text-navy">
-              10-kratnega svetovnega prvaka Sama Jeranka
+              Samo Jeranko
             </strong>
-            .
+            , eden najboljših slovenskih potapljačev na vdih in izkušen učitelj
+            začetnikov, rekreativcev in tekmovalcev.
           </p>
         </div>
       </Section>
@@ -149,7 +150,7 @@ export default function TecajiPage() {
               <div className="flex flex-col justify-between">
                 <div>
                   <p className="text-[40px] font-bold text-navy font-heading leading-none mb-2">
-                    €{siteConfig.courses[course.key].price}
+                    {siteConfig.courses[course.key].price} €
                   </p>
                   <p className="text-sm text-muted-text font-body mb-6">
                     Vse vključeno
@@ -171,8 +172,8 @@ export default function TecajiPage() {
             Tečaj je tudi odlično darilo
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
-            Podarite izkušnjo prostega potapljanja. Darilni bon velja 1 leto
-            in je na voljo za vse tečaje.
+            Podarite izkušnjo, ki je človek ne pozabi po enem vikendu. Darilni
+            bon velja 1 leto in je na voljo za vse tečaje.
           </p>
           <Button asChild>
             <Link href="/darilni-bon">Darilni bon →</Link>
@@ -182,7 +183,7 @@ export default function TecajiPage() {
 
       <FinalCTA
         heading="Kateri tečaj je pravi za vas?"
-        description="Niste prepričani? Pišite nam — pomagamo vam izbrati pravi tečaj glede na vaše izkušnje in cilje."
+        description="Niste prepričani, ali začeti z začetnim tečajem ali nadaljevati na višji stopnji? Pišite nam in pomagali vam bomo izbrati pravi tečaj glede na vaše izkušnje in cilje."
         buttonText="Kontaktirajte nas →"
         buttonHref="/kontakt"
       />

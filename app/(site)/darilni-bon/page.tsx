@@ -11,13 +11,13 @@ import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 export const metadata = {
   title: "Darilni bon za tečaj prostega potapljanja",
   description:
-    "Podari izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, €395. Velja 1 leto. Digitalni bon po e-pošti.",
+    "Podarite izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, 395 €. Velja 1 leto. Digitalni bon po e-pošti.",
 };
 
 const faqs = [
   {
     q: "Kako deluje darilni bon?",
-    a: "Po nakupu prejmeš digitalni bon s kodo po e-pošti. Prejemnik se z bon kodo prijavi na izbrani termin tečaja po e-pošti na info@apnea.si. Bon velja 1 leto od nakupa.",
+    a: "Po nakupu prejmete digitalni bon s kodo po e-pošti. Prejemnik se s kodo bona prijavi na izbrani termin tečaja po e-pošti na info@apnea.si. Bon velja 1 leto od nakupa.",
   },
   {
     q: "Ali lahko prejemnik izbere termin in lokacijo?",
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: "Kaj če prejemnik že ima začetni tečaj?",
-    a: "Bon je mogoče uporabiti tudi za nadaljevalni ali master tečaj, doplača se razlika v ceni. Kontaktiraj nas na info@apnea.si.",
+    a: "Bon je mogoče uporabiti tudi za nadaljevalni ali master tečaj, doplača se razlika v ceni. Pišite nam na info@apnea.si.",
   },
 ];
 
@@ -68,15 +68,15 @@ export default function DarilniBonPage() {
               Darilo, ki si ga zapomnijo za vedno
             </h1>
             <p className="text-[17px] md:text-[19px] text-body leading-[1.6] font-body mb-3">
-              Podari izkušnjo prostega potapljanja: prvi potop pod morsko
+              Podarite izkušnjo prostega potapljanja: prvi potop pod morsko
               gladino, prvi dve minuti zadrževanja diha, prvi pogled na svet,
               ki ga večina nikoli ne vidi.
             </p>
             <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
-              €{siteConfig.courses.zacetni.price}
+              {siteConfig.courses.zacetni.price} €
             </p>
             <Button asChild>
-              <a href="/darilni-bon/nakup">Kupi darilni bon →</a>
+              <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
             </Button>
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function DarilniBonPage() {
         <div className="max-w-6xl mx-auto px-6">
           <Overline>Zakaj je to najboljše darilo</Overline>
           <SectionHeading className="mb-16 max-w-2xl">
-            Ne podari stvari. Podari izkušnjo.
+            Ne podarite stvari. Podarite izkušnjo.
           </SectionHeading>
 
           {/* Scenario 1 — text left, photo right */}
@@ -100,13 +100,13 @@ export default function DarilniBonPage() {
               </h3>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-4">
                 Partner, prijatelj ali družinski član, ki obožuje morje, a še
-                nikoli ni poskusil prostega potapljanja. Podari mu izkušnjo, ki
-                je ne bo pozabil: globoki potopi, dolgo zadrževanje diha in
-                ljubezen do modre globine.
+                nikoli ni poskusil prostega potapljanja. Podarite mu izkušnjo,
+                ki je ne bo pozabil: miren potop, dolgo zadrževanje diha in
+                nov pogled na morje.
               </p>
               <p className="text-[17px] text-body leading-[1.7] font-body">
-                Tečaj vodi 10-kratni svetovni prvak Samo Jeranko. Varno,
-                strokovno in v majhnih skupinah.
+                Tečaj vodi Samo Jeranko z ekipo izkušenih inštruktorjev:
+                strokovno, mirno in v majhnih skupinah.
               </p>
             </div>
             <div className="relative aspect-[4/3]">
@@ -176,7 +176,7 @@ export default function DarilniBonPage() {
       <section className="bg-surface py-16">
         <div className="max-w-6xl mx-auto px-6 mb-8">
           <p className="text-sm text-muted-text font-body">
-            To je izkušnja, ki jo podariš.
+            To je izkušnja, ki jo podarite.
           </p>
         </div>
         <PhotoGallery photos={giftPhotos} />
@@ -199,13 +199,13 @@ export default function DarilniBonPage() {
                 {[
                   {
                     step: "1",
-                    title: "Kupi darilni bon",
-                    text: "Opravi plačilo bona, ki stane €395 (začetni tečaj prostega potapljanja, SSI Level 1).",
+                    title: "Kupite darilni bon",
+                    text: "Opravite plačilo bona, ki stane 395 € (začetni tečaj prostega potapljanja, SSI Level 1).",
                   },
                   {
                     step: "2",
-                    title: "Prejmeš digitalni bon",
-                    text: "Po plačilu prejmeš bon s kodo po e-pošti, pripravljen za tiskanje ali pošiljanje prejemniku.",
+                    title: "Prejmete digitalni bon",
+                    text: "Po plačilu prejmete bon s kodo po e-pošti, pripravljen za tiskanje ali pošiljanje prejemniku.",
                   },
                   {
                     step: "3",
@@ -235,7 +235,7 @@ export default function DarilniBonPage() {
               <div className="bg-surface p-8 border border-border-custom">
                 <Overline>Darilni bon</Overline>
                 <p className="text-[48px] font-bold text-navy font-heading leading-none mb-2">
-                  €{siteConfig.courses.zacetni.price}
+                  {siteConfig.courses.zacetni.price} €
                 </p>
                 <p className="text-sm text-muted-text font-body mb-8">
                   Začetni tečaj prostega potapljanja · SSI Level 1
@@ -256,17 +256,17 @@ export default function DarilniBonPage() {
                   href="/darilni-bon/nakup"
                   className="block w-full mt-8 bg-gold text-white py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors text-center"
                 >
-                  Kupi darilni bon →
+                  Kupite darilni bon →
                 </a>
 
                 <p className="mt-6 text-sm text-muted-text font-body text-center">
-                  Želiš bon za nadaljevalni (€{siteConfig.courses.nadaljevalni.price}) ali
-                  master tečaj (€{siteConfig.courses.master.price})?{" "}
+                  Želite bon za nadaljevalni ({siteConfig.courses.nadaljevalni.price} €) ali
+                  master tečaj ({siteConfig.courses.master.price} €)?{" "}
                   <a
                     href={`mailto:${siteConfig.email}?subject=Darilni bon`}
                     className="text-gold hover:text-gold-hover transition-colors"
                   >
-                    Piši nam →
+                    Pišite nam →
                   </a>
                 </p>
               </div>
@@ -305,7 +305,7 @@ export default function DarilniBonPage() {
             gladino in si tečaj zapomnil za vedno.
           </p>
           <Button asChild size="xl">
-            <a href="/darilni-bon/nakup">Kupi darilni bon →</a>
+            <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
           </Button>
         </div>
       </section>

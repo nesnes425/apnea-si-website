@@ -203,7 +203,7 @@ export function TrainingScheduleSelector({
                 </dd>
               </div>
               <div className="flex justify-between gap-6">
-                <dt className="text-muted-text">Rezervacija mesta</dt>
+                <dt className="text-muted-text">Ob prijavi</dt>
                 <dd className="text-right font-medium text-navy">
                   {membershipFee} € letna članarina
                 </dd>
@@ -250,7 +250,7 @@ export function TrainingScheduleSelector({
                       </div>
                       {applicationsOpen && !group.isFull ? (
                         <Button asChild size="sm" fullWidth>
-                          <Link href={`/treningi/prijava?groupId=${group._id}`}>Izberite</Link>
+                          <Link href={`/treningi/prijava?groupId=${group._id}`}>Prijava</Link>
                         </Button>
                       ) : !group.isFull ? (
                         <span className="text-sm text-muted-text">Prijave zaprte</span>
