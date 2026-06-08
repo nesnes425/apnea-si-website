@@ -25,7 +25,7 @@ export function Header() {
         </Link>
 
         {/* Desktop nav — right aligned */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           {siteConfig.nav.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             const children = "children" in item ? item.children : undefined;
@@ -82,7 +82,7 @@ export function Header() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-white/80"
+          className="lg:hidden p-2 text-white/80"
           aria-label={mobileOpen ? "Zapri meni" : "Odpri meni"}
         >
           {mobileOpen ? (
@@ -99,7 +99,7 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="md:hidden bg-navy-dark border-t border-white/10">
+        <nav className="lg:hidden bg-navy-dark border-t border-white/10">
           <div className="px-6 py-6 flex flex-col gap-1">
             {siteConfig.nav.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
