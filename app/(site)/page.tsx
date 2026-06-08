@@ -6,15 +6,36 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
 
+const heroChoices = [
+  {
+    label: "Prvič pod gladino?",
+    title: "Začetni tečaj",
+    text: "Naučite se osnov, s katerimi se pod vodo premaknete mirno, samozavestno in z užitkom.",
+    href: "/tecaji/zacetni",
+  },
+  {
+    label: "Želite redno napredovati?",
+    title: "Treningi",
+    text: "Celoletne skupine za tehniko, kondicijo, rezultate in občutek skupnosti tudi izven poletja.",
+    href: "/treningi",
+  },
+  {
+    label: "Iščete posebno darilo?",
+    title: "Darilni bon",
+    text: "Podarite izkušnjo, ki ostane: začetni tečaj prostega potapljanja z ekipo Apnea.si.",
+    href: "/darilni-bon",
+  },
+];
+
 export default function HomePage() {
   return (
     <>
       <LocalBusinessJsonLd />
       {/* ============================================
-          1. HERO — image breathes, text below, CTA
+          1. HERO — cinematic image, clear next step
           ============================================ */}
-      <section>
-        <div className="relative w-full h-[50vh] md:h-[65vh] min-h-[400px] max-h-[600px]">
+      <section className="relative bg-navy-dark">
+        <div className="relative min-h-[720px] md:min-h-[760px] flex items-center overflow-hidden">
           <Image
             src="/images/placeholder/hero-samo-underwater.jpg"
             alt="Samo Jeranko med prostim potapljanjem"
@@ -22,21 +43,59 @@ export default function HomePage() {
             className="object-cover"
             priority
           />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy-dark/70 to-navy-dark/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-transparent to-transparent" />
 
-        <div className="max-w-6xl mx-auto px-6 py-12 md:py-16">
-          <h1 className="text-[36px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-navy font-heading max-w-3xl mb-6">
-            Odkrijte svet pod gladino na en vdih
-          </h1>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <p className="text-[17px] md:text-[20px] text-body leading-[1.6] font-body max-w-xl">
-              Naučite se prostega potapljanja v največji šoli v Sloveniji.
-              Od prvega zadrževanja diha do potopov v morju, kjer odkrijete
-              tišino, mir in občutek, da zmorete veliko več, kot ste mislili.
-            </p>
-            <Button asChild>
-              <Link href="/tecaji">Oglejte si tečaje →</Link>
-            </Button>
+          <div className="relative z-10 w-full">
+            <div className="max-w-6xl mx-auto px-6 pt-20 pb-12 md:pt-28 md:pb-20">
+              <div className="max-w-3xl">
+                <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-gold font-body mb-5">
+                  Apnea Slovenija
+                </p>
+                <h1 className="text-[38px] md:text-[64px] font-bold leading-[1.04] tracking-[-0.035em] text-white font-heading mb-6">
+                  Prosto potapljanje se začne z enim mirnim vdihom
+                </h1>
+                <p className="text-[18px] md:text-[21px] text-white/80 leading-[1.65] font-body max-w-2xl mb-8">
+                  Naučite se potopiti samozavestno, varno in z užitkom. Tečaji
+                  in treningi prostega potapljanja po Sloveniji pod vodstvom
+                  Sama Jeranka in ekipe Apnea.si.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button asChild size="xl">
+                    <Link href="/tecaji/zacetni">Začnite z začetnim tečajem →</Link>
+                  </Button>
+                  <Link
+                    href="/treningi"
+                    className="inline-flex items-center justify-center border border-white/30 px-10 py-4 text-[16px] font-medium text-white hover:border-gold hover:text-gold transition-colors font-body"
+                  >
+                    Poglejte treninge →
+                  </Link>
+                </div>
+              </div>
+
+              <div className="mt-16 grid gap-4 md:grid-cols-3">
+                {heroChoices.map((choice) => (
+                  <Link
+                    key={choice.href}
+                    href={choice.href}
+                    className="group border border-white/15 bg-white/95 p-6 transition-colors hover:border-gold"
+                  >
+                    <p className="text-[12px] font-medium uppercase tracking-[0.09em] text-gold font-body mb-3">
+                      {choice.label}
+                    </p>
+                    <h2 className="text-[24px] font-semibold leading-tight text-navy font-heading mb-3">
+                      {choice.title}
+                    </h2>
+                    <p className="text-[15px] text-body leading-[1.65] font-body mb-5">
+                      {choice.text}
+                    </p>
+                    <span className="text-[14px] font-medium text-gold group-hover:text-gold-hover transition-colors font-body">
+                      Izberite pot →
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
