@@ -59,3 +59,18 @@ lib/
 - Check `lib/config.ts` exists and is up to date
 - New components follow existing patterns in `components/blocks/`
 - Run `npm run build` before committing — fix all errors and warnings
+
+## Samo/Katarina Agent Guides
+
+When Samo or Katarina use Claude Code / Codex to operate this website, read the guides in
+`agent-guides/` before acting:
+
+- `agent-guides/README.md` — guide index and global guardrails
+- `agent-guides/sanity-content-editing.md` — course dates and blog posts via Sanity MCP
+- `agent-guides/stripe-operations.md` — payment inspection, refunds, webhooks, voucher lookup
+- `agent-guides/website-code.md` — safe code-editing rules for this site
+- `agent-guides/mcp-setup.md` — how to connect Sanity, Stripe, and optional MCPs safely
+
+Important: Samo/Katarina may have Admin access in Sanity because the current plan lacks
+granular editor roles. Treat that as content-editor-only access unless Neža explicitly
+says otherwise.
