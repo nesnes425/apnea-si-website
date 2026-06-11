@@ -53,7 +53,7 @@ export default function HomePage() {
                   Apnea Slovenija
                 </p>
                 <h1 className="text-[38px] md:text-[64px] font-bold leading-[1.04] tracking-[-0.035em] text-white font-heading mb-6">
-                  Prosto potapljanje se začne z enim mirnim vdihom
+                  Vstopite v svet prostega potapljanja
                 </h1>
                 <p className="text-[18px] md:text-[21px] text-white/80 leading-[1.65] font-body max-w-2xl mb-8">
                   Naučite se potopiti samozavestno, varno in z užitkom. Tečaji
