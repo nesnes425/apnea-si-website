@@ -11,8 +11,8 @@ To use:
 3. Fill only the values marked `PASTE_...`.
 4. Do not paste secrets into Claude/Codex chat.
 
-Katarina should have everything needed for content/code preview work **except Stripe**.
-Stripe remains Neža/Samo-only for now.
+Katarina should have everything needed for content/code preview work and Brevo-related
+work **except Stripe**. Stripe remains Neža/Samo-only for now.
 
 ```bash
 # === Sanity ===
@@ -25,30 +25,13 @@ NEXT_PUBLIC_SANITY_PROJECT_ID="t1msc3zw"
 SANITY_API_TOKEN=PASTE_KATARINA_SANITY_API_TOKEN_HERE
 
 
-# === Stripe — intentionally not shared with Katarina ===
-# Leave these empty unless Neža explicitly decides Katarina should test payment flows locally.
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_PRICE_ZACETNI=
-STRIPE_PRICE_NADALJEVALNI=
-STRIPE_PRICE_MASTER=
-STRIPE_PRICE_GIFT_ZACETNI=
-STRIPE_WEBHOOK_SECRET=
-
-# Training Stripe account — intentionally not shared with Katarina.
-TRAINING_STRIPE_SECRET_KEY=
-NEXT_PUBLIC_TRAINING_STRIPE_PUBLISHABLE_KEY=
-TRAINING_STRIPE_WEBHOOK_SECRET=
-
-
 # === Brevo ===
-# Secret. Only needed if Katarina must test code paths that send emails or manage Brevo contacts/lists.
-# If she only edits Sanity content, she does not need this.
+# Secret. Needed if Katarina manages Brevo contacts/lists or tests email flows.
 BREVO_API_KEY=PASTE_KATARINA_BREVO_API_KEY_HERE
 
 # Safe/default values:
 BREVO_FROM_EMAIL=info@apnea.si
-BREVO_FROM_NAME=Apnea Slovenija
+BREVO_FROM_NAME="Apnea Slovenija"
 BREVO_NOTIFY_EMAIL=info@apnea.si
 
 # Brevo list/folder IDs. These are not secrets; they identify existing lists/folders.
@@ -56,9 +39,7 @@ BREVO_LIST_ALUMNI_ZACETNI=91
 BREVO_LIST_ALUMNI_NADALJEVALNI=92
 BREVO_LIST_ALUMNI_MASTER=93
 BREVO_FOLDER_TECAJNIKI=16
-
-# Fill if Katarina needs training-list code paths. Otherwise leave blank.
-BREVO_FOLDER_TRAININGS=PASTE_TRAININGS_FOLDER_ID_OR_LEAVE_EMPTY
+BREVO_FOLDER_TRAININGS=40
 
 
 # === Cron ===
@@ -86,5 +67,5 @@ She usually does **not** need:
 - Stripe keys
 - Stripe webhook secret
 - Vercel access
-- Brevo API key, unless testing email/contact flows
 
+She does need Brevo values if she will manage Brevo contacts/lists or test email flows.
