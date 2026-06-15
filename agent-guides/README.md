@@ -15,6 +15,7 @@ Before helping Samo or Katarina with Apnea.si, read:
    - `stripe-operations.md` — Stripe payments, products, webhooks, refunds
    - `website-code.md` — safe website code changes
    - `mcp-setup.md` — connecting and using MCPs safely
+   - `katarina-local-env-template.md` — shareable `.env.local` template for Katarina
 
 ## Primary Rule
 
@@ -44,4 +45,3 @@ For any content, payment, or production-affecting change:
 
 Small code edits can be made directly if requested, but still run the relevant checks
 before committing.
-

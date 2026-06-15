@@ -17,6 +17,23 @@ Preferred setup:
 - Stripe login / Stripe MCP gives payment visibility.
 - Other systems are added only when there is a clear workflow.
 
+## Katarina Profile
+
+Katarina should get everything needed for content and website-preview work **except
+Stripe**.
+
+Recommended for Katarina:
+
+- Sanity MCP — yes, required
+- Brevo MCP/API — only if she will manage Brevo lists/campaigns or test email flows
+- Browser/local preview — yes, useful for checking website changes
+- Gmail for `info@apnea.si` — optional, only if she will help with support/customer email
+- Stripe MCP — no, keep with Neža/Samo for now
+- Vercel — no, keep with Neža for now
+
+If a task touches money, refunds, live webhooks, environment variables, or deployment
+settings, pause and ask Neža.
+
 ## Required MCPs
 
 ### Sanity
@@ -54,6 +71,8 @@ Purpose:
 Stripe MCP setup depends on the current Claude Code / Codex environment. Prefer the
 official Stripe MCP and the user’s own Stripe login/account. If a secret key is required,
 guide the user to configure it locally; do not paste it into chat.
+
+Do **not** set this up for Katarina unless Neža explicitly changes the access model.
 
 First test prompt:
 
@@ -125,4 +144,3 @@ Use Stripe MCP. Find payment for customer ana@example.com. Show me the amount, s
 - Any shared mailbox with broad business history
 
 If a connection grants broad access, pause and ask Neža.
-
