@@ -46,7 +46,7 @@ export default function KontaktPage() {
       {/* Hero with photo */}
       <section className="relative w-full min-h-[320px] md:min-h-[400px] flex items-end">
         <Image
-          src="/images/placeholder/tecaj-skupina.jpg"
+          src="/images/kontakt-hero.webp"
           alt="Ekipa Apnea Slovenija"
           fill
           className="object-cover"

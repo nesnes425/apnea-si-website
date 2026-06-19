@@ -37,10 +37,11 @@ export default function HomePage() {
       <section className="relative bg-navy-dark">
         <div className="relative min-h-[720px] md:min-h-[760px] flex items-center overflow-hidden">
           <Image
-            src="/images/placeholder/hero-samo-underwater.jpg"
+            src="/images/domov-hero.webp"
             alt="Samo Jeranko med prostim potapljanjem"
             fill
             className="object-cover"
+            style={{ objectPosition: "right center" }}
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy-dark/70 to-navy-dark/15" />
@@ -109,7 +110,7 @@ export default function HomePage() {
             {/* Image — takes ~60% width, full height */}
             <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:left-0 md:w-[60%]">
               <Image
-                src="/images/placeholder/tecaj-bled.png"
+                src="/images/domov-tecaji.webp"
                 alt="Tečaj prostega potapljanja"
                 fill
                 className="object-cover"
@@ -168,7 +169,7 @@ export default function HomePage() {
             {/* Image — right-aligned, full height */}
             <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:right-0 md:w-[60%]">
               <Image
-                src="/images/placeholder/tecaj-bazen-samo.png"
+                src="/images/domov-treningi.webp"
                 alt="Trening v bazenu"
                 fill
                 className="object-cover"
@@ -258,7 +259,7 @@ export default function HomePage() {
               {/* Main portrait */}
               <div className="relative aspect-[3/4] w-[85%]">
                 <Image
-                  src="/images/placeholder/samo-portrait.jpg"
+                  src="/images/domov-samo-1.webp"
                   alt="Samo Jeranko"
                   fill
                   className="object-cover"
@@ -268,7 +269,7 @@ export default function HomePage() {
               <div className="absolute bottom-[-30px] right-[-10px] flex gap-3">
                 <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
                   <Image
-                    src="/images/placeholder/tedx-samo-23.webp"
+                    src="/images/domov-samo-2.webp"
                     alt="Samo na TEDx Ljubljana"
                     fill
                     className="object-cover"
@@ -276,7 +277,7 @@ export default function HomePage() {
                 </div>
                 <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
                   <Image
-                    src="/images/placeholder/samo-cmas-2025.png"
+                    src="/images/domov-samo-3.webp"
                     alt="Samo na svetovnem prvenstvu"
                     fill
                     className="object-cover"

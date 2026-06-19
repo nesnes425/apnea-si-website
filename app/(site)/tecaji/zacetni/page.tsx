@@ -24,13 +24,14 @@ export const metadata = {
 // === Page-specific data ===
 
 const coursePhotos = [
-  { src: "/images/placeholder/tecaj-bled.png", alt: "Tečaj prostega potapljanja na Bledu" },
-  { src: "/images/placeholder/tecaj-morje.png", alt: "Potapljanje v morju" },
-  { src: "/images/placeholder/tecaj-bazen-samo.png", alt: "Samo Jeranko med poukom v bazenu" },
-  { src: "/images/placeholder/tecaj-skupina.jpg", alt: "Vesela skupina tečajnikov" },
-  { src: "/images/placeholder/trening-camp.jpg", alt: "Trening camp prostega potapljanja" },
-  { src: "/images/placeholder/tecaj-ljubljana.jpg", alt: "Tečaj v Ljubljani" },
-  { src: "/images/placeholder/prosto-potapljanje-depth.jpg", alt: "Potop v globino" },
+  { src: "/images/tecaji-zacetni-galerija-1.webp", alt: "Tečaj prostega potapljanja" },
+  { src: "/images/tecaji-zacetni-galerija-7.webp", alt: "Potop v globino" },
+  { src: "/images/tecaji-zacetni-galerija-2.webp", alt: "Potapljanje v morju" },
+  { src: "/images/tecaji-zacetni-galerija-3.webp", alt: "Samo Jeranko med poukom v bazenu" },
+  { src: "/images/tecaji-zacetni-galerija-8.webp", alt: "Prosto potapljanje" },
+  { src: "/images/tecaji-zacetni-galerija-4.webp", alt: "Vesela skupina tečajnikov" },
+  { src: "/images/tecaji-zacetni-galerija-5.webp", alt: "Trening prostega potapljanja" },
+  { src: "/images/tecaji-zacetni-galerija-6.webp", alt: "Tečaj v bazenu" },
 ];
 
 const stories = [
@@ -147,10 +148,11 @@ function Hero() {
   return (
     <section className="relative w-full min-h-[560px] md:min-h-[640px] flex items-center">
       <Image
-        src="/images/placeholder/tecaj-bled.png"
+        src="/images/tecaji-zacetni-hero.webp"
         alt="Prosto potapljanje v čistem jezeru"
         fill
         className="object-cover"
+        style={{ objectPosition: "70% center" }}
         priority
       />
       <div className="absolute inset-0 bg-gradient-to-r from-white from-[40%] via-white/80 via-[55%] to-transparent to-[75%]" />
@@ -272,7 +274,7 @@ function OutcomePromise() {
 
         <div className="relative aspect-[3/4]">
           <Image
-            src="/images/placeholder/prosto-potapljanje-depth.jpg"
+            src="/images/tecaji-zacetni-pricakovan-napredek.webp"
             alt="Potapljač med prostim potapljanjem v globino"
             fill
             className="object-cover"
@@ -289,7 +291,7 @@ function Instructor() {
       <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
         <div className="relative aspect-[4/5] md:aspect-[3/4]">
           <Image
-            src="/images/placeholder/samo-portrait.jpg"
+            src="/images/tecaji-zacetni-instruktor.webp"
             alt="Samo Jeranko, inštruktor prostega potapljanja"
             fill
             className="object-cover"
@@ -525,6 +527,7 @@ export default function ZacetniTecajPage() {
       <DatesAndBooking />
       <FAQ items={faqs} />
       <FinalCTA
+        backgroundImage="/images/tecaji-zacetni-CTA.webp"
         heading="Odkrijte, kaj zmorete pod morsko gladino"
         description={`Začetni tečaj prostega potapljanja vas nauči osnov, s katerimi morje doživite drugače. Cena tečaja je ${siteConfig.courses.zacetni.price} €.`}
       />

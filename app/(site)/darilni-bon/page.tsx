@@ -38,10 +38,15 @@ const faqs = [
 ];
 
 const giftPhotos = [
-  { src: "/images/placeholder/tecaj-bled.png", alt: "Tečaj prostega potapljanja na Bledu", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-skupina.jpg", alt: "Vesela skupina po tečaju", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-morje.png", alt: "Potapljanje v morju", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-bazen-samo.png", alt: "Samo med poukom", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-2.webp", alt: "Tečaj prostega potapljanja", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-3.webp", alt: "Vesela skupina po tečaju", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-4.webp", alt: "Potapljanje v morju", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-5.webp", alt: "Samo med poukom", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-6.webp", alt: "Prosto potapljanje", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-7.webp", alt: "Tečaj prostega potapljanja", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-8.webp", alt: "Potapljanje", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-9.webp", alt: "Skupina tečajnikov", aspect: 1.5 },
+  { src: "/images/darilni-bon-galerija-10.webp", alt: "Prosto potapljanje v morju", aspect: 1.5 },
 ];
 
 export default function DarilniBonPage() {
@@ -52,7 +57,7 @@ export default function DarilniBonPage() {
           ============================================ */}
       <section className="relative w-full min-h-[520px] md:min-h-[600px] flex items-center">
         <Image
-          src="/images/placeholder/tecaj-bled.png"
+          src="/images/darilni-bon-hero.webp"
           alt="Prosto potapljanje — nepozabna izkušnja"
           fill
           className="object-cover"
@@ -111,7 +116,7 @@ export default function DarilniBonPage() {
             </div>
             <div className="relative aspect-[4/3]">
               <Image
-                src="/images/placeholder/tecaj-morje.png"
+                src="/images/darilni-bon-zakaj-1.webp"
                 alt="Potapljanje v morju"
                 fill
                 className="object-cover"
@@ -123,7 +128,7 @@ export default function DarilniBonPage() {
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center mb-20">
             <div className="relative aspect-[4/3] md:order-1">
               <Image
-                src="/images/placeholder/tecaj-skupina.jpg"
+                src="/images/darilni-bon-zakaj-2.webp"
                 alt="Vesela skupina po tečaju"
                 fill
                 className="object-cover"
@@ -160,7 +165,7 @@ export default function DarilniBonPage() {
             </div>
             <div className="relative aspect-[4/3]">
               <Image
-                src="/images/placeholder/tecaj-bazen-samo.png"
+                src="/images/darilni-bon-zakaj-3.webp"
                 alt="Samo med poukom v bazenu"
                 fill
                 className="object-cover"

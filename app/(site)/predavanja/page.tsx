@@ -14,10 +14,9 @@ export const metadata = {
 };
 
 const eventPhotos = [
-  { src: "/images/placeholder/tedx-samo-23.webp", alt: "Samo Jeranko na TEDx Ljubljana", aspect: 1.5 },
-  { src: "/images/placeholder/tedx-samo-61.webp", alt: "Samo Jeranko na odru TEDx Ljubljana", aspect: 0.67 },
-  { src: "/images/placeholder/samo-cmas-2025.png", alt: "Samo Jeranko na tekmovanju", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-skupina.jpg", alt: "Delavnica z ekipo", aspect: 1.5 },
+  { src: "/images/predavanja-galerija-1.webp", alt: "Samo Jeranko na TEDx Ljubljana", aspect: 1.5 },
+  { src: "/images/predavanja-galerija-3.webp", alt: "Samo Jeranko na tekmovanju", aspect: 1.5 },
+  { src: "/images/predavanja-galerija-4.webp", alt: "Delavnica z ekipo", aspect: 1.5 },
 ];
 
 const faqs = [
@@ -51,7 +50,7 @@ export default function PredavanjaPage() {
           ============================================ */}
       <section className="relative w-full min-h-[560px] md:min-h-[640px] flex items-center bg-navy-dark">
         <Image
-          src="/images/placeholder/tedx-samo-23.webp"
+          src="/images/predavanja-hero.webp"
           alt="Samo Jeranko na TEDx Ljubljana"
           fill
           className="object-cover opacity-50"
@@ -264,18 +263,6 @@ export default function PredavanjaPage() {
                 vam bomo ponudbo. Samo se pred vsakim nastopom osebno pogovori
                 z organizatorjem.
               </p>
-
-              <div className="relative aspect-[4/3] mt-8 hidden md:block">
-                <Image
-                  src="/images/placeholder/tedx-samo-23.webp"
-                  alt="Samo Jeranko na TEDx Ljubljana"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
-            <div>
               <SpeakingInquiryForm />
               <p className="mt-5 text-sm text-muted-text font-body">
                 Ali pokličite{" "}
@@ -286,6 +273,15 @@ export default function PredavanjaPage() {
                   {siteConfig.phone}
                 </a>
               </p>
+            </div>
+
+            <div className="relative aspect-[3/4] hidden md:block">
+              <Image
+                src="/images/predavanja-povabite-sama.webp"
+                alt="Samo Jeranko na TEDx Ljubljana"
+                fill
+                className="object-cover"
+              />
             </div>
           </div>
         </div>

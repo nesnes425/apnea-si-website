@@ -86,10 +86,16 @@ const faqs = [
 ];
 
 const coursePhotos = [
-  { src: "/images/placeholder/tecaj-morje.png", alt: "Potapljanje v morju" },
-  { src: "/images/placeholder/prosto-potapljanje-depth.jpg", alt: "Potop v globino" },
-  { src: "/images/placeholder/trening-camp.jpg", alt: "Trening prostega potapljanja" },
-  { src: "/images/placeholder/tecaj-bled.png", alt: "Tečaj na Bledu" },
+  { src: "/images/tecaji-nadaljevalni-galerija-1.webp", alt: "Nadaljevalni tečaj prostega potapljanja" },
+  { src: "/images/tecaji-nadaljevalni-galerija-2.webp", alt: "Potapljanje v morju" },
+  { src: "/images/tecaji-nadaljevalni-galerija-3.webp", alt: "Globinsko potapljanje" },
+  { src: "/images/tecaji-nadaljevalni-galerija-4.webp", alt: "Prosto potapljanje" },
+  { src: "/images/tecaji-nadaljevalni-galerija-5.webp", alt: "Tečaj na morju" },
+  { src: "/images/tecaji-nadaljevalni-galerija-6.webp", alt: "Potop v globino" },
+  { src: "/images/tecaji-nadaljevalni-galerija-7.webp", alt: "Nadaljevalni tečaj" },
+  { src: "/images/tecaji-nadaljevalni-galerija-8.webp", alt: "Prosto potapljanje v morju" },
+  { src: "/images/tecaji-nadaljevalni-galerija-9.webp", alt: "Potapljač" },
+  { src: "/images/tecaji-nadaljevalni-galerija-10.webp", alt: "Globinsko potapljanje" },
 ];
 
 // === Sections ===
@@ -98,7 +104,7 @@ function Hero() {
   return (
     <section className="relative w-full min-h-[560px] md:min-h-[640px] flex items-center">
       <Image
-        src="/images/placeholder/prosto-potapljanje-depth.jpg"
+        src="/images/tecaji-nadaljevalni-hero.webp"
         alt="Potapljač med potopom v globino"
         fill
         className="object-cover"
@@ -158,7 +164,7 @@ function WhyAdvanced() {
 
         <div className="relative aspect-[3/4]">
           <Image
-            src="/images/placeholder/tecaj-morje.png"
+            src="/images/tecaji-nadaljevalni-zakaj-nadaljevalni.webp"
             alt="Prosto potapljanje v morju"
             fill
             className="object-cover"
@@ -214,7 +220,7 @@ function OutcomePromise() {
 
         <div className="relative aspect-[3/4]">
           <Image
-            src="/images/placeholder/trening-camp.jpg"
+            src="/images/tecaji-nadaljevalni-pricakovan-napredek.webp"
             alt="Globinsko potapljanje"
             fill
             className="object-cover"
@@ -422,7 +428,7 @@ export default function NadaljevalniTecajPage() {
       <FinalCTA
         heading="Odkrijte, kaj se skriva pod 30 metri"
         description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m. ${siteConfig.courses.nadaljevalni.price} €.`}
-        backgroundImage="/images/placeholder/prosto-potapljanje-depth.jpg"
+        backgroundImage="/images/tecaji-nadaljevalni-CTA.webp"
       />
     </>
   );

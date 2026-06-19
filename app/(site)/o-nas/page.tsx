@@ -18,7 +18,7 @@ const communityStories = [
     name: "Polona",
     role: "Trenerka in tekmovalka",
     years: "8 let z nami",
-    image: "/images/placeholder/tecaj-skupina.jpg",
+    image: "/images/onas-polona.webp",
     story:
       "Prišla je kot navdušenka, ki je želela poskusiti potapljanje v bazenu. Danes plava 150 metrov pod vodo brez plavuti in je ena tistih ljudi, ki najbolje pokažejo, kam lahko pripelje redna vadba. Postala je trenerka, ki vodi skupine v bazenu, pomaga pri organizaciji kluba in je prisotna na tekmovanjih.",
   },
@@ -26,7 +26,7 @@ const communityStories = [
     name: "Matevž",
     role: "Inštruktor",
     years: "6 let z nami",
-    image: "/images/placeholder/tecaj-bazen-samo.png",
+    image: "/images/onas-matevz.webp",
     story:
       "Začel je v bazenu, potem opravil inštruktorski tečaj in danes pomaga voditi tečaje. Srečate ga lahko tako na bazenu kot na našem vsakoletnem trening kampu. Brez Matevža Samovi tečaji ne bi potekali tako mirno in gladko.",
   },
@@ -34,7 +34,7 @@ const communityStories = [
     name: "Simon",
     role: "Inštruktor, z nami od samega začetka",
     years: "12+ let z nami",
-    image: "/images/placeholder/trening-camp.jpg",
+    image: "/images/onas-simon.webp",
     story:
       "Simon je eden tistih, ki so bili tu že od prvih sezon. Že več kot 12 let trenira, napreduje in pomaga drugim. Postal je inštruktor in danes soustvarja tečaje skupaj s Samom.",
   },
@@ -52,7 +52,7 @@ export default function ONasPage() {
           ============================================ */}
       <section className="relative w-full min-h-[500px] md:min-h-[600px] flex items-end">
         <Image
-          src="/images/placeholder/tecaj-skupina.jpg"
+          src="/images/onas-hero.webp"
           alt="Skupnost Apnea Slovenija"
           fill
           className="object-cover"
@@ -116,7 +116,7 @@ export default function ONasPage() {
             <div className="space-y-6">
               <div className="relative aspect-[3/4]">
                 <Image
-                  src="/images/placeholder/samo-portrait.jpg"
+                  src="/images/onas-samo.webp"
                   alt="Samo Jeranko"
                   fill
                   className="object-cover"
@@ -280,7 +280,7 @@ export default function ONasPage() {
 
             <div className="relative aspect-[4/3]">
               <Image
-                src="/images/placeholder/samo-cmas-2025.png"
+                src="/images/onas-tekmovanje.webp"
                 alt="Tekmovanje prostega potapljanja"
                 fill
                 className="object-cover"

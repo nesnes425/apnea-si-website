@@ -131,7 +131,7 @@ export default function ProstoPotapljanjePage() {
 
       <section className="relative min-h-[70vh] flex items-center overflow-hidden">
         <Image
-          src="/images/placeholder/prosto-potapljanje-depth.jpg"
+          src="/images/prosto-potapljanje-hero.webp"
           alt="Prosto potapljanje v modrini"
           fill
           priority
@@ -321,9 +321,9 @@ export default function ProstoPotapljanjePage() {
 
       <Section>
         <div className="grid md:grid-cols-2 gap-14 items-start">
-          <div className="relative aspect-[4/3]">
+          <div className="relative aspect-[3/4]">
             <Image
-              src="/images/placeholder/tecaj-morje.png"
+              src="/images/prosto-potapljanje-ribolov.webp"
               alt="Potapljanje na vdih v morju"
               fill
               className="object-cover"
@@ -429,7 +429,7 @@ export default function ProstoPotapljanjePage() {
 
       <section className="relative w-full py-24 md:py-32">
         <Image
-          src="/images/placeholder/tecaj-bled.png"
+          src="/images/prosto-potapljanje-pod-gladino.webp"
           alt=""
           fill
           className="object-cover"

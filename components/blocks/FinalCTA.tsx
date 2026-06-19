@@ -7,6 +7,7 @@ interface FinalCTAProps {
   buttonText?: string;
   buttonHref?: string;
   backgroundImage?: string;
+  imagePosition?: string;
 }
 
 export function FinalCTA({
@@ -15,6 +16,7 @@ export function FinalCTA({
   buttonText = "Rezervirajte svoje mesto →",
   buttonHref = "#termini",
   backgroundImage = "/images/placeholder/tecaj-morje.png",
+  imagePosition = "center center",
 }: FinalCTAProps) {
   return (
     <section className="relative w-full py-24 md:py-32">
@@ -23,6 +25,7 @@ export function FinalCTA({
         alt=""
         fill
         className="object-cover"
+        style={{ objectPosition: imagePosition }}
       />
       <div className="absolute inset-0 bg-navy/85" />
       <div className="relative max-w-6xl mx-auto px-6 text-center">

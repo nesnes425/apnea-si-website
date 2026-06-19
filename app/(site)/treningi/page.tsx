@@ -51,10 +51,15 @@ const faqs = [
 ];
 
 const trainingPhotos = [
-  { src: "/images/placeholder/tecaj-bazen-samo.png", alt: "Trening v bazenu", aspect: 1.5 },
-  { src: "/images/placeholder/trening-camp.jpg", alt: "Trening camp", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-skupina.jpg", alt: "Skupina na treningu", aspect: 1.5 },
-  { src: "/images/placeholder/tecaj-bled.png", alt: "Trening na prostem", aspect: 1.5 },
+  { src: "/images/treningi-galerija-1.webp", alt: "Trening v bazenu", aspect: 1.5 },
+  { src: "/images/treningi-galerija-2.webp", alt: "Trening camp", aspect: 1.5 },
+  { src: "/images/treningi-galerija-3.webp", alt: "Skupina na treningu", aspect: 1.5 },
+  { src: "/images/treningi-galerija-4.webp", alt: "Trening na prostem", aspect: 1.5 },
+  { src: "/images/treningi-galerija-5.webp", alt: "Prosto potapljanje", aspect: 1.5 },
+  { src: "/images/treningi-galerija-6.webp", alt: "Trening prostega potapljanja", aspect: 1.5 },
+  { src: "/images/treningi-galerija-7.webp", alt: "Vadba v bazenu", aspect: 1.5 },
+  { src: "/images/treningi-galerija-8.webp", alt: "Skupinski trening", aspect: 1.5 },
+  { src: "/images/treningi-galerija-9.webp", alt: "Prosto potapljanje v bazenu", aspect: 1.5 },
 ];
 
 export default async function TreningiPage() {
@@ -69,10 +74,11 @@ export default async function TreningiPage() {
     <>
       <section className="relative flex min-h-[520px] w-full items-center md:min-h-[600px]">
         <Image
-          src="/images/placeholder/tecaj-bazen-samo.png"
+          src="/images/treningi-hero-v2.webp"
           alt="Trening prostega potapljanja v bazenu"
           fill
           className="object-cover"
+          style={{ objectPosition: "85% center" }}
           sizes="100vw"
           priority
         />
@@ -144,7 +150,7 @@ export default async function TreningiPage() {
             </div>
             <div className="relative aspect-[4/3]">
               <Image
-                src="/images/placeholder/trening-camp.jpg"
+                src="/images/treningi-kako-je-na-treningu.webp"
                 alt="Trening prostega potapljanja"
                 fill
                 sizes="(min-width: 768px) 50vw, 100vw"

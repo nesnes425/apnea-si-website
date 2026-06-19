@@ -182,6 +182,8 @@ export default function TecajiPage() {
       </Section>
 
       <FinalCTA
+        backgroundImage="/images/tecaji-CTA.webp"
+        imagePosition="center 70%"
         heading="Kateri tečaj je pravi za vas?"
         description="Niste prepričani, ali začeti z začetnim tečajem ali nadaljevati na višji stopnji? Pišite nam in pomagali vam bomo izbrati pravi tečaj glede na vaše izkušnje in cilje."
         buttonText="Kontaktirajte nas →"

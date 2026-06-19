@@ -91,7 +91,7 @@ function Hero() {
   return (
     <section className="relative w-full min-h-[560px] md:min-h-[640px] flex items-center">
       <Image
-        src="/images/placeholder/samo-cmas-2025.png"
+        src="/images/tecaji-master-hero.webp"
         alt="Samo Jeranko na tekmovanju"
         fill
         className="object-cover"
@@ -152,7 +152,7 @@ function WhyMaster() {
 
         <div className="relative aspect-[3/4]">
           <Image
-            src="/images/placeholder/prosto-potapljanje-depth.jpg"
+            src="/images/tecaji-master-zakaj.webp"
             alt="Globinsko prosto potapljanje"
             fill
             className="object-cover"
@@ -208,7 +208,7 @@ function OutcomePromise() {
 
         <div className="relative aspect-[3/4]">
           <Image
-            src="/images/placeholder/trening-camp.jpg"
+            src="/images/tecaji-master-pricakovan-napredek.webp"
             alt="Trening prostega potapljanja"
             fill
             className="object-cover"
@@ -388,7 +388,7 @@ export default function MasterTecajPage() {
       <FinalCTA
         heading="Globina, ki jo razumete. Ne le dosežete."
         description={`Master tečaj prostega potapljanja: Mouthfill, 30–40 m, 2 vodena treninga. ${siteConfig.courses.master.price} €.`}
-        backgroundImage="/images/placeholder/prosto-potapljanje-depth.jpg"
+        backgroundImage="/images/tecaji-master-CTA.webp"
       />
     </>
   );
