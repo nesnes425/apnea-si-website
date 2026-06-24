@@ -131,23 +131,21 @@ If changing payment/webhook code, test with Stripe test mode before considering 
 
 ## Commit Model
 
-This website is a git submodule. Commit inside the website repo first, then update the
-parent monorepo pointer.
+This website is a git submodule inside the Apnea.si hub. Commit inside the website repo first, then update the hub pointer. The Produktnica parent repo points at the hub, not directly at this website checkout.
 
 Workflow:
 
 ```bash
-cd websites/apnea-si-website
+cd clients/samo-jeranko/apnea-si-hub/website/apnea-si-website
 git status
 git add ...
 git commit -m "..."
 git push origin main
 
 cd ../..
-git add websites/apnea-si-website
+git add website/apnea-si-website
 git commit -m "Apnea.si: update submodule pointer"
 git push origin main
 ```
 
 Do not commit unrelated parent-monorepo changes unless the user explicitly asks.
-
