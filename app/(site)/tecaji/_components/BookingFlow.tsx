@@ -85,7 +85,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <Input
-        label="Ime in priimek"
+        label="Ime in priimek (obvezno)"
         id="fullName"
         name="fullName"
         type="text"
@@ -94,7 +94,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
         error={errors.fullName}
       />
       <Input
-        label="E-pošta"
+        label="E-pošta (obvezno)"
         id="email"
         name="email"
         type="email"
@@ -103,7 +103,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
         error={errors.email}
       />
       <Input
-        label="Telefon"
+        label="Telefon (obvezno)"
         id="phone"
         name="phone"
         type="tel"
@@ -113,7 +113,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
       />
       <div>
         <label htmlFor="note" className="mb-2 block font-body text-sm font-medium text-body">
-          Opomba ali vprašanje
+          Opomba ali vprašanje (neobvezno)
         </label>
         <textarea
           id="note"
@@ -134,7 +134,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
             required
           />
           <span className="text-sm text-body font-body leading-relaxed">
-            Strinjam se s{" "}
+            Obvezno: strinjam se s{" "}
             <a href="/pogoji" target="_blank" className="text-gold hover:text-gold-hover underline">
               pogoji poslovanja
             </a>{" "}
