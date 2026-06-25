@@ -38,7 +38,7 @@ export function GoogleTestimonials({ reviews }: GoogleTestimonialsProps) {
               rel="noopener noreferrer"
               className="text-[15px] text-gold font-medium font-body hover:text-gold-hover transition-colors"
             >
-              Preberite vse ocene →
+              Vse Google ocene →
             </a>
           </div>
         </div>
@@ -49,17 +49,12 @@ export function GoogleTestimonials({ reviews }: GoogleTestimonialsProps) {
               key={review.name}
               className="flex min-h-[260px] flex-col bg-white p-7 shadow-sm ring-1 ring-border-custom/70"
             >
-              <div className="mb-5 flex items-center justify-between gap-4">
-                <div className="flex gap-0.5 text-gold" aria-label="5 od 5 zvezdic">
-                  {[...Array(5)].map((_, index) => (
-                    <span key={index} className="text-sm" aria-hidden="true">
-                      ★
-                    </span>
-                  ))}
-                </div>
-                <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-text font-body">
-                  Google
-                </span>
+              <div className="mb-5 flex gap-0.5 text-gold" aria-label="5 od 5 zvezdic">
+                {[...Array(5)].map((_, index) => (
+                  <span key={index} className="text-sm" aria-hidden="true">
+                    ★
+                  </span>
+                ))}
               </div>
 
               <p className="text-[16px] text-body font-body leading-[1.75]">
@@ -68,23 +63,9 @@ export function GoogleTestimonials({ reviews }: GoogleTestimonialsProps) {
 
               <div className="mt-auto border-t border-border-custom pt-5">
                 <p className="text-[14px] text-navy font-semibold font-body">{review.name}</p>
-                {review.detail && (
-                  <p className="mt-1 text-xs text-muted-text font-body">{review.detail}</p>
-                )}
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mt-10 flex justify-center">
-          <a
-            href={siteConfig.social.googleReviews}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center border border-gold/40 px-5 py-3 text-[15px] font-medium text-gold font-body transition-colors hover:border-gold hover:text-gold-hover"
-          >
-            Vse Google ocene →
-          </a>
         </div>
       </div>
     </section>
