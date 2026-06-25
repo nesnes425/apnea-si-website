@@ -361,10 +361,33 @@ export async function createTrainingMinimaxInvoice(params: {
         vatRateId,
         membershipFee: params.membershipFee,
       });
-      const created = await createIssuedInvoice({
-        organisationId,
-        issuedInvoice: buildIssuedInvoicePayload(invoiceData, customer.CustomerId, item.ItemId),
-      });
+      let created;
+      try {
+        created = await createIssuedInvoice({
+          organisationId,
+          issuedInvoice: buildIssuedInvoicePayload(invoiceData, customer.CustomerId, item.ItemId),
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes("Minimax response did not include IssuedInvoiceId")
+        ) {
+          const createdByReference = await findInvoiceByPaymentIntentReference({
+            organisationId,
+            paymentIntentId: invoiceData.paymentIntentId,
+            paymentCreated: invoiceData.paymentCreated,
+          });
+          if (createdByReference) {
+            created = {
+              issuedInvoiceId: createdByReference.IssuedInvoiceId,
+              rowVersion: createdByReference.RowVersion,
+              year: createdByReference.Year,
+              invoiceNumber: createdByReference.InvoiceNumber,
+            };
+          }
+        }
+        if (!created) throw error;
+      }
       issuedInvoiceId = created.issuedInvoiceId;
       rowVersion = created.rowVersion;
       invoiceNumber = invoiceNumberLabel(created);
