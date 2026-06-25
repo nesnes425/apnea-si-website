@@ -22,6 +22,9 @@ type TrainingInvoiceData = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerAddress: string;
+  customerPostalCode: string;
+  customerCity: string;
   membershipFee: number;
   paymentIntentId: string;
   paymentCreated: Date;
@@ -87,6 +90,9 @@ async function findOrCreateTrainingCustomer(params: {
     customer: {
       Code: code,
       Name: params.data.customerName,
+      Address: params.data.customerAddress,
+      PostalCode: params.data.customerPostalCode,
+      City: params.data.customerCity,
       Country: fk(params.countryId),
       Currency: fk(params.currencyId),
       SubjectToVAT: "N",
@@ -129,6 +135,9 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
     DateTransaction: issuedAt,
     DateDue: issuedAt,
     AddresseeName: data.customerName,
+    AddresseeAddress: data.customerAddress,
+    AddresseePostalCode: data.customerPostalCode,
+    AddresseeCity: data.customerCity,
     AddresseeCountry: fk(countryId),
     DocumentReference: data.paymentIntentId,
     Notes: [
@@ -253,6 +262,18 @@ function dataFromIntent(
     customerName: intent.metadata.customerName ?? "",
     customerEmail: intent.metadata.customerEmail ?? "",
     customerPhone: intent.metadata.customerPhone ?? "",
+    customerAddress:
+      intent.metadata.customerAddress ??
+      readOptionalEnv("MINIMAX_TRAINING_TEST_CUSTOMER_ADDRESS") ??
+      "Naslov ni podan",
+    customerPostalCode:
+      intent.metadata.customerPostalCode ??
+      readOptionalEnv("MINIMAX_TRAINING_TEST_CUSTOMER_POSTAL_CODE") ??
+      "1000",
+    customerCity:
+      intent.metadata.customerCity ??
+      readOptionalEnv("MINIMAX_TRAINING_TEST_CUSTOMER_CITY") ??
+      "Ljubljana",
     membershipFee,
     paymentIntentId: intent.id,
     paymentCreated: new Date((intent.created ?? Math.floor(Date.now() / 1000)) * 1000),
