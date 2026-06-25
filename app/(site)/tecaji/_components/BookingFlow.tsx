@@ -31,7 +31,7 @@ export function BookingFlow({ instanceId }: Props) {
             <p className="font-body text-body leading-relaxed">
               Hvala za prijavo. Na e-pošto smo vam poslali potrditev prejema.
               Samo bo preveril termin in vam poslal nadaljnje informacije za
-              potrditev udeležbe, plačilo 50 € akontacije in račun.
+              potrditev udeležbe in račun.
             </p>
           </div>
         </div>
@@ -54,7 +54,8 @@ export function BookingFlow({ instanceId }: Props) {
                 2
               </span>
               <span>
-                Za potrditev mesta prejmete podatke za plačilo 50 € akontacije.
+                Če je termin prost, prejmete tudi podatke za plačilo akontacije
+                v višini 50 €.
               </span>
             </li>
             <li className="flex gap-3 font-body text-[15px] leading-relaxed text-body">
@@ -193,16 +194,6 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
           {serverError}
         </div>
       )}
-
-      <div className="border border-green-200 bg-green-50 px-4 py-3">
-        <p className="font-body text-sm font-medium text-green-900">
-          Potrditev mesta: 50 € akontacije
-        </p>
-        <p className="mt-1 font-body text-sm leading-relaxed text-green-900/80">
-          Po oddaji prijave vam Samo pošlje podatke za plačilo akontacije.
-          Mesto je dokončno potrjeno po plačilu in Samovi potrditvi.
-        </p>
-      </div>
 
       <Button type="submit" disabled={submitting} fullWidth className="md:w-auto">
         {submitting ? "Pošiljam prijavo…" : "Pošlji prijavo →"}
