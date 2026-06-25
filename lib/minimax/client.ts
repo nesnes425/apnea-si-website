@@ -59,6 +59,13 @@ export type MinimaxCustomer = {
   RowVersion?: string;
 };
 
+export type MinimaxItem = {
+  ItemId: number;
+  Code?: string;
+  Name?: string;
+  RowVersion?: string;
+};
+
 type MinimaxSearchResult<T> = {
   Rows?: T[];
   TotalRows?: number;
@@ -169,6 +176,15 @@ function unwrapCustomer(response: unknown): MinimaxCustomer {
   return customer;
 }
 
+function unwrapItem(response: unknown): MinimaxItem {
+  const value = response as MinimaxItem | { Data?: MinimaxItem; Content?: MinimaxItem };
+  const item = "ItemId" in value ? value : value.Data ?? value.Content;
+  if (!item?.ItemId) {
+    throw new Error("Minimax response did not include ItemId");
+  }
+  return item;
+}
+
 function isMinimaxNotFound(error: unknown) {
   return error instanceof Error && error.message.includes(" failed (404):");
 }
@@ -249,7 +265,51 @@ export async function createCustomer(params: {
     method: "POST",
     body: JSON.stringify(params.customer),
   });
-  return unwrapCustomer(response);
+  try {
+    return unwrapCustomer(response);
+  } catch (error) {
+    const code = typeof params.customer.Code === "string" ? params.customer.Code : undefined;
+    if (code) {
+      const customer = await getCustomerByCode({ organisationId: params.organisationId, code });
+      if (customer) return customer;
+    }
+    throw error;
+  }
+}
+
+export async function getItemByCode(params: {
+  organisationId: number;
+  code: string;
+}): Promise<MinimaxItem | undefined> {
+  try {
+    const response = await minimaxFetch<unknown>(
+      `/api/orgs/${params.organisationId}/items/code(${encodeURIComponent(params.code)})`
+    );
+    return unwrapItem(response);
+  } catch (error) {
+    if (isMinimaxNotFound(error)) return undefined;
+    throw error;
+  }
+}
+
+export async function createItem(params: {
+  organisationId: number;
+  item: Record<string, unknown>;
+}): Promise<MinimaxItem> {
+  const response = await minimaxFetch<unknown>(`/api/orgs/${params.organisationId}/items`, {
+    method: "POST",
+    body: JSON.stringify(params.item),
+  });
+  try {
+    return unwrapItem(response);
+  } catch (error) {
+    const code = typeof params.item.Code === "string" ? params.item.Code : undefined;
+    if (code) {
+      const item = await getItemByCode({ organisationId: params.organisationId, code });
+      if (item) return item;
+    }
+    throw error;
+  }
 }
 
 export async function runIssuedInvoiceAction(params: {

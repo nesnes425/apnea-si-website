@@ -3,9 +3,11 @@ import type Stripe from "stripe";
 import {
   createCustomer,
   createIssuedInvoice,
+  createItem,
   getCustomerByCode,
   getDocumentAttachment,
   getIssuedInvoice,
+  getItemByCode,
   getResource,
   listIssuedInvoices,
   runIssuedInvoiceAction,
@@ -103,7 +105,35 @@ async function findOrCreateTrainingCustomer(params: {
   });
 }
 
-function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number) {
+async function findOrCreateTrainingItem(params: {
+  organisationId: number;
+  currencyId: number | undefined;
+  vatRateId: number | undefined;
+  membershipFee: number;
+}) {
+  const code = readOptionalEnv("MINIMAX_TRAINING_ITEM_CODE") ?? "APNEA-CLANARINA";
+  const existing = await getItemByCode({ organisationId: params.organisationId, code });
+  if (existing) return existing;
+
+  return createItem({
+    organisationId: params.organisationId,
+    item: {
+      Code: code,
+      Name: "Letna članarina ŠD Apnea Slovenija",
+      Description: "Letna članarina ŠD Apnea Slovenija",
+      ItemType: "S",
+      UnitOfMeasurement: "kos",
+      Price: params.membershipFee,
+      VatRate: fk(params.vatRateId),
+      Currency: fk(params.currencyId),
+      Usage: "D",
+      SerialNumbers: "N",
+      BatchNumbers: "N",
+    },
+  });
+}
+
+function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number, itemId: number) {
   const vatPercent = Number(readOptionalEnv("MINIMAX_TRAINING_VAT_PERCENT") ?? "0");
   if (!Number.isFinite(vatPercent)) {
     throw new Error("MINIMAX_TRAINING_VAT_PERCENT is not a valid number");
@@ -117,7 +147,6 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
   const cashRegisterId = readOptionalEnvNumber("MINIMAX_TRAINING_CASH_REGISTER_ID");
   const revenueId = readOptionalEnvNumber("MINIMAX_TRAINING_REVENUE_ID");
   const vatRateId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_ID");
-  const vatRatePercentageId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_PERCENTAGE_ID");
   const countryId = readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
 
   const issuedAt = data.paymentCreated.toISOString();
@@ -148,7 +177,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
     Currency: fk(currencyId),
     IssuedInvoiceReportTemplate: fk(reportTemplateId),
     Status: "O",
-    PricesOnInvoice: "D",
+    PricesOnInvoice: "N",
     RecurringInvoice: "N",
     InvoiceForPeriod: "N",
     InvoiceType: "R",
@@ -158,14 +187,14 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
       "Plačano preko Stripe. Davčno potrjevanje bo omogočeno pred produkcijskim zagonom.",
     IssuedInvoiceRows: [
       {
+        Item: { ID: itemId },
         ItemName: itemName,
         Description: description,
         Quantity: 1,
         UnitOfMeasurement: "kos",
-        PriceWithVAT: data.membershipFee,
+        Price: data.membershipFee,
         VATPercent: vatPercent,
         VatRate: fk(vatRateId),
-        VatRatePercentage: fk(vatRatePercentageId),
       },
     ],
     IssuedInvoicePaymentMethods: recordPayment && paymentMethodId
@@ -287,6 +316,7 @@ export async function createTrainingMinimaxInvoice(params: {
   const organisationId = readEnvNumber("MINIMAX_TRAINING_ORGANISATION_ID");
   const currencyId = readOptionalEnvNumber("MINIMAX_TRAINING_CURRENCY_ID");
   const countryId = readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
+  const vatRateId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_ID");
   const existingInvoiceId = Number(params.intent.metadata.minimaxIssuedInvoiceId);
   const invoiceData = dataFromIntent(params.intent, params.membershipFee);
 
@@ -325,9 +355,15 @@ export async function createTrainingMinimaxInvoice(params: {
         currencyId,
         countryId,
       });
+      const item = await findOrCreateTrainingItem({
+        organisationId,
+        currencyId,
+        vatRateId,
+        membershipFee: params.membershipFee,
+      });
       const created = await createIssuedInvoice({
         organisationId,
-        issuedInvoice: buildIssuedInvoicePayload(invoiceData, customer.CustomerId),
+        issuedInvoice: buildIssuedInvoicePayload(invoiceData, customer.CustomerId, item.ItemId),
       });
       issuedInvoiceId = created.issuedInvoiceId;
       rowVersion = created.rowVersion;
