@@ -27,6 +27,7 @@ ${d.weekday}, ${d.time}
 Plačano: ${d.membershipFee} € letne članarine ŠD Apnea Slovenija
 S plačilom članarine ste rezervirali mesto v skupini.
 Številka transakcije: ${d.paymentIntentId}
+Račun za plačano članarino je priložen temu e-sporočilu.
 
 Podrobnosti o plačilu vadnine in začetku treningov boste prejeli po e-pošti.
 
@@ -48,7 +49,8 @@ Ekipa Apnea Slovenija`;
     <p style="margin:0 0 16px;">${escapeHtml(d.weekday)}, ${escapeHtml(d.time)}</p>
     <p style="margin:0;"><strong>Plačano: ${d.membershipFee} € letne članarine</strong><br>
     <span style="color:#8a8377;font-size:14px;">S plačilom članarine ste rezervirali mesto v skupini.</span><br>
-    <span style="color:#8a8377;font-size:13px;">Številka transakcije: ${escapeHtml(d.paymentIntentId)}</span></p>
+    <span style="color:#8a8377;font-size:13px;">Številka transakcije: ${escapeHtml(d.paymentIntentId)}</span><br>
+    <span style="color:#8a8377;font-size:14px;">Račun za plačano članarino je priložen temu e-sporočilu.</span></p>
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
     <p>Podrobnosti o plačilu vadnine in začetku treningov boste prejeli po e-pošti.</p>
     <p style="margin:0;">Vprašanja? <a href="mailto:${siteConfig.email}" style="color:#d3a356;">${siteConfig.email}</a> · ${siteConfig.phone}</p>

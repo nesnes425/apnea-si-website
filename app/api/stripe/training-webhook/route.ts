@@ -143,6 +143,8 @@ async function createMinimaxInvoiceForTraining(params: {
       minimaxIssuedInvoiceId: String(invoice.issuedInvoiceId),
       minimaxInvoiceNumber: invoice.invoiceNumber ?? String(invoice.issuedInvoiceId),
       minimaxPdfGenerated: invoice.pdf ? "true" : "false",
+      minimaxFailureAlertSent: "",
+      minimaxLastError: "",
     };
 
     await trainingStripe.paymentIntents.update(params.intent.id, { metadata });
@@ -259,6 +261,8 @@ async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
             minimaxInvoiceNumber:
               minimaxInvoice.invoiceNumber ?? String(minimaxInvoice.issuedInvoiceId),
             minimaxPdfGenerated: minimaxInvoice.pdf ? "true" : "false",
+            minimaxFailureAlertSent: "",
+            minimaxLastError: "",
           }
         : {}),
       trainingProcessed: "true",
