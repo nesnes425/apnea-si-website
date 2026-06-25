@@ -20,6 +20,8 @@ export const metadata = {
     "Poglobite znanje prostega potapljanja. Frenzel izenačevanje, potopi do 35 m. SSI Level 2 certifikat. 415 €.",
 };
 
+export const revalidate = 60;
+
 // === Data ===
 
 const coursePhases = [

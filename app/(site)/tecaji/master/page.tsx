@@ -19,6 +19,8 @@ export const metadata = {
     "Obvladajte Mouthfill izenačevanje in dosezite 30–40 m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. 550 €.",
 };
 
+export const revalidate = 60;
+
 // === Data ===
 
 const coursePhases = [
