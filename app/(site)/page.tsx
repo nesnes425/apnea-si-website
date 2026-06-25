@@ -19,27 +19,6 @@ export const metadata = pageMetadata({
   imageAlt: "Samo Jeranko in Apnea Slovenija pri prostem potapljanju",
 });
 
-const heroChoices = [
-  {
-    label: "Prvič pod gladino?",
-    title: "Začetni tečaj",
-    text: "Naučite se osnov, s katerimi se pod vodo premaknete mirno, samozavestno in z užitkom.",
-    href: "/tecaji/zacetni",
-  },
-  {
-    label: "Želite redno napredovati?",
-    title: "Treningi",
-    text: "Celoletne skupine za tehniko, kondicijo, rezultate in občutek skupnosti tudi izven poletja.",
-    href: "/treningi",
-  },
-  {
-    label: "Iščete posebno darilo?",
-    title: "Darilni bon",
-    text: "Podarite izkušnjo, ki ostane: začetni tečaj prostega potapljanja z ekipo Apnea.si.",
-    href: "/darilni-bon",
-  },
-];
-
 export default function HomePage() {
   return (
     <>
@@ -87,37 +66,14 @@ export default function HomePage() {
                   </Link>
                 </div>
                 <p className="mt-5 text-[15px] text-white/65 font-body">
-                  Prvič slišite za potapljanje na vdih?{" "}
+                  Še ne poznate potapljanja na vdih?{" "}
                   <Link
                     href="/prosto-potapljanje"
                     className="text-gold hover:text-gold-hover transition-colors"
                   >
-                    Preberite, kaj je prosto potapljanje →
+                    Preberite več o prostem potapljanju →
                   </Link>
                 </p>
-              </div>
-
-              <div className="mt-16 grid gap-4 md:grid-cols-3">
-                {heroChoices.map((choice) => (
-                  <Link
-                    key={choice.href}
-                    href={choice.href}
-                    className="group border border-white/15 bg-white/95 p-6 transition-colors hover:border-gold"
-                  >
-                    <p className="text-[12px] font-medium uppercase tracking-[0.09em] text-gold font-body mb-3">
-                      {choice.label}
-                    </p>
-                    <h2 className="text-[24px] font-semibold leading-tight text-navy font-heading mb-3">
-                      {choice.title}
-                    </h2>
-                    <p className="text-[15px] text-body leading-[1.65] font-body mb-5">
-                      {choice.text}
-                    </p>
-                    <span className="text-[14px] font-medium text-gold group-hover:text-gold-hover transition-colors font-body">
-                      Izberite pot →
-                    </span>
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
@@ -129,19 +85,19 @@ export default function HomePage() {
           ============================================ */}
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="relative md:min-h-[560px]">
-            {/* Image — takes ~60% width, full height */}
-            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:left-0 md:w-[60%]">
+          <div className="relative md:h-[520px]">
+            {/* Image */}
+            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:left-0 md:w-[52%]">
               <Image
                 src="/images/domov-tecaji.webp"
                 alt="Tečaj prostega potapljanja"
                 fill
-                sizes="(max-width: 768px) 100vw, 60vw"
+                sizes="(max-width: 768px) 100vw, 52vw"
                 className="object-cover"
               />
             </div>
-            {/* Text card — overlaps image from the right */}
-            <div className="relative md:ml-auto md:w-[48%] md:my-10 bg-white p-8 md:p-10 shadow-lg">
+            {/* Text card */}
+            <div className="relative bg-white p-8 shadow-lg md:ml-auto md:flex md:h-full md:w-[48%] md:flex-col md:justify-center md:p-10">
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
                 Začetni tečaj
               </p>
@@ -189,19 +145,19 @@ export default function HomePage() {
           ============================================ */}
       <section className="pb-20 md:pb-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="relative md:min-h-[480px]">
-            {/* Image — right-aligned, full height */}
-            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:right-0 md:w-[60%]">
+          <div className="relative md:h-[520px]">
+            {/* Image */}
+            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:right-0 md:w-[52%]">
               <Image
                 src="/images/domov-treningi.webp"
                 alt="Trening v bazenu"
                 fill
-                sizes="(max-width: 768px) 100vw, 60vw"
+                sizes="(max-width: 768px) 100vw, 52vw"
                 className="object-cover"
               />
             </div>
-            {/* Text card — overlaps image from the left, navy */}
-            <div className="relative md:w-[48%] md:my-10 bg-navy p-8 md:p-10 shadow-lg">
+            {/* Text card */}
+            <div className="relative bg-navy p-8 shadow-lg md:flex md:h-full md:w-[48%] md:flex-col md:justify-center md:p-10">
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
                 Treningi
               </p>
@@ -219,6 +175,21 @@ export default function HomePage() {
                 </span>
                 <span className="text-sm text-white/50 font-body">/mesec</span>
               </div>
+              <div className="space-y-1.5 mb-6">
+                {[
+                  "Celoletni treningi v več krajih",
+                  "Skupine za začetnike in izkušene potapljače",
+                  "Redna vadba, tehnika in skupnost",
+                ].map((item) => (
+                  <p
+                    key={item}
+                    className="text-[14px] text-white/75 font-body flex gap-3 items-start"
+                  >
+                    <span className="text-gold shrink-0">✓</span>
+                    {item}
+                  </p>
+                ))}
+              </div>
               <Button asChild className="self-start">
                 <Link href="/treningi">Več o treningih →</Link>
               </Button>
@@ -228,12 +199,37 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          5. TESTIMONIALS — hand-picked Google reviews
+          5. GIFT VOUCHER — secondary path, not a third pillar
+          ============================================ */}
+      <section className="pb-20 md:pb-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="border border-border-custom bg-white px-7 py-8 md:flex md:items-center md:justify-between md:gap-10 md:px-10">
+            <div className="max-w-2xl">
+              <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
+                Darilni bon
+              </p>
+              <h2 className="text-[24px] md:text-[30px] font-semibold leading-[1.15] tracking-[-0.01em] text-navy mb-3">
+                Iščete darilo za nekoga, ki ima rad morje?
+              </h2>
+              <p className="text-[16px] text-body leading-[1.7] font-body">
+                Podarite začetni tečaj prostega potapljanja. Darilni bon
+                uredimo hitro, obdarjenec pa si termin izbere kasneje.
+              </p>
+            </div>
+            <Button asChild className="mt-6 md:mt-0">
+              <Link href="/darilni-bon">Poglejte darilni bon →</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          6. TESTIMONIALS — hand-picked Google reviews
           ============================================ */}
       <GoogleTestimonials reviews={homeGoogleReviews} />
 
       {/* ============================================
-          6. SAMO — quote-led, editorial photo collage
+          7. SAMO — quote-led, editorial photo collage
           ============================================ */}
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6">
@@ -277,7 +273,7 @@ export default function HomePage() {
             {/* Text */}
             <div className="md:pt-8 mt-8 md:mt-0">
               <h2 className="text-[26px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.01em] mb-6 italic font-heading">
-                &ldquo;Hotel sem tisto, kar sem občutil na globini, deliti z
+                &ldquo;Želel sem tisto, kar sem občutil na globini, deliti z
                 drugimi.&rdquo;
               </h2>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
@@ -318,7 +314,7 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          7. INSTAGRAM — community invitation via Elfsight
+          8. INSTAGRAM — community invitation via Elfsight
           ============================================ */}
       <section className="bg-surface py-16 md:py-20">
         <div className="max-w-6xl mx-auto px-6 mb-8">
@@ -348,22 +344,22 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          8. LEAD MAGNET — newsletter + free guide, centered
+          9. LEAD MAGNET — newsletter + free guide, centered
           ============================================ */}
       <section className="py-20 md:py-28">
-        <div className="max-w-2xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
             Brezplačen posnetek + novice
           </p>
           <SectionHeading center className="mb-4">
-            Prejmite posnetek predavanja o izenačevanju pritiska
+            Prijavite se na novice in prejmite predavanje o izenačevanju
+            pritiska
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
             <strong className="text-navy">
               Kako pravilno izenačiti pritisk v ušesih:
             </strong>{" "}
             tehniki Valsalva in Frenzel, razloženi preprosto, korak za korakom.
-            Posnetek prejmete ob prijavi na naše novice.
           </p>
           <LeadMagnetSignup />
           <p className="text-xs text-muted-text font-body mt-4">
