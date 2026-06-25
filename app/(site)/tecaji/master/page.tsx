@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,14 @@ import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Master tečaj prostega potapljanja — SSI Level 3",
   description:
     "Obvladajte Mouthfill izenačevanje in dosezite 30–40 m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. 550 €.",
-  alternates: { canonical: "/tecaji/master" },
-};
+  path: "/tecaji/master",
+  image: "/images/tecaji-master-hero.webp",
+  imageAlt: "Master tečaj prostega potapljanja Apnea Slovenija",
+});
 
 export const revalidate = 60;
 

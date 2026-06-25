@@ -1,16 +1,18 @@
 import Image from "next/image";
-import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { LocalBusinessJsonLd, PersonSamoJsonLd } from "@/components/seo/StructuredData";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "O nas",
   description:
     "Apnea Slovenija je največja šola prostega potapljanja v Sloveniji. Od enega potapljača do skupnosti 350+ ljudi. Zgodba Sama Jeranka in ljudi, ki se potapljajo z njim.",
-  alternates: { canonical: "/o-nas" },
-};
+  path: "/o-nas",
+  image: "/images/onas-hero.webp",
+  imageAlt: "Ekipa Apnea Slovenija in Samo Jeranko",
+});
 
 // === Community stories ===
 

@@ -5,10 +5,16 @@ import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  alternates: { canonical: "/" },
-};
+export const metadata = pageMetadata({
+  title: "Apnea Slovenija - šola prostega potapljanja",
+  description:
+    "Tečaji prostega potapljanja, celoletni treningi in darilni boni z ekipo Apnea Slovenija. Naučite se potopiti mirno, samozavestno in z užitkom.",
+  path: "/",
+  image: "/images/domov-hero.webp",
+  imageAlt: "Samo Jeranko in Apnea Slovenija pri prostem potapljanju",
+});
 
 const heroChoices = [
   {

@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { FAQPageJsonLd } from "@/components/seo/StructuredData";
 
 const answerLinkClassName = "text-gold hover:text-gold-hover transition-colors";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Pogosta vprašanja",
   description:
     "Odgovori na pogosta vprašanja o tečajih prostega potapljanja, treningih, darilnih bonih in opremi. Apnea Slovenija.",
-  alternates: { canonical: "/vprasanja" },
-};
+  path: "/vprasanja",
+  imageAlt: "Pogosta vprašanja Apnea Slovenija",
+});
 
 const sections = [
   {

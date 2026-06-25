@@ -5,14 +5,17 @@ import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 import { FAQ } from "@/components/blocks/FAQ";
+import { pageMetadata } from "@/lib/seo";
 import { SpeakingInquiryForm } from "./SpeakingInquiryForm";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Predavanja za podjetja",
   description:
     "Samo Jeranko, TEDx govornik in eden najuspešnejših slovenskih prostih potapljačev. Predavanja o dihanju, stresu in pripravi na zahtevne trenutke.",
-  alternates: { canonical: "/predavanja" },
-};
+  path: "/predavanja",
+  image: "/images/predavanja-hero.webp",
+  imageAlt: "Samo Jeranko na predavanju za podjetja",
+});
 
 const eventPhotos = [
   { src: "/images/predavanja-galerija-1.webp", alt: "Samo Jeranko na TEDx Ljubljana", aspect: 1.5 },

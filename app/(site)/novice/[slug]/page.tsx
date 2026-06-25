@@ -9,6 +9,7 @@ import type { BlogPost } from "@/lib/sanity/types";
 import type { Metadata } from "next";
 
 const builder = imageUrlBuilder(sanityClient);
+const SITE_URL = "https://apnea.si";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -19,10 +20,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getBlogPost(slug);
   if (!post) return { title: "Novica ni najdena" };
 
+  const description = post.metaDescription || `${post.title} — Apnea Slovenija`;
+  const path = `/novice/${post.slug.current}`;
+  const image = post.featuredImage?.asset?.url
+    ? builder
+        .image(post.featuredImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .quality(85)
+        .auto("format")
+        .url()
+    : "/images/og-default.jpg";
+  const imageAlt = post.featuredImage?.alt || post.title;
+
   return {
     title: post.title,
-    description: post.metaDescription || `${post.title} — Apnea Slovenija`,
-    alternates: { canonical: `/novice/${post.slug.current}` },
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title: post.title,
+      description,
+      url: new URL(path, SITE_URL).toString(),
+      type: "article",
+      locale: "sl_SI",
+      siteName: "Apnea Slovenija",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: imageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: [image],
+    },
   };
 }
 

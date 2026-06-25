@@ -6,13 +6,16 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
 import { FAQ } from "@/components/blocks/FAQ";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Darilni bon za tečaj prostega potapljanja",
   description:
     "Podarite izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, 395 €. Pošljite povpraševanje in bon uredimo po potrditvi.",
-  alternates: { canonical: "/darilni-bon" },
-};
+  path: "/darilni-bon",
+  image: "/images/darilni-bon-hero.webp",
+  imageAlt: "Darilni bon za tečaj prostega potapljanja",
+});
 
 const faqs = [
   {

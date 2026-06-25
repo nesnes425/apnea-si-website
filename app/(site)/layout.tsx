@@ -27,20 +27,27 @@ export const metadata: Metadata = {
     "Največja šola prostega potapljanja v Sloveniji. SSI tečaji, treningi in klubsko potapljanje na 5 lokacijah. 2000+ potapljačev, 245+ Google ocen (5.0 ★).",
   metadataBase: new URL("https://apnea.si"),
   openGraph: {
+    title: "Apnea Slovenija — Šola prostega potapljanja",
+    description:
+      "SSI tečaji, celoletni treningi in klubsko prosto potapljanje v Sloveniji z ekipo Apnea Slovenija.",
+    url: "https://apnea.si",
     type: "website",
     locale: "sl_SI",
     siteName: "Apnea Slovenija",
     images: [
       {
         url: "/images/og-default.jpg",
-        width: 2048,
-        height: 600,
-        alt: "Samo Jeranko — prosto potapljanje",
+        width: 1200,
+        height: 630,
+        alt: "Apnea Slovenija - tečaji in treningi prostega potapljanja",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
+    title: "Apnea Slovenija — Šola prostega potapljanja",
+    description:
+      "SSI tečaji, celoletni treningi in klubsko prosto potapljanje v Sloveniji z ekipo Apnea Slovenija.",
     images: ["/images/og-default.jpg"],
   },
 };

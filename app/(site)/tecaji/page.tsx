@@ -7,13 +7,16 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Tečaji prostega potapljanja",
   description:
     "SSI certificirani tečaji prostega potapljanja v Sloveniji. Od prvega potopa na en vdih do naprednih tehnik izenačevanja in globine. Začetni, nadaljevalni in master tečaj.",
-  alternates: { canonical: "/tecaji" },
-};
+  path: "/tecaji",
+  image: "/images/tecaji-CTA.webp",
+  imageAlt: "Tečaji prostega potapljanja Apnea Slovenija",
+});
 
 const courses = [
   {

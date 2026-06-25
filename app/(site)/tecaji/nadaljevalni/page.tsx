@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,14 @@ import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Nadaljevalni tečaj prostega potapljanja — SSI Level 2",
   description:
     "Poglobite znanje prostega potapljanja. Frenzel izenačevanje, potopi do 35 m. SSI Level 2 certifikat. 415 €.",
-  alternates: { canonical: "/tecaji/nadaljevalni" },
-};
+  path: "/tecaji/nadaljevalni",
+  image: "/images/tecaji-nadaljevalni-hero.webp",
+  imageAlt: "Nadaljevalni tečaj prostega potapljanja Apnea Slovenija",
+});
 
 export const revalidate = 60;
 

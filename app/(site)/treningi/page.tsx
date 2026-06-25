@@ -10,14 +10,17 @@ import {
   getTrainingSettings,
 } from "@/lib/sanity/queries";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { TrainingScheduleSelector } from "./TrainingScheduleSelector";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Treningi prostega potapljanja",
   description:
     "Celoletni vodeni treningi prostega potapljanja na 7 lokacijah po Sloveniji. Za vse, ki želijo bolje plavati pod vodo, napredovati v apneji in ostati povezani z morjem tudi izven poletja.",
-  alternates: { canonical: "/treningi" },
-};
+  path: "/treningi",
+  image: "/images/treningi-hero-v2.webp",
+  imageAlt: "Trening prostega potapljanja v bazenu z Apnea Slovenija",
+});
 
 export const revalidate = 60;
 
