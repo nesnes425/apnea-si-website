@@ -305,7 +305,7 @@ export default function HomePage() {
               </h2>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
                 <strong className="text-navy">Samo Jeranko</strong> je eden
-                najuspešnejših slovenskih prostih potapljačev, nosilec 10
+                najuspešnejših slovenskih prostih potapljačev, nosilec 7
                 medalj s svetovnih prvenstev in SSI Instructor Trainer. V
                 zadnjih 15 letih je naučil prostega potapljanja več kot 2000
                 ljudi in zgradil največjo šolo v Sloveniji.

@@ -59,7 +59,7 @@ export function PersonSamoJsonLd() {
           siteConfig.social.linkedin,
         ],
         award: [
-          "10x medalja na svetovnem prvenstvu",
+          "7x medalja na svetovnem prvenstvu",
           "19x državni rekord",
           "SSI Freediving Instructor Trainer",
         ],

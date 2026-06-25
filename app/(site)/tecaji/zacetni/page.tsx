@@ -315,7 +315,7 @@ function Instructor() {
 
           <div className="grid grid-cols-2 gap-8">
             {[
-              { number: "10x", label: "medalja na SP" },
+              { number: "7x", label: "medalja na SP" },
               { number: "2000+", label: "potapljačev" },
               { number: "19x", label: "državni rekorder" },
               { number: "SSI", label: "Instructor Trainer" },
@@ -519,7 +519,7 @@ export default function ZacetniTecajPage() {
     <>
       <CourseJsonLd
         name={siteConfig.courses.zacetni.fullName}
-        description="SSI Freediving Level 1: tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 10x medaljer s svetovnih prvenstev."
+        description="SSI Freediving Level 1: tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 7x medaljer s svetovnih prvenstev."
         url="https://apnea.si/tecaji/zacetni"
         priceInEuros={siteConfig.courses.zacetni.price}
       />

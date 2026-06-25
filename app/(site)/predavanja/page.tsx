@@ -64,7 +64,7 @@ export default function PredavanjaPage() {
         <div className="relative w-full max-w-6xl px-6 mx-auto py-20">
           <div className="max-w-xl">
             <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-              TEDx govornik · 10 medalj s svetovnih prvenstev
+              TEDx govornik · 7 medalj s svetovnih prvenstev
             </p>
             <h1 className="text-[40px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] text-white font-heading mb-6">
               Samo Jeranko
@@ -234,7 +234,7 @@ export default function PredavanjaPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
             {[
               { number: "TEDx", label: "govornik" },
-              { number: "10x", label: "medalja na SP" },
+              { number: "7x", label: "medalja na SP" },
               { number: "2000+", label: "ljudi poučil" },
               { number: "8 min", label: "statična apneja" },
               { number: "-110m", label: "osebni rekord" },

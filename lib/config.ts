@@ -31,7 +31,7 @@ export const siteConfig = {
     googleReviews: "245+",
     googleRating: "5.0",
     yearsExperience: "15+",
-    worldChampionshipMedals: "10",
+    worldChampionshipMedals: "7",
     coachingMedals: "15",
     nationalRecords: "46",
   },

@@ -87,7 +87,7 @@ export default function ONasPage() {
                 Kasneje je odkril prosto potapljanje in podvodni ribolov in se
                 v oba takoj zaljubil. Študiral je strojništvo, a morje ga je
                 neprestano vleklo k sebi. Leta 2008 je prvič tekmoval in hitro
-                so začele prihajati medalje. Osvojil je 10 medalj na svetovnih
+                so začele prihajati medalje. Osvojil je 7 medalj na svetovnih
                 prvenstvih in postavil 19 državnih rekordov.
               </p>
 
@@ -127,7 +127,7 @@ export default function ONasPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { number: "10x", label: "medalja na SP" },
+                  { number: "7x", label: "medalja na SP" },
                   { number: "19", label: "državnih rekordov" },
                   { number: "-110m", label: "osebni rekord" },
                   { number: "8 min", label: "statična apneja" },
