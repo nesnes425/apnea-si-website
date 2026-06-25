@@ -40,8 +40,8 @@ export async function BookingPage({ courseType, instanceId }: Props) {
         <SectionHeading className="mb-10">{course.fullName}</SectionHeading>
         <p className="mb-10 max-w-2xl font-body text-body leading-relaxed">
           Pošljite prijavo za izbrani termin. Samo bo prijavo preveril in vam
-          poslal nadaljnje informacije za potrditev udeležbe in plačilo oziroma
-          račun.
+          poslal nadaljnje informacije za potrditev udeležbe, plačilo 50 €
+          akontacije in račun.
         </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
@@ -63,6 +63,16 @@ export async function BookingPage({ courseType, instanceId }: Props) {
               <p className="text-sm text-muted-text font-body mb-6">
                 Račun prejmete po potrditvi prijave.
               </p>
+
+              <div className="mb-6 border border-green-200 bg-green-50 px-4 py-3">
+                <p className="font-body text-sm font-medium text-green-900">
+                  Potrditev mesta: 50 € akontacije
+                </p>
+                <p className="mt-1 font-body text-xs leading-relaxed text-green-900/80">
+                  Podatke za plačilo prejmete po pregledu prijave. Mesto je
+                  potrjeno po plačilu akontacije.
+                </p>
+              </div>
 
               <CheckList items={[...course.booking.sidebarItems]} />
 
