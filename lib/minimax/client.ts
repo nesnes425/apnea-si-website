@@ -20,9 +20,12 @@ export type MinimaxFkField = {
 
 export type MinimaxDocumentAttachment = {
   ID?: number;
+  AttachmentId?: number;
   DocumentAttachmentId?: number;
   Document?: MinimaxFkField;
   AttachmentData?: string;
+  AttachmentFileName?: string;
+  AttachmentMimeType?: string;
   FileName?: string;
   MimeType?: string;
   ResourceUrl?: string;
@@ -332,6 +335,15 @@ export async function getDocumentAttachment(params: {
 }): Promise<MinimaxDocumentAttachment> {
   return minimaxFetch<MinimaxDocumentAttachment>(
     `/api/orgs/${params.organisationId}/documents/${params.documentId}/attachments/${params.attachmentId}`
+  );
+}
+
+export async function listIssuedInvoiceAttachments(params: {
+  organisationId: number;
+  issuedInvoiceId: number;
+}): Promise<MinimaxDocumentAttachment[]> {
+  return minimaxFetch<MinimaxDocumentAttachment[]>(
+    `/api/orgs/${params.organisationId}/issuedinvoices/${params.issuedInvoiceId}/attachments`
   );
 }
 

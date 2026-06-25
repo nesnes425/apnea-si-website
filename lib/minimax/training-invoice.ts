@@ -9,6 +9,7 @@ import {
   getIssuedInvoice,
   getItemByCode,
   getResource,
+  listIssuedInvoiceAttachments,
   listIssuedInvoices,
   runIssuedInvoiceAction,
   type MinimaxDocumentAttachment,
@@ -268,12 +269,27 @@ async function getInvoicePdf(params: {
   organisationId: number;
   issuedInvoiceId: number;
 }): Promise<{ fileName: string; contentBase64: string } | undefined> {
+  const attachments = await listIssuedInvoiceAttachments(params);
+  const invoicePdf = attachments.find((attachment) => attachment.AttachmentData);
+  if (invoicePdf?.AttachmentData) {
+    return {
+      fileName:
+        invoicePdf.AttachmentFileName ??
+        invoicePdf.FileName ??
+        `minimax-racun-${params.issuedInvoiceId}.pdf`,
+      contentBase64: invoicePdf.AttachmentData,
+    };
+  }
+
   const invoice = await getIssuedInvoice(params);
   const attachment = await resolveAttachment(params.organisationId, invoice.InvoiceAttachment);
   if (!attachment?.AttachmentData) return undefined;
 
   return {
-    fileName: attachment.FileName ?? `minimax-racun-${params.issuedInvoiceId}.pdf`,
+    fileName:
+      attachment.AttachmentFileName ??
+      attachment.FileName ??
+      `minimax-racun-${params.issuedInvoiceId}.pdf`,
     contentBase64: attachment.AttachmentData,
   };
 }
