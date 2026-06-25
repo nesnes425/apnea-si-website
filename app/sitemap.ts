@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { sanityClient } from "@/lib/sanity/client";
+import { sanityFreshClient } from "@/lib/sanity/client";
 
 const SITE_URL = "https://apnea.si";
 
@@ -26,7 +26,7 @@ type SanityPostEntry = { slug: string; publishedAt?: string };
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  const posts = await sanityClient.fetch<SanityPostEntry[]>(
+  const posts = await sanityFreshClient.fetch<SanityPostEntry[]>(
     `*[_type == "blogPost" && defined(slug.current)] {
       "slug": slug.current,
       publishedAt

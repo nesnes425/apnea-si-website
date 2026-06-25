@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.metaDescription || `${post.title} — Apnea Slovenija`,
+    alternates: { canonical: `/novice/${post.slug.current}` },
   };
 }
 

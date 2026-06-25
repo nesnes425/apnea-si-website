@@ -11,6 +11,7 @@ export const metadata = {
   title: "Darilni bon za tečaj prostega potapljanja",
   description:
     "Podarite izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, 395 €. Pošljite povpraševanje in bon uredimo po potrditvi.",
+  alternates: { canonical: "/darilni-bon" },
 };
 
 const faqs = [

@@ -16,6 +16,7 @@ export const metadata = {
   title: "Treningi prostega potapljanja",
   description:
     "Celoletni vodeni treningi prostega potapljanja na 7 lokacijah po Sloveniji. Za vse, ki želijo bolje plavati pod vodo, napredovati v apneji in ostati povezani z morjem tudi izven poletja.",
+  alternates: { canonical: "/treningi" },
 };
 
 export const revalidate = 60;

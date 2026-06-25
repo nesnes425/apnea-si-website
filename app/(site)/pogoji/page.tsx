@@ -5,6 +5,7 @@ export const metadata = {
   title: "Splošni pogoji poslovanja",
   description:
     "Splošni pogoji poslovanja — tečaji in treningi prostega potapljanja. Apnea Slovenija.",
+  alternates: { canonical: "/pogoji" },
 };
 
 const tocSections = [

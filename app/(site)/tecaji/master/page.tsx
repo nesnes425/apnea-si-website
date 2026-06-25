@@ -17,6 +17,7 @@ export const metadata = {
   title: "Master tečaj prostega potapljanja — SSI Level 3",
   description:
     "Obvladajte Mouthfill izenačevanje in dosezite 30–40 m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. 550 €.",
+  alternates: { canonical: "/tecaji/master" },
 };
 
 export const revalidate = 60;

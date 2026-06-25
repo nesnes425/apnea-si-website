@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "Novice",
   description:
     "Nasveti, reportaže in novice iz sveta prostega potapljanja. Apnea Slovenija blog.",
+  alternates: { canonical: "/novice" },
 };
 
 interface Props {

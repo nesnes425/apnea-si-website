@@ -19,6 +19,7 @@ export const metadata = {
   title: "Začetni tečaj prostega potapljanja | SSI Level 1",
   description:
     "Naučite se prostega potapljanja s Samom Jerankom. Potopite se do 20 m, zadržite dih več kot 2 minuti in odkrijte nov način doživljanja morja. SSI Level 1 certifikat. 395 €.",
+  alternates: { canonical: "/tecaji/zacetni" },
 };
 
 export const revalidate = 60;

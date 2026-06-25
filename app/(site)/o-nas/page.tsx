@@ -9,6 +9,7 @@ export const metadata = {
   title: "O nas",
   description:
     "Apnea Slovenija je največja šola prostega potapljanja v Sloveniji. Od enega potapljača do skupnosti 350+ ljudi. Zgodba Sama Jeranka in ljudi, ki se potapljajo z njim.",
+  alternates: { canonical: "/o-nas" },
 };
 
 // === Community stories ===

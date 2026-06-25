@@ -7,6 +7,7 @@ export const metadata = {
   title: "Pogosta vprašanja",
   description:
     "Odgovori na pogosta vprašanja o tečajih prostega potapljanja, treningih, darilnih bonih in opremi. Apnea Slovenija.",
+  alternates: { canonical: "/vprasanja" },
 };
 
 const sections = [

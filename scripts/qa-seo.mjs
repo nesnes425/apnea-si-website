@@ -29,6 +29,10 @@ const redirectChecks = [
     "/2026/03/18/reportaza-apnea-si-challenge-2026/",
     "/novice/reportaza-apnea-si-challenge-2026",
   ],
+  [
+    "/2026/06/10/apnea-si-trening-camp-2026/",
+    "/novice/apnea-si-trening-camp-2026",
+  ],
   ["/2020/03/01/some-old-non-migrated-post/", "/novice"],
 ];
 
@@ -74,6 +78,7 @@ async function checkSitemap() {
     hasBeginnerCourse: urls.includes(`${expectedHost}/tecaji/zacetni`),
     hasNews: urls.includes(`${expectedHost}/novice`),
     hasBlogPost: urls.some((u) => u.includes("/novice/reportaza-apnea-si-challenge-2026")),
+    hasTrainingCamp2026: urls.some((u) => u.includes("/novice/apnea-si-trening-camp-2026")),
     excludesDesignPreview: !urls.includes(`${expectedHost}/design-preview`),
   };
 }

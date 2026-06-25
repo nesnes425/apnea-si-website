@@ -12,6 +12,7 @@ export const metadata = {
   title: "Tečaji prostega potapljanja",
   description:
     "SSI certificirani tečaji prostega potapljanja v Sloveniji. Od prvega potopa na en vdih do naprednih tehnik izenačevanja in globine. Začetni, nadaljevalni in master tečaj.",
+  alternates: { canonical: "/tecaji" },
 };
 
 const courses = [

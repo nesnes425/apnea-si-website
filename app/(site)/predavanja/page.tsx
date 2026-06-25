@@ -11,6 +11,7 @@ export const metadata = {
   title: "Predavanja za podjetja",
   description:
     "Samo Jeranko, TEDx govornik in eden najuspešnejših slovenskih prostih potapljačev. Predavanja o dihanju, stresu in pripravi na zahtevne trenutke.",
+  alternates: { canonical: "/predavanja" },
 };
 
 const eventPhotos = [

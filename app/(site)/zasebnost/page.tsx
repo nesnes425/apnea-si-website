@@ -5,6 +5,7 @@ export const metadata = {
   title: "Politika zasebnosti",
   description:
     "Politika zasebnosti in izjava o varstvu osebnih podatkov — Apnea Slovenija.",
+  alternates: { canonical: "/zasebnost" },
 };
 
 const tocSections = [

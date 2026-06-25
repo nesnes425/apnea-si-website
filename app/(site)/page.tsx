@@ -6,6 +6,10 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
 
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 const heroChoices = [
   {
     label: "Prvič pod gladino?",

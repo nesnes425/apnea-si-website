@@ -38,6 +38,7 @@ export const metadata = {
   title: "Kontakt",
   description:
     "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
+  alternates: { canonical: "/kontakt" },
 };
 
 export default function KontaktPage() {
