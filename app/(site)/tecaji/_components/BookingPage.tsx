@@ -38,10 +38,6 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
         <Overline>Prijava na tečaj</Overline>
         <SectionHeading className="mb-10">{course.fullName}</SectionHeading>
-        <p className="mb-10 max-w-2xl font-body text-body leading-relaxed">
-          Pošljite prijavo za izbrani termin. Samo bo prijavo preveril in vam
-          poslal nadaljnje informacije za potrditev udeležbe in račun.
-        </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
           <BookingFlow instanceId={instance._id} />

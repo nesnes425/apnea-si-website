@@ -28,10 +28,6 @@ export default function GiftVoucherPurchasePage() {
 
         <Overline>Povpraševanje za darilni bon</Overline>
         <SectionHeading className="mb-10">{voucher.fullName}</SectionHeading>
-        <p className="mb-10 max-w-2xl font-body text-body leading-relaxed">
-          Pošljite podatke za darilni bon. Samo vam bo poslal nadaljnje
-          informacije za plačilo oziroma račun, bon pa uredimo po potrditvi.
-        </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
           <GiftVoucherFlow />
