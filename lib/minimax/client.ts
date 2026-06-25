@@ -36,6 +36,7 @@ export type MinimaxIssuedInvoice = {
   Year?: number;
   InvoiceNumber?: number;
   DocumentReference?: string;
+  Status?: string;
   InvoiceAttachment?: MinimaxDocumentAttachment;
   RowVersion?: string;
 };

@@ -339,11 +339,13 @@ export async function createTrainingMinimaxInvoice(params: {
   let issuedInvoiceId: number;
   let rowVersion: string | undefined;
   let invoiceNumber: string | undefined;
+  let invoiceStatus: string | undefined;
 
   if (Number.isFinite(existingInvoiceId) && existingInvoiceId > 0) {
     const existing = await getIssuedInvoice({ organisationId, issuedInvoiceId: existingInvoiceId });
     issuedInvoiceId = existing.IssuedInvoiceId;
     rowVersion = existing.RowVersion;
+    invoiceStatus = existing.Status;
     invoiceNumber = invoiceNumberLabel({
       issuedInvoiceId,
       year: existing.Year,
@@ -359,6 +361,7 @@ export async function createTrainingMinimaxInvoice(params: {
     if (existingByReference) {
       issuedInvoiceId = existingByReference.IssuedInvoiceId;
       rowVersion = existingByReference.RowVersion;
+      invoiceStatus = existingByReference.Status;
       invoiceNumber = invoiceNumberLabel({
         issuedInvoiceId,
         year: existingByReference.Year,
@@ -406,11 +409,12 @@ export async function createTrainingMinimaxInvoice(params: {
       }
       issuedInvoiceId = created.issuedInvoiceId;
       rowVersion = created.rowVersion;
+      invoiceStatus = "O";
       invoiceNumber = invoiceNumberLabel(created);
     }
   }
 
-  if (rowVersion && params.intent.metadata.minimaxPdfGenerated !== "true") {
+  if (rowVersion && invoiceStatus !== "I" && params.intent.metadata.minimaxPdfGenerated !== "true") {
     await runIssuedInvoiceAction({
       organisationId,
       issuedInvoiceId,
