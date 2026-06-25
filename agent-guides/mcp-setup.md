@@ -1,6 +1,6 @@
 # MCP Setup Guide
 
-Last updated: June 11, 2026
+Last updated: June 12, 2026
 
 Use this when helping Samo or Katarina connect Claude Code / Codex to the systems behind
 Apnea.si.
@@ -14,7 +14,8 @@ Preferred setup:
 
 - GitHub access gives repo context.
 - Sanity login gives CMS permissions.
-- Stripe login / Stripe MCP gives payment visibility.
+- Stripe login / Stripe MCP gives payment visibility, but each of the two Stripe
+  accounts must be verified separately.
 - Other systems are added only when there is a clear workflow.
 
 ## Katarina Profile
@@ -48,10 +49,16 @@ Purpose:
 Setup:
 
 ```bash
-claude mcp add --scope user Sanity --transport http https://mcp.sanity.io
+codex mcp add sanity --url https://mcp.sanity.io
+codex mcp login sanity
 ```
 
-Then restart Claude Code / Codex and authenticate.
+Then restart Codex if the tools do not appear immediately. Authenticate with the
+user's own Sanity login; do not use a shared API token.
+
+During OAuth, Codex opens a temporary `http://127.0.0.1:<port>/callback/...` URL. This
+localhost address is only the secure callback into the local Codex app. The MCP server
+remains `https://mcp.sanity.io` and operates on Sanity's cloud project and datasets.
 
 First test prompt:
 
@@ -68,16 +75,63 @@ Purpose:
 - Verify webhook/email metadata
 - Help with refunds after confirmation
 
+Required account coverage:
+
+- Samo Jeranko s.p. — courses and gift vouchers
+- ŠD Apnea Slovenija — training memberships
+
+Current status as of June 12, 2026:
+
+- `stripe-trainings` is connected to the live ŠD Apnea Slovenija account and restricted
+  to read-only tools.
+- `stripe-courses` is connected to the Samo Jeranko s.p. account and restricted to
+  read-only tools.
+
+Codex also offers an official Stripe plugin. For Apnea.si, prefer the two named MCP
+connections over the generic plugin connector because the site uses two separate Stripe
+accounts. The explicit names make account selection auditable and reduce the risk of
+querying the wrong account. The plugin's Stripe implementation skills may still be used
+for development guidance without replacing these account-specific connections.
+
 Stripe MCP setup depends on the current Claude Code / Codex environment. Prefer the
 official Stripe MCP and the user’s own Stripe login/account. If a secret key is required,
 guide the user to configure it locally; do not paste it into chat.
 
 Do **not** set this up for Katarina unless Neža explicitly changes the access model.
 
-First test prompt:
+Codex setup:
+
+```bash
+codex mcp add stripe-courses --url https://mcp.stripe.com
+codex mcp login stripe-courses
+
+codex mcp add stripe-trainings --url https://mcp.stripe.com
+codex mcp login stripe-trainings
+```
+
+Authorize `stripe-courses` while signed into Samo Jeranko s.p. and
+`stripe-trainings` while signed into ŠD Apnea Slovenija. Stripe administrators may need
+to enable MCP access separately for sandbox and live mode.
+
+Recommended Codex tool policy for both Stripe connections:
+
+- Enable read-only account, balance, list, search, fetch, and documentation tools.
+- Disable all create, update, finalize, refund, and cancel tools.
+- Treat Samo's Stripe MCP access as fully read-only.
+- If Katarina is explicitly granted Stripe access later, apply the same read-only policy.
+
+The exact read/write classification is documented in `stripe-operations.md`.
+
+Run a read-only test against each account and explicitly name the expected account:
 
 ```text
-Use Stripe MCP. Show the latest 5 test-mode payments.
+Use Stripe MCP with the Samo Jeranko s.p. account. Show the latest 5 test-mode payments.
+Do not change anything.
+```
+
+```text
+Use Stripe MCP with the ŠD Apnea Slovenija account. Show the latest 5 test-mode
+payments. Do not change anything.
 ```
 
 ## Optional MCPs
@@ -99,10 +153,45 @@ Currently course dates live in Sanity, not Calendar.
 
 ### Brevo
 
-There is no routine Brevo MCP requirement for Samo/Katarina right now. The website uses
-Brevo through API code for transactional emails and contact/list management.
+Brevo provides an official MCP server, but its MCP token grants full read/write account
+access. Do not connect the all-features endpoint by default.
 
-For Brevo operations, prefer the Brevo UI unless Neža adds a tested MCP workflow.
+Recommended initial endpoint:
+
+```text
+https://mcp.brevo.com/v1/brevo_contacts/mcp
+```
+
+This exposes contact operations rather than campaign sending, domains, users, webhooks,
+or account administration. Disable `create_contact`, `update_contact`, and
+`delete_contact` so Samo/Katarina receive read-only contact access. The token itself is
+still powerful and must be stored in an environment variable, never directly in the
+repo or chat.
+
+Codex configuration:
+
+```bash
+codex mcp add brevo-contacts \
+  --url https://mcp.brevo.com/v1/brevo_contacts/mcp \
+  --bearer-token-env-var BREVO_MCP_TOKEN
+```
+
+Equivalent manual configuration:
+
+```toml
+[mcp_servers.brevo-contacts]
+url = "https://mcp.brevo.com/v1/brevo_contacts/mcp"
+bearer_token_env_var = "BREVO_MCP_TOKEN"
+default_tools_approval_mode = "prompt"
+disabled_tools = ["create_contact", "update_contact", "delete_contact"]
+```
+
+Create a separate Brevo MCP token for Samo's Codex access. Do not reuse
+`BREVO_API_KEY`, which belongs to the production website runtime.
+
+Keep campaign creation/sending in the Brevo UI initially. Add focused campaign or
+analytics MCP endpoints only after the operating workflow and confirmations have been
+tested.
 
 ### Vercel
 
@@ -139,7 +228,7 @@ Use Stripe MCP. Find payment for customer ana@example.com. Show me the amount, s
 ## What Not To Connect Casually
 
 - Vercel
-- Brevo API
+- Brevo's all-features MCP endpoint
 - Stripe live secret keys
 - Any shared mailbox with broad business history
 

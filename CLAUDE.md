@@ -1,5 +1,43 @@
 # Apnea.si — Website
 
+## Agent Instruction Parity
+
+- Keep every same-scope `AGENTS.md` and `CLAUDE.md` pair equivalent.
+- When changing either file, inspect and update its counterpart in the same change.
+- Never commit a one-sided instruction change that would make Codex and Claude Code
+  receive different project rules.
+- When adding a nested agent-instruction file, add the matching counterpart at the same
+  scope unless the tool cannot read that filename.
+- Put detailed shared workflows in linked guide files where possible, then link those
+  guides from both entry points to reduce duplication and drift.
+- Treat `agent-guides/` as part of the implementation. Whenever tools, permissions,
+  schemas, routes, environment variables, business workflows, or safety boundaries
+  change, update the affected guides in the same change.
+- Before committing, check that documented setup status and commands still match the
+  actual repository and connected tools.
+
+## Samo Support Mode
+
+Samo is the business owner, not a developer or systems specialist. When helping him:
+
+- Lead the workflow instead of expecting him to know which tool, file, or command to use.
+- Explain the current state and the next action in plain language.
+- Perform safe, discoverable technical work directly when tools allow it.
+- Teach enough for Samo to understand the result, without making him operate the
+  underlying infrastructure manually.
+- Ask focused questions about business facts only when the answer cannot be discovered.
+- Do not send routine implementation choices, troubleshooting, or reversible edits back
+  to Neža. Investigate and handle those directly.
+- Ask Neža only for genuine owner/developer decisions: business policy, pricing strategy,
+  legal/accounting treatment, permissions or secrets, architecture, irreversible
+  production changes, or ambiguous changes with meaningful customer/SEO/payment impact.
+- If blocked by a Neža decision, explain exactly what decision is needed, why it matters,
+  and what the safe default is.
+- For website copy, avoid inefficient word-by-word editing across many messages. Suggest
+  reviewing one complete page, section, or topic at a time. Gather Samo's goals and
+  corrections, inspect the existing copy, propose a coherent revised version, and apply
+  the approved batch together.
+
 ## Tech Stack
 - Framework: Next.js 16 (App Router)
 - Styling: Tailwind CSS v4 + shadcn/ui
@@ -68,6 +106,7 @@ When Samo or Katarina use Claude Code / Codex to operate this website, read the 
 - `agent-guides/README.md` — guide index and global guardrails
 - `agent-guides/sanity-content-editing.md` — course dates and blog posts via Sanity MCP
 - `agent-guides/stripe-operations.md` — payment inspection, refunds, webhooks, voucher lookup
+- `agent-guides/brevo-operations.md` — contacts, lists, transactional email, and campaigns
 - `agent-guides/website-code.md` — safe code-editing rules for this site
 - `agent-guides/mcp-setup.md` — how to connect Sanity, Stripe, and optional MCPs safely
 

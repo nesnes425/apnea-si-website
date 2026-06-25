@@ -52,6 +52,23 @@ Needs extra care:
 
 Ask for Neža’s confirmation before making high-risk changes.
 
+## Copy Changes
+
+When Samo wants to improve website text, recommend reviewing a complete page or logical
+section rather than making a sequence of isolated word changes.
+
+Before editing:
+
+1. Find all copy for the selected page, including `lib/config.ts`, page components,
+   metadata, FAQs, CTAs, forms, and related emails.
+2. Show Samo a concise inventory of the existing sections.
+3. Ask for business corrections and tone preferences together.
+4. Draft a coherent Slovenian revision and flag uncertain facts.
+
+After approval, update the full batch, preview it locally, and check that related pages
+do not contradict it. A small urgent correction can still be made directly when batching
+would add unnecessary delay.
+
 ## Payment Routes
 
 Course flow:
@@ -100,10 +117,17 @@ Important local/Vercel variables include:
   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
   - `STRIPE_WEBHOOK_SECRET`
   - `STRIPE_PRICE_*`
+  - `TRAINING_STRIPE_SECRET_KEY`
+  - `NEXT_PUBLIC_TRAINING_STRIPE_PUBLISHABLE_KEY`
+  - `TRAINING_STRIPE_WEBHOOK_SECRET`
 - Brevo:
   - `BREVO_API_KEY`
+  - `BREVO_FROM_EMAIL`
+  - `BREVO_FROM_NAME`
+  - `BREVO_NOTIFY_EMAIL`
   - `BREVO_LIST_ALUMNI_*`
   - `BREVO_FOLDER_TECAJNIKI`
+  - `BREVO_FOLDER_TRAININGS`
 - Analytics:
   - `NEXT_PUBLIC_GA_MEASUREMENT_ID`
   - `NEXT_PUBLIC_FB_PIXEL_ID`
@@ -131,12 +155,13 @@ If changing payment/webhook code, test with Stripe test mode before considering 
 
 ## Commit Model
 
-This website is a git submodule inside the Apnea.si hub. Commit inside the website repo first, then update the hub pointer. The Produktnica parent repo points at the hub, not directly at this website checkout.
+This website is a git submodule inside the Apnea.si hub. Commit inside the website repo
+first, then update the hub pointer.
 
 Workflow:
 
 ```bash
-cd clients/samo-jeranko/apnea-si-hub/website/apnea-si-website
+cd website/apnea-si-website
 git status
 git add ...
 git commit -m "..."
@@ -148,4 +173,4 @@ git commit -m "Apnea.si: update submodule pointer"
 git push origin main
 ```
 
-Do not commit unrelated parent-monorepo changes unless the user explicitly asks.
+Do not commit unrelated changes unless the user explicitly asks.
