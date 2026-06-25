@@ -13,6 +13,7 @@ import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
 export const metadata = pageMetadata({
   title: "Master tečaj prostega potapljanja — SSI Level 3",
@@ -391,6 +392,15 @@ export default function MasterTecajPage() {
       <CourseStructure />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         heading="Globina, ki jo razumete. Ne le dosežete."
         description={`Master tečaj prostega potapljanja: Mouthfill, 30–40 m, 2 vodena treninga. ${siteConfig.courses.master.price} €.`}

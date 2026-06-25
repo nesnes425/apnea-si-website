@@ -95,6 +95,23 @@ export default function TecajiPage() {
             , eden najboljših slovenskih potapljačev na vdih in izkušen učitelj
             začetnikov, rekreativcev in tekmovalcev.
           </p>
+          <p className="mt-6 text-[15px] text-muted-text leading-[1.7] font-body">
+            Če še raziskujete, kaj ta šport sploh pomeni, začnite z razlago{" "}
+            <Link
+              href="/prosto-potapljanje"
+              className="text-gold hover:text-gold-hover transition-colors"
+            >
+              kaj je prosto potapljanje
+            </Link>
+            . Za praktična vprašanja o prijavi, opremi in poteku pa poglejte{" "}
+            <Link
+              href="/vprasanja"
+              className="text-gold hover:text-gold-hover transition-colors"
+            >
+              FAQ
+            </Link>
+            .
+          </p>
         </div>
       </Section>
 

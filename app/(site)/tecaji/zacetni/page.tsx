@@ -15,6 +15,7 @@ import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { Testimonials } from "@/components/blocks/Testimonials";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
 export const metadata = pageMetadata({
   title: "Začetni tečaj prostega potapljanja | SSI Level 1",
@@ -240,6 +241,15 @@ function StoriesSection() {
         Ne potrebujete predznanja ali vrhunske kondicije. Dovolj je, da ste
         stari vsaj 12 let, v dobri psihofizični kondiciji in lahkotno
         preplavate 200 m brez ustavljanja.
+      </p>
+      <p className="mt-6 max-w-2xl text-[15px] leading-[1.7] text-muted-text font-body">
+        Če želite najprej razumeti osnove športa, preberite še razlago{" "}
+        <Link
+          href="/prosto-potapljanje"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          kaj je prosto potapljanje →
+        </Link>
       </p>
     </Section>
   );
@@ -538,6 +548,15 @@ export default function ZacetniTecajPage() {
       <Testimonials reviews={reviews} />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         backgroundImage="/images/tecaji-zacetni-CTA.webp"
         heading="Odkrijte, kaj zmorete pod morsko gladino"

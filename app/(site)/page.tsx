@@ -82,6 +82,15 @@ export default function HomePage() {
                     Poglejte treninge →
                   </Link>
                 </div>
+                <p className="mt-5 text-[15px] text-white/65 font-body">
+                  Prvič slišite za potapljanje na vdih?{" "}
+                  <Link
+                    href="/prosto-potapljanje"
+                    className="text-gold hover:text-gold-hover transition-colors"
+                  >
+                    Preberite, kaj je prosto potapljanje →
+                  </Link>
+                </p>
               </div>
 
               <div className="mt-16 grid gap-4 md:grid-cols-3">

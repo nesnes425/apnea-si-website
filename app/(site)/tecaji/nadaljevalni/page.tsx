@@ -14,6 +14,7 @@ import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
 export const metadata = pageMetadata({
   title: "Nadaljevalni tečaj prostega potapljanja — SSI Level 2",
@@ -431,6 +432,15 @@ export default function NadaljevalniTecajPage() {
       <CourseStructure />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         heading="Odkrijte, kaj se skriva pod 30 metri"
         description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m. ${siteConfig.courses.nadaljevalni.price} €.`}

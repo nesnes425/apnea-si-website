@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FAQ } from "@/components/blocks/FAQ";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 import { Overline } from "@/components/blocks/Overline";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -210,6 +212,16 @@ export default async function TreningiPage() {
             vašemu znanju in urniku. Mesto v skupini rezervirate s plačilom
             letne članarine v višini {membershipFee} €.
           </p>
+          <p className="-mt-6 mb-12 max-w-3xl text-[15px] leading-[1.7] text-muted-text">
+            Niste prepričani glede ravni, opreme ali prijave? Poglejte{" "}
+            <Link
+              href="/vprasanja"
+              className="text-gold hover:text-gold-hover transition-colors"
+            >
+              FAQ
+            </Link>
+            .
+          </p>
           <TrainingScheduleSelector groups={groups} applicationsOpen={applicationsOpen} membershipFee={membershipFee} />
         </div>
       </section>
@@ -219,6 +231,16 @@ export default async function TreningiPage() {
       </section>
 
       <FAQ items={faqs} surface />
+      <ContextLinks surface>
+        Za širša vprašanja o tečajih, opremi in začetku prostega potapljanja
+        odprite še{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          celoten FAQ →
+        </Link>
+      </ContextLinks>
 
       <section className="bg-navy py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-6 text-center">
