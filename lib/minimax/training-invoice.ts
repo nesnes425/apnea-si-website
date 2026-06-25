@@ -76,6 +76,8 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
   const paymentMethodId = readOptionalEnvNumber("MINIMAX_TRAINING_PAYMENT_METHOD_ID");
   const cashRegisterId = readOptionalEnvNumber("MINIMAX_TRAINING_CASH_REGISTER_ID");
   const revenueId = readOptionalEnvNumber("MINIMAX_TRAINING_REVENUE_ID");
+  const vatRateId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_ID");
+  const vatRatePercentageId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_PERCENTAGE_ID");
 
   const issuedAt = data.paymentCreated.toISOString();
   const itemName = "Letna članarina ŠD Apnea Slovenija";
@@ -111,6 +113,8 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
         UnitOfMeasurement: "kos",
         PriceWithVAT: data.membershipFee,
         VATPercent: vatPercent,
+        VatRate: fk(vatRateId),
+        VatRatePercentage: fk(vatRatePercentageId),
       },
     ],
     IssuedInvoicePaymentMethods: recordPayment && paymentMethodId
