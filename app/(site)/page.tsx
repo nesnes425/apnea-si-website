@@ -4,8 +4,10 @@ import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
+import { GoogleTestimonials } from "@/components/blocks/GoogleTestimonials";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
 import { pageMetadata } from "@/lib/seo";
+import { homeGoogleReviews } from "@/lib/testimonials";
 
 export const metadata = pageMetadata({
   title: "Apnea Slovenija - šola prostega potapljanja",
@@ -227,48 +229,7 @@ export default function HomePage() {
       {/* ============================================
           5. TESTIMONIALS — hand-picked Google reviews
           ============================================ */}
-      <section className="bg-surface py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body">
-              {siteConfig.stats.googleReviews} ocen na Google · {siteConfig.stats.googleRating} ★
-            </p>
-            <a
-              href="https://www.google.com/maps/place/Apnea+Slovenija/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[15px] text-gold font-medium font-body hover:text-gold-hover transition-colors"
-            >
-              Preberite vse ocene na Google →
-            </a>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { text: "Zelo strokovno izpeljan tečaj. Zelo priporočam. Izveš veliko uporabnih stvari.", name: "Peter Pajk" },
-              { text: "Odličen tečaj z vrhunsko ekipo – strokovno, sproščeno in z veliko prakse. Res prava izkušnja, ki jo priporočam vsakemu.", name: "Mitja Mohorič" },
-              { text: "Hvala za vso znanje, pomoč in podporo pri srkanju novega znanja pri potopih na vdih. Resnično profesionalci na vseh področjih. Ekipa kapo dol.", name: "david kozjek" },
-            ].map((review, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 border-l-2 border-gold/30"
-              >
-                <div className="flex gap-0.5 text-gold mb-3">
-                  {[...Array(5)].map((_, j) => (
-                    <span key={j} className="text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-[15px] text-body font-body leading-relaxed mb-4">
-                  &ldquo;{review.text}&rdquo;
-                </p>
-                <p className="text-[13px] text-navy font-medium font-body">
-                  {review.name}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <GoogleTestimonials reviews={homeGoogleReviews} />
 
       {/* ============================================
           6. SAMO — quote-led, editorial photo collage
