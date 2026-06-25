@@ -117,6 +117,9 @@ function DetailsStep({
       fullName: String(formData.get("fullName") ?? ""),
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
+      address: String(formData.get("address") ?? ""),
+      postalCode: String(formData.get("postalCode") ?? ""),
+      city: String(formData.get("city") ?? ""),
       acceptTerms: formData.get("acceptTerms") === "on",
     };
     const parsed = trainingReservationSchema.safeParse(raw);
@@ -149,6 +152,18 @@ function DetailsStep({
       <Input label="Ime in priimek *" id="fullName" name="fullName" autoComplete="name" required error={errors.fullName} />
       <Input label="E-pošta *" id="email" name="email" type="email" autoComplete="email" required error={errors.email} />
       <Input label="Telefon *" id="phone" name="phone" type="tel" autoComplete="tel" required error={errors.phone} />
+      <Input label="Naslov *" id="address" name="address" autoComplete="street-address" required error={errors.address} />
+      <div className="grid gap-5 sm:grid-cols-[140px_1fr]">
+        <Input
+          label="Poštna številka *"
+          id="postalCode"
+          name="postalCode"
+          autoComplete="postal-code"
+          required
+          error={errors.postalCode}
+        />
+        <Input label="Kraj *" id="city" name="city" autoComplete="address-level2" required error={errors.city} />
+      </div>
       <div>
         <label className="flex cursor-pointer items-start gap-3">
           <input type="checkbox" name="acceptTerms" className="mt-1 h-4 w-4 shrink-0 accent-gold" />
