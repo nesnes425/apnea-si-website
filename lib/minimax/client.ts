@@ -52,6 +52,13 @@ export type MinimaxCreatedInvoice = {
   invoiceNumber?: number;
 };
 
+export type MinimaxCustomer = {
+  CustomerId: number;
+  Code?: string;
+  Name?: string;
+  RowVersion?: string;
+};
+
 type MinimaxSearchResult<T> = {
   Rows?: T[];
   TotalRows?: number;
@@ -153,6 +160,19 @@ function unwrapIssuedInvoice(response: unknown): MinimaxIssuedInvoice {
   return invoice;
 }
 
+function unwrapCustomer(response: unknown): MinimaxCustomer {
+  const value = response as MinimaxCustomer | { Data?: MinimaxCustomer; Content?: MinimaxCustomer };
+  const customer = "CustomerId" in value ? value : value.Data ?? value.Content;
+  if (!customer?.CustomerId) {
+    throw new Error("Minimax response did not include CustomerId");
+  }
+  return customer;
+}
+
+function isMinimaxNotFound(error: unknown) {
+  return error instanceof Error && error.message.includes(" failed (404):");
+}
+
 export async function createIssuedInvoice(params: {
   organisationId: number;
   issuedInvoice: Record<string, unknown>;
@@ -204,6 +224,32 @@ export async function listIssuedInvoices(params: {
     `/api/orgs/${params.organisationId}/issuedinvoices?${query.toString()}`
   );
   return response.Rows ?? [];
+}
+
+export async function getCustomerByCode(params: {
+  organisationId: number;
+  code: string;
+}): Promise<MinimaxCustomer | undefined> {
+  try {
+    const response = await minimaxFetch<unknown>(
+      `/api/orgs/${params.organisationId}/customers/code(${encodeURIComponent(params.code)})`
+    );
+    return unwrapCustomer(response);
+  } catch (error) {
+    if (isMinimaxNotFound(error)) return undefined;
+    throw error;
+  }
+}
+
+export async function createCustomer(params: {
+  organisationId: number;
+  customer: Record<string, unknown>;
+}): Promise<MinimaxCustomer> {
+  const response = await minimaxFetch<unknown>(`/api/orgs/${params.organisationId}/customers`, {
+    method: "POST",
+    body: JSON.stringify(params.customer),
+  });
+  return unwrapCustomer(response);
 }
 
 export async function runIssuedInvoiceAction(params: {

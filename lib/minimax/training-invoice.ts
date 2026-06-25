@@ -1,6 +1,9 @@
+import { createHash } from "node:crypto";
 import type Stripe from "stripe";
 import {
+  createCustomer,
   createIssuedInvoice,
+  getCustomerByCode,
   getDocumentAttachment,
   getIssuedInvoice,
   getResource,
@@ -63,7 +66,38 @@ function isoDateOnly(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
+function customerCode(data: TrainingInvoiceData) {
+  const key = data.customerEmail || `${data.customerName}-${data.customerPhone}`;
+  const hash = createHash("sha256").update(key.toLowerCase()).digest("hex").slice(0, 12);
+  return `APNEA-${hash.toUpperCase()}`;
+}
+
+async function findOrCreateTrainingCustomer(params: {
+  organisationId: number;
+  data: TrainingInvoiceData;
+  currencyId: number | undefined;
+  countryId: number | undefined;
+}) {
+  const code = customerCode(params.data);
+  const existing = await getCustomerByCode({ organisationId: params.organisationId, code });
+  if (existing) return existing;
+
+  return createCustomer({
+    organisationId: params.organisationId,
+    customer: {
+      Code: code,
+      Name: params.data.customerName,
+      Country: fk(params.countryId),
+      Currency: fk(params.currencyId),
+      SubjectToVAT: "N",
+      Usage: "D",
+      EInvoiceIssuing: "SeNePripravlja",
+      ExpirationDays: 0,
+    },
+  });
+}
+
+function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number) {
   const vatPercent = Number(readOptionalEnv("MINIMAX_TRAINING_VAT_PERCENT") ?? "0");
   if (!Number.isFinite(vatPercent)) {
     throw new Error("MINIMAX_TRAINING_VAT_PERCENT is not a valid number");
@@ -78,6 +112,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
   const revenueId = readOptionalEnvNumber("MINIMAX_TRAINING_REVENUE_ID");
   const vatRateId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_ID");
   const vatRatePercentageId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_PERCENTAGE_ID");
+  const countryId = readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
 
   const issuedAt = data.paymentCreated.toISOString();
   const itemName = "Letna članarina ŠD Apnea Slovenija";
@@ -89,10 +124,12 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
 
   return {
     DocumentNumbering: { ID: documentNumberingId },
+    Customer: { ID: customerId },
     DateIssued: issuedAt,
     DateTransaction: issuedAt,
     DateDue: issuedAt,
     AddresseeName: data.customerName,
+    AddresseeCountry: fk(countryId),
     DocumentReference: data.paymentIntentId,
     Notes: [
       "Ustvarjeno samodejno iz Stripe testnega plačila.",
@@ -227,6 +264,8 @@ export async function createTrainingMinimaxInvoice(params: {
   membershipFee: number;
 }): Promise<MinimaxTrainingInvoiceResult> {
   const organisationId = readEnvNumber("MINIMAX_TRAINING_ORGANISATION_ID");
+  const currencyId = readOptionalEnvNumber("MINIMAX_TRAINING_CURRENCY_ID");
+  const countryId = readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
   const existingInvoiceId = Number(params.intent.metadata.minimaxIssuedInvoiceId);
   const invoiceData = dataFromIntent(params.intent, params.membershipFee);
 
@@ -259,9 +298,15 @@ export async function createTrainingMinimaxInvoice(params: {
         invoiceNumber: existingByReference.InvoiceNumber,
       });
     } else {
+      const customer = await findOrCreateTrainingCustomer({
+        organisationId,
+        data: invoiceData,
+        currencyId,
+        countryId,
+      });
       const created = await createIssuedInvoice({
         organisationId,
-        issuedInvoice: buildIssuedInvoicePayload(invoiceData),
+        issuedInvoice: buildIssuedInvoicePayload(invoiceData, customer.CustomerId),
       });
       issuedInvoiceId = created.issuedInvoiceId;
       rowVersion = created.rowVersion;
