@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   OPEN_CONSENT_EVENT,
@@ -9,6 +10,7 @@ import {
   writeConsent,
   type ConsentState,
 } from "@/lib/cookie-consent";
+import { trackPageView } from "@/lib/analytics";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
@@ -25,6 +27,8 @@ fbq('init', '${id}');
 fbq('track', 'PageView');`;
 
 export function CookieConsent() {
+  const pathname = usePathname();
+  const previousPathRef = useRef(pathname);
   const [consent, setConsent] = useState<ConsentState | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -32,6 +36,8 @@ export function CookieConsent() {
   const [marketingToggle, setMarketingToggle] = useState(true);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect --
+       Consent lives in document.cookie, so the banner state is hydrated on the client. */
     const stored = readConsent();
     if (stored) {
       setConsent(stored);
@@ -52,13 +58,22 @@ export function CookieConsent() {
     };
     window.addEventListener(OPEN_CONSENT_EVENT, reopen);
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, reopen);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   function persist(next: ConsentState) {
+    const previous = consent ?? readConsent();
     writeConsent(next);
     setConsent(next);
     setShowBanner(false);
     setShowSettings(false);
+
+    if (
+      (previous?.analytics && !next.analytics) ||
+      (previous?.marketing && !next.marketing)
+    ) {
+      window.location.reload();
+    }
   }
 
   function acceptAll() {
@@ -72,6 +87,13 @@ export function CookieConsent() {
   function saveSelection() {
     persist({ analytics: analyticsToggle, marketing: marketingToggle });
   }
+
+  useEffect(() => {
+    if (previousPathRef.current === pathname) return;
+    previousPathRef.current = pathname;
+    if (!consent?.analytics && !consent?.marketing) return;
+    trackPageView(pathname);
+  }, [consent?.analytics, consent?.marketing, pathname]);
 
   return (
     <>
