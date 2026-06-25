@@ -68,6 +68,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
   if (!Number.isFinite(vatPercent)) {
     throw new Error("MINIMAX_TRAINING_VAT_PERCENT is not a valid number");
   }
+  const recordPayment = readOptionalEnv("MINIMAX_TRAINING_RECORD_PAYMENT") === "true";
 
   const documentNumberingId = readEnvNumber("MINIMAX_TRAINING_DOCUMENT_NUMBERING_ID");
   const currencyId = readOptionalEnvNumber("MINIMAX_TRAINING_CURRENCY_ID");
@@ -112,7 +113,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
         VATPercent: vatPercent,
       },
     ],
-    IssuedInvoicePaymentMethods: paymentMethodId
+    IssuedInvoicePaymentMethods: recordPayment && paymentMethodId
       ? [
           {
             PaymentMethod: { ID: paymentMethodId },

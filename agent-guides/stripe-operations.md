@@ -8,39 +8,43 @@ Use this when Samo or Katarina asks Claude Code / Codex about Apnea.si payments.
 
 Apnea.si uses two separate Stripe accounts:
 
-- **Samo Jeranko s.p.** — courses and gift vouchers
+- **Samo Jeranko s.p.** — dormant/deferred course and gift-voucher payment code
 - **ŠD Apnea Slovenija** — training memberships
 
 Always identify and state which account is active before searching, refunding, or
 changing anything. A connector authenticated to one account cannot be assumed to cover
 the other.
 
-All flows use Stripe Elements through PaymentIntents. Stripe products/prices are
-templates only. The actual course, training group, location, and customer details are
-stored on PaymentIntent metadata.
+For launch, only training memberships use Stripe publicly. Courses and gift vouchers
+use manual signup/povpraševanje plus manual invoicing; their older Stripe code remains
+in the repository for possible later reuse, but it should not be visible to visitors.
+Stripe products/prices are templates only. The actual training group, location, and
+customer details are stored on PaymentIntent metadata.
 
-Current payment flows:
+Current public launch flows:
 
-- Course booking:
+- Course booking, manual:
   - `/tecaji/zacetni/prijava`
   - `/tecaji/nadaljevalni/prijava`
   - `/tecaji/master/prijava`
-  - Confirmation: `/tecaji/hvala`
-- Gift voucher:
+  - Confirmation happens inline on the signup page. `/tecaji/hvala` is a noindex
+    fallback page only.
+- Gift voucher, manual:
   - `/darilni-bon/nakup`
-  - Confirmation: `/darilni-bon/hvala`
-- Training membership:
+  - Confirmation happens inline on the request page. `/darilni-bon/hvala` is a noindex
+    fallback page only.
+- Training membership, online payment:
   - `/treningi/prijava`
+  - Confirmation: `/treningi/hvala`
 
 Webhook routes:
 
-- Courses and vouchers: `/api/stripe/webhook`
+- Courses and vouchers: `/api/stripe/webhook` is dormant/deferred for launch
 - Trainings: `/api/stripe/training-webhook`
 
-The webhooks send Brevo emails and mark successful PaymentIntents with:
+The training webhook sends Brevo emails and marks successful PaymentIntents with:
 
 ```text
-Courses/vouchers: emailSent=true
 Trainings: trainingProcessed=true
 ```
 
@@ -76,6 +80,11 @@ minimaxPdfGenerated=true|false
 If Minimax invoice/PDF creation fails, the customer confirmation email is not sent.
 The webhook alerts the admin address and returns an error so Stripe retries. Do not
 enable this in live mode until Minimax/FURS davčno potrjevanje is configured and tested.
+
+Payment posting inside Minimax is disabled by default. Set
+`MINIMAX_TRAINING_RECORD_PAYMENT=true` only after accountant/FURS setup confirms how
+Stripe card payments should map to Minimax payment method, cash register, and revenue
+fields.
 
 ## MCP Setup
 
