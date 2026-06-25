@@ -314,21 +314,21 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          8. INSTAGRAM — community invitation via Elfsight
+          8. INSTAGRAM — live Elfsight feed
           ============================================ */}
       <section className="bg-surface py-16 md:py-20">
         <div className="max-w-6xl mx-auto px-6 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-2">
-                Pridružite se nam
+                Instagram
               </p>
               <p className="text-[22px] md:text-[26px] font-semibold text-navy font-heading">
-                Vstopite v naš svet na Instagramu
+                Pridružite se nam tudi na Instagramu
               </p>
             </div>
             <a
-              href="https://www.instagram.com/apnea.si/"
+              href={siteConfig.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[15px] text-gold font-medium font-body hover:text-gold-hover transition-colors shrink-0"
