@@ -82,8 +82,9 @@ Odgovori neposredno na ta email. Pošiljatelj je v Reply-To.`;
 
 export function speakingInquiryConfirmationEmail(d: SpeakingInquiryEmailData) {
   const subject = "Prejeli smo vaše povpraševanje za predavanje";
+  const greeting = d.name.trim() ? `Pozdravljeni ${d.name.trim()},` : "Pozdravljeni,";
 
-  const text = `Pozdravljeni,
+  const text = `${greeting}
 
 hvala za povpraševanje za predavanje ali delavnico Sama Jeranka.
 
@@ -96,7 +97,7 @@ ekipa Apnea.si`;
 <html lang="sl">
 <body style="margin:0;padding:24px;background:#f7f5f2;color:#33404f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;padding:24px;">
-    <p style="margin:0 0 16px;">Pozdravljeni,</p>
+    <p style="margin:0 0 16px;">${escapeHtml(greeting)}</p>
     <p style="margin:0 0 16px;">
       hvala za povpraševanje za predavanje ali delavnico Sama Jeranka.
     </p>

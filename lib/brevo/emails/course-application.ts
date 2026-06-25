@@ -18,7 +18,7 @@ export function courseApplicationConfirmationEmail(d: CourseApplicationEmailData
 
   const text = `Pozdravljeni, ${first || d.customerName},
 
-prejeli smo vašo prijavo na ${d.courseName}. Mesto še ni dokončno potrjeno.
+prejeli smo vašo prijavo na ${d.courseName}. V kratkem se vam javimo z nadaljnjimi informacijami za potrditev udeležbe ter plačilo akontacije.
 
 VAŠ IZBRANI TERMIN
 ${d.courseName}
@@ -26,9 +26,6 @@ ${d.dateRange}, ${d.location}
 Bazenski del
 
 Cena: €${d.priceInEuros}
-
-KAJ SLEDI
-Samo bo preveril prijavo in vam poslal nadaljnje informacije za potrditev udeležbe in plačilo oziroma račun.
 
 GLOBINSKI DEL
 Globinski del (morje) se izvaja maj–avgust. Podrobnosti uskladimo po bazenskem delu tečaja.
@@ -45,7 +42,7 @@ Apnea Slovenija`;
 <body style="margin:0;padding:24px;background:#f7f5f2;color:#33404f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.6;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;padding:32px 28px;">
     <p>Pozdravljeni, <strong>${escapeHtml(first || d.customerName)}</strong>,</p>
-    <p>prejeli smo vašo prijavo na <strong>${escapeHtml(d.courseName)}</strong>. Mesto še ni dokončno potrjeno.</p>
+    <p>prejeli smo vašo prijavo na <strong>${escapeHtml(d.courseName)}</strong>. V kratkem se vam javimo z nadaljnjimi informacijami za potrditev udeležbe ter plačilo akontacije.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
@@ -57,10 +54,7 @@ Apnea Slovenija`;
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
-    <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Kaj sledi</p>
-    <p>Samo bo preveril prijavo in vam poslal nadaljnje informacije za potrditev udeležbe in plačilo oziroma račun.</p>
-
-    <p style="margin:24px 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Globinski del</p>
+    <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Globinski del</p>
     <p>Globinski del (morje) se izvaja maj–avgust. Podrobnosti uskladimo po bazenskem delu tečaja.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">

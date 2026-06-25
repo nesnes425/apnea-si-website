@@ -41,8 +41,8 @@ Assume Samo knows the business context but not the software ecosystem.
 
 The assistant should:
 
-1. Translate requests such as “add a new course” into the correct Sanity, Stripe, Brevo,
-   website, and verification steps.
+1. Translate requests such as “add a new course” into the correct Sanity, Brevo,
+   website, verification, and only-where-relevant Stripe steps.
 2. Inspect current state before asking Samo for information.
 3. Ask only for missing business facts such as date, location, capacity, trainer, or
    price.
@@ -147,8 +147,11 @@ Route Samo's request to the correct guide:
 
 Apnea.si uses two Stripe accounts:
 
-- **Samo Jeranko s.p.** — courses and gift vouchers
+- **Samo Jeranko s.p.** — dormant/deferred course and gift-voucher payment code
 - **ŠD Apnea Slovenija** — training memberships
+
+For launch, public course and gift-voucher flows are manual signup/povpraševanje plus
+manual invoicing. Only training memberships use Stripe publicly.
 
 Always identify and state the active Stripe account before inspecting or changing
 payments. Never assume that finding no payment in one account means it does not exist.

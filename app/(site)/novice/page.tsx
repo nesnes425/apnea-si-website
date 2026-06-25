@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
 import { pageMetadata } from "@/lib/seo";
 import { getBlogPosts, getBlogPostCount } from "@/lib/sanity/queries";
 import type { BlogPost } from "@/lib/sanity/types";
 
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 
 const POSTS_PER_PAGE = 12;
 

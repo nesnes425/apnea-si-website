@@ -69,24 +69,36 @@ After approval, update the full batch, preview it locally, and check that relate
 do not contradict it. A small urgent correction can still be made directly when batching
 would add unnecessary delay.
 
-## Payment Routes
+## Signup And Payment Routes
 
-Course flow:
+Course launch flow is manual signup, not visible Stripe payment:
 
 - `app/(site)/tecaji/_components/BookingPage.tsx`
 - `app/(site)/tecaji/_components/BookingFlow.tsx`
 - `app/(site)/tecaji/[course]/prijava/page.tsx`
-- `lib/stripe/actions.ts`
-- `app/api/stripe/webhook/route.ts`
+- `lib/course-application-actions.ts`
+- `app/(site)/tecaji/hvala/page.tsx` — noindex fallback only; inline confirmation on
+  the signup page is the normal path.
 
-Gift voucher flow:
+Gift voucher launch flow is manual povpraševanje, not visible Stripe payment:
 
 - `app/(site)/darilni-bon/nakup/page.tsx`
 - `app/(site)/darilni-bon/nakup/GiftVoucherFlow.tsx`
-- `app/(site)/darilni-bon/hvala/page.tsx`
-- `lib/stripe/gift-voucher-actions.ts`
-- `lib/voucher-pdf/Voucher.tsx`
-- `app/api/stripe/webhook/route.ts`
+- `lib/gift-voucher-request-actions.ts`
+- `app/(site)/darilni-bon/hvala/page.tsx` — noindex fallback only; inline confirmation
+  on the request page is the normal path.
+
+Training launch flow uses Stripe online payment:
+
+- `app/(site)/treningi/prijava/page.tsx`
+- `app/(site)/treningi/prijava/TrainingSignupForm.tsx`
+- `app/(site)/treningi/hvala/page.tsx`
+- `lib/stripe/training-actions.ts`
+- `app/api/stripe/training-webhook/route.ts`
+
+Dormant/deferred course and voucher payment code remains in `lib/stripe/`,
+`app/api/stripe/webhook/route.ts`, and voucher PDF files for possible later reuse. Do
+not expose it publicly unless Neža explicitly changes the launch scope.
 
 ## SEO / Redirects
 
@@ -128,6 +140,17 @@ Important local/Vercel variables include:
   - `BREVO_LIST_ALUMNI_*`
   - `BREVO_FOLDER_TECAJNIKI`
   - `BREVO_FOLDER_TRAININGS`
+- Minimax training invoicing:
+  - `MINIMAX_CLIENT_ID`
+  - `MINIMAX_CLIENT_SECRET`
+  - `MINIMAX_SUBSCRIPTION_KEY`
+  - `MINIMAX_ORGANIZATION_ID`
+  - `MINIMAX_TRAINING_INVOICING_ENABLED`
+  - `MINIMAX_TRAINING_RECORD_PAYMENT`
+  - `MINIMAX_TRAINING_REQUIRE_PDF`
+  - `MINIMAX_TRAINING_*`
+- Ops:
+  - `CRON_SECRET`
 - Analytics:
   - `NEXT_PUBLIC_GA_MEASUREMENT_ID`
   - `NEXT_PUBLIC_FB_PIXEL_ID`

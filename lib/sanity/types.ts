@@ -1,3 +1,5 @@
+import type { PortableTextBlock } from "@portabletext/types";
+
 export interface CourseInstance {
   _id: string;
   _type: "courseInstance";
@@ -16,7 +18,7 @@ export interface BlogPost {
   _type: "blogPost";
   title: string;
   slug: { current: string };
-  body: unknown[]; // Portable Text
+  body: PortableTextBlock[];
   featuredImage?: {
     asset: {
       _id: string;
@@ -45,9 +47,9 @@ export interface TrainingProgram {
   name: string;
   slug: { current: string };
   shortDescription: string;
-  description?: unknown[];
+  description?: PortableTextBlock[];
   placementGuidance: string;
-  equipment?: unknown[];
+  equipment?: PortableTextBlock[];
   image?: SanityImage;
   sortOrder: number;
   active: boolean;

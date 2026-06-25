@@ -16,15 +16,12 @@ export function giftVoucherRequestConfirmationEmail(d: GiftVoucherRequestEmailDa
 
   const text = `Pozdravljeni, ${first || d.buyerName},
 
-prejeli smo vaše povpraševanje za darilni bon.
+prejeli smo vaše povpraševanje za darilni bon. V kratkem bomo preverili podatke in vam poslali nadaljnje informacije za plačilo ter dostavo bona.
 
 BON
 ${d.voucherName}
 Za: ${d.recipientName}
 Cena: €${d.priceInEuros}
-
-KAJ SLEDI
-Samo bo preveril podatke in vam poslal nadaljnje informacije za plačilo oziroma račun. Bon še ni izdan.
 
 VPRAŠANJA
 Pišite nam na ${siteConfig.email} ali pokličite ${siteConfig.phone}.
@@ -38,7 +35,7 @@ Apnea Slovenija`;
 <body style="margin:0;padding:24px;background:#f7f5f2;color:#33404f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.6;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;padding:32px 28px;">
     <p>Pozdravljeni, <strong>${escapeHtml(first || d.buyerName)}</strong>,</p>
-    <p>prejeli smo vaše povpraševanje za darilni bon. Bon še ni izdan.</p>
+    <p>prejeli smo vaše povpraševanje za darilni bon. V kratkem bomo preverili podatke in vam poslali nadaljnje informacije za plačilo ter dostavo bona.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
@@ -46,11 +43,6 @@ Apnea Slovenija`;
     <p style="margin:0 0 4px;font-size:18px;font-weight:600;">${escapeHtml(d.voucherName)}</p>
     <p style="margin:0 0 4px;">Za: ${escapeHtml(d.recipientName)}</p>
     <p style="margin:0;">Cena: <strong>€${d.priceInEuros}</strong></p>
-
-    <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
-
-    <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Kaj sledi</p>
-    <p>Samo bo preveril podatke in vam poslal nadaljnje informacije za plačilo oziroma račun.</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 

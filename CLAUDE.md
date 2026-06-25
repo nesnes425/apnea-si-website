@@ -42,7 +42,8 @@ Samo is the business owner, not a developer or systems specialist. When helping 
 - Framework: Next.js 16 (App Router)
 - Styling: Tailwind CSS v4 + shadcn/ui
 - CMS: Sanity (course schedule, blog posts)
-- Payments: Stripe Elements (two accounts — s.p. for courses, ŠD for trainings)
+- Payments: Stripe Elements for training memberships. Course and gift-voucher payment
+  code exists but is deferred for launch; public course/voucher flows are manual.
 - Email: Brevo (transactional + marketing)
 - Analytics: GA4 + Facebook Pixel (consent-gated)
 - Deployment: Vercel
@@ -58,7 +59,8 @@ Follow the Produktnica website coding standards:
 - **Config before components.** All business data imports from `lib/config.ts`.
 - **Sanity is the source of truth** for course schedule and blog posts. Never hardcode course dates.
 - **Course details (curriculum, pricing, FAQs, testimonials) are hardcoded** on landing pages — they rarely change.
-- **Stripe logic lives in `lib/stripe/`** — two accounts: Samo Jeranko s.p. (courses) + ŠD Apnea Slovenija (trainings).
+- **Stripe logic lives in `lib/stripe/`** — training payments use ŠD Apnea
+  Slovenija; dormant/deferred course and voucher payment code uses Samo Jeranko s.p.
 - **Brevo for all email** — transactional (booking confirmations) + marketing (newsletter). One provider, one contact database.
 - **No fake urgency.** "Še prosta mesta" and "Razprodano" come from real Sanity data.
 - **Never leave a page with stock photos or grey placeholders.** Always use real freediving imagery.

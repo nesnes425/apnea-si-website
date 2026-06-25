@@ -186,11 +186,17 @@ as Slovenian accounting invoices; Samo’s accountant / Zoho Books decision is s
 
 ## Webhooks
 
-Production emails only work if Stripe has a webhook endpoint configured:
+Production training emails only work if Stripe has a webhook endpoint configured:
+
+```text
+Trainings: https://<production-domain>/api/stripe/training-webhook
+```
+
+Do not configure the course/voucher production webhook for launch unless Neža explicitly
+revives those Stripe flows. The dormant endpoint is:
 
 ```text
 Courses/vouchers: https://<production-domain>/api/stripe/webhook
-Trainings: https://<production-domain>/api/stripe/training-webhook
 ```
 
 Required event:
@@ -214,9 +220,11 @@ Test mode and live mode have different webhook secrets.
 
 ## Live Mode Rules
 
-Before launch:
+Before launch, the only public Stripe live-mode setup is for the ŠD Apnea Slovenija
+training account.
 
-For the Samo Jeranko s.p. account:
+For the Samo Jeranko s.p. account, course and gift-voucher Stripe flows are deferred.
+Only do the following later if Neža explicitly revives online payment for those flows:
 
 1. Recreate Stripe products/prices in live mode.
 2. Replace Vercel env vars:
@@ -230,7 +238,7 @@ For the Samo Jeranko s.p. account:
 3. Redeploy Vercel.
 4. Run one real low-risk payment test if Samo approves.
 
-For the ŠD Apnea Slovenija account:
+For the ŠD Apnea Slovenija account before launch:
 
 1. Confirm the live training membership price created by the PaymentIntent flow.
 2. Replace Vercel env vars:

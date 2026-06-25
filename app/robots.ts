@@ -6,7 +6,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/studio/", "/tecaji/*/prijava", "/tecaji/hvala"],
+        disallow: [
+          "/api/",
+          "/studio/",
+          "/tecaji/*/prijava",
+          "/tecaji/hvala",
+          "/darilni-bon/hvala",
+        ],
       },
     ],
     sitemap: "https://apnea.si/sitemap.xml",

@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
 import { getBlogPost, getRelatedPosts } from "@/lib/sanity/queries";
 import { PortableTextRenderer } from "@/components/blocks/PortableTextRenderer";
 import type { BlogPost } from "@/lib/sanity/types";
 import type { Metadata } from "next";
 
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 const SITE_URL = "https://apnea.si";
 
 interface Props {

@@ -57,3 +57,8 @@ If helping Samo or Katarina operate the site via Claude Code / Codex, also read:
 Important: Samo/Katarina may have Admin access in Sanity because the current plan lacks
 granular roles. Treat that as content-editor-only access unless Neža explicitly says
 otherwise.
+
+Launch payment scope: public course and gift-voucher flows are manual signup /
+povpraševanje plus manual invoicing. Stripe is public only for training memberships.
+Dormant course/voucher payment code remains in the repo for possible later reuse, but
+do not expose it unless Neža explicitly changes the launch scope.
