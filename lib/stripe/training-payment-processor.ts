@@ -130,7 +130,7 @@ async function sendMinimaxFailureAlert(params: {
   const message = errorMessage(params.error);
   const subject = `Minimax račun ni bil ustvarjen: ${params.data.customerName}`;
   const text = [
-    "Stripe testno placilo je uspelo, Minimax racun pa ni bil ustvarjen.",
+    "Stripe placilo je uspelo, Minimax racun pa ni bil ustvarjen.",
     "",
     `PaymentIntent: ${params.intent.id}`,
     `Znesek: ${params.membershipFee} EUR`,
@@ -141,7 +141,7 @@ async function sendMinimaxFailureAlert(params: {
     "",
     `Napaka: ${message}`,
     "",
-    "Customer email ni bil poslan. Stripe webhook se bo ponovno poskusil izvesti.",
+    "Potrditveni email stranki ni bil poslan. Stripe webhook se bo ponovno poskusil izvesti.",
   ].join("\n");
 
   await params.deps.sendTransactionalEmail({

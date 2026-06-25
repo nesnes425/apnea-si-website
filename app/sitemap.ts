@@ -26,12 +26,17 @@ type SanityPostEntry = { slug: string; publishedAt?: string };
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  const posts = await sanityFreshClient.fetch<SanityPostEntry[]>(
-    `*[_type == "blogPost" && defined(slug.current)] {
-      "slug": slug.current,
-      publishedAt
-    }`
-  );
+  let posts: SanityPostEntry[] = [];
+  try {
+    posts = await sanityFreshClient.fetch<SanityPostEntry[]>(
+      `*[_type == "blogPost" && defined(slug.current)] {
+        "slug": slug.current,
+        publishedAt
+      }`
+    );
+  } catch (error) {
+    console.error("Unable to fetch blog posts for sitemap", error);
+  }
 
   const blogEntries: MetadataRoute.Sitemap = posts.map((p) => ({
     url: `${SITE_URL}/novice/${p.slug}`,
