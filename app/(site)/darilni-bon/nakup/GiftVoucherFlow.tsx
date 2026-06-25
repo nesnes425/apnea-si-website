@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CircleCheck } from "lucide-react";
 import { submitGiftVoucherRequest } from "@/lib/gift-voucher-request-actions";
 import { giftVoucherFormSchema, type GiftVoucherFormInput } from "@/lib/gift-voucher-schema";
 import { Button } from "@/components/ui/button";
@@ -11,17 +12,54 @@ export function GiftVoucherFlow() {
 
   if (sent) {
     return (
-      <div className="border border-gold/30 bg-white p-8">
-        <h2 className="mb-3 font-heading text-[24px] font-semibold text-navy">
-          Povpraševanje je poslano
-        </h2>
-        <p className="font-body text-body leading-relaxed">
-          Hvala. Na e-pošto smo vam poslali potrditev prejema. Samo bo preveril
-          podatke in vam poslal nadaljnje informacije za plačilo oziroma račun.
-        </p>
-        <p className="mt-4 font-body text-sm text-muted-text leading-relaxed">
-          Darilni bon še ni izdan. Uredimo ga po potrditvi in plačilu.
-        </p>
+      <div className="border border-green-200 bg-white p-8 shadow-sm">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-green-200 bg-green-50 text-green-700">
+            <CircleCheck aria-hidden="true" className="h-7 w-7" strokeWidth={1.8} />
+          </div>
+          <div>
+            <p className="mb-2 font-body text-[13px] font-medium uppercase tracking-[0.08em] text-green-700">
+              Povpraševanje prejeto
+            </p>
+            <h2 className="mb-3 font-heading text-[26px] font-semibold leading-tight text-navy">
+              Povpraševanje je poslano
+            </h2>
+            <p className="font-body text-body leading-relaxed">
+              Hvala. Na e-pošto smo vam poslali potrditev prejema. Samo bo
+              preveril podatke in vam poslal nadaljnje informacije za plačilo
+              oziroma račun.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 border-t border-green-100 pt-6">
+          <p className="mb-4 font-body text-[15px] font-medium text-navy">
+            Kaj sledi?
+          </p>
+          <ol className="space-y-4">
+            <li className="flex gap-3 font-body text-[15px] leading-relaxed text-body">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center bg-green-50 text-sm font-semibold text-green-700">
+                1
+              </span>
+              <span>Samo preveri podatke za darilni bon.</span>
+            </li>
+            <li className="flex gap-3 font-body text-[15px] leading-relaxed text-body">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center bg-green-50 text-sm font-semibold text-green-700">
+                2
+              </span>
+              <span>Po e-pošti prejmete informacije za plačilo oziroma račun.</span>
+            </li>
+            <li className="flex gap-3 font-body text-[15px] leading-relaxed text-body">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center bg-green-50 text-sm font-semibold text-green-700">
+                3
+              </span>
+              <span>
+                Darilni bon uredimo po potrditvi in plačilu ter ga pošljemo po
+                e-pošti.
+              </span>
+            </li>
+          </ol>
+        </div>
       </div>
     );
   }
