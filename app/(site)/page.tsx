@@ -50,6 +50,7 @@ export default function HomePage() {
             src="/images/domov-hero.webp"
             alt="Samo Jeranko med prostim potapljanjem"
             fill
+            sizes="100vw"
             className="object-cover"
             style={{ objectPosition: "right center" }}
             priority
@@ -132,6 +133,7 @@ export default function HomePage() {
                 src="/images/domov-tecaji.webp"
                 alt="Tečaj prostega potapljanja"
                 fill
+                sizes="(max-width: 768px) 100vw, 60vw"
                 className="object-cover"
               />
             </div>
@@ -191,6 +193,7 @@ export default function HomePage() {
                 src="/images/domov-treningi.webp"
                 alt="Trening v bazenu"
                 fill
+                sizes="(max-width: 768px) 100vw, 60vw"
                 className="object-cover"
               />
             </div>
@@ -281,6 +284,7 @@ export default function HomePage() {
                   src="/images/domov-samo-1.webp"
                   alt="Samo Jeranko"
                   fill
+                  sizes="(max-width: 768px) 85vw, 42vw"
                   className="object-cover"
                 />
               </div>
@@ -291,6 +295,7 @@ export default function HomePage() {
                     src="/images/domov-samo-2.webp"
                     alt="Samo na TEDx Ljubljana"
                     fill
+                    sizes="(max-width: 768px) 180px, 210px"
                     className="object-cover"
                   />
                 </div>
@@ -299,6 +304,7 @@ export default function HomePage() {
                     src="/images/domov-samo-3.webp"
                     alt="Samo na svetovnem prvenstvu"
                     fill
+                    sizes="(max-width: 768px) 180px, 210px"
                     className="object-cover"
                     style={{ objectPosition: "center 20%" }}
                   />

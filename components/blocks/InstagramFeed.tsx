@@ -53,16 +53,20 @@ const instagramImages = [
   },
 ];
 
+function mobileVisibilityClass(index: number) {
+  return index >= 6 ? "hidden sm:block" : "";
+}
+
 export function InstagramFeed() {
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
-      {instagramImages.map((image) => (
+      {instagramImages.map((image, index) => (
         <Link
           key={image.src}
           href={siteConfig.social.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative aspect-square overflow-hidden bg-navy"
+          className={`group relative aspect-square overflow-hidden bg-navy ${mobileVisibilityClass(index)}`}
           aria-label="Odpri Instagram profil Apnea.si"
         >
           <Image
