@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import type { Appearance } from "@stripe/stripe-js";
-import { getStripe } from "@/lib/stripe/client-side";
-import { createBookingPaymentIntent } from "@/lib/stripe/actions";
+import { submitCourseApplication } from "@/lib/course-application-actions";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,47 +10,37 @@ type Props = {
   instanceId: string;
 };
 
-type IntentState = { clientSecret: string; email: string };
-
-const stripePromise = getStripe();
-
-const elementsAppearance: Appearance = {
-  theme: "stripe",
-  variables: {
-    colorPrimary: "#d3a356",
-    colorText: "#33404f",
-    colorDanger: "#b3261e",
-    fontFamily: "Roboto, system-ui, sans-serif",
-    borderRadius: "0px",
-    spacingUnit: "4px",
-  },
-};
-
 export function BookingFlow({ instanceId }: Props) {
-  const [intent, setIntent] = useState<IntentState | null>(null);
+  const [sent, setSent] = useState(false);
 
-  if (intent) {
+  if (sent) {
     return (
-      <Elements
-        stripe={stripePromise}
-        options={{ clientSecret: intent.clientSecret, appearance: elementsAppearance, locale: "sl" }}
-      >
-        <PaymentStep customerEmail={intent.email} />
-      </Elements>
+      <div className="border border-gold/30 bg-white p-8">
+        <h2 className="mb-3 font-heading text-[24px] font-semibold text-navy">
+          Prijava je poslana
+        </h2>
+        <p className="font-body text-body leading-relaxed">
+          Hvala za prijavo. Na e-pošto smo vam poslali potrditev prejema. Samo
+          bo preveril termin in vam poslal nadaljnje informacije za potrditev
+          udeležbe in plačilo oziroma račun.
+        </p>
+        <p className="mt-4 font-body text-sm text-muted-text leading-relaxed">
+          Mesto na tečaju še ni dokončno potrjeno, dokler prijave ne potrdi
+          Samo.
+        </p>
+      </div>
     );
   }
 
-  return <DetailsStep instanceId={instanceId} onIntentCreated={setIntent} />;
+  return <DetailsStep instanceId={instanceId} onSent={() => setSent(true)} />;
 }
-
-// === Step 1: customer details ===
 
 type DetailsStepProps = {
   instanceId: string;
-  onIntentCreated: (intent: IntentState) => void;
+  onSent: () => void;
 };
 
-function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
+function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -68,6 +55,7 @@ function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
       fullName: String(formData.get("fullName") ?? ""),
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
+      note: String(formData.get("note") ?? ""),
       acceptTerms: formData.get("acceptTerms") === "on",
       instanceId,
     };
@@ -84,14 +72,14 @@ function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
     }
 
     setSubmitting(true);
-    const result = await createBookingPaymentIntent(parsed.data);
+    const result = await submitCourseApplication(parsed.data);
     setSubmitting(false);
 
     if (!result.ok) {
       setServerError(result.error);
       return;
     }
-    onIntentCreated({ clientSecret: result.clientSecret, email: parsed.data.email });
+    onSent();
   }
 
   return (
@@ -123,6 +111,19 @@ function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
         required
         error={errors.phone}
       />
+      <div>
+        <label htmlFor="note" className="mb-2 block font-body text-sm font-medium text-body">
+          Opomba ali vprašanje
+        </label>
+        <textarea
+          id="note"
+          name="note"
+          rows={5}
+          className="w-full border border-border-custom bg-white px-4 py-3 font-body text-body outline-none transition-colors focus:border-gold"
+          placeholder="Če imate vprašanje, posebnost ali dodatno željo, jo napišite tukaj."
+        />
+        {errors.note && <p className="mt-1 text-sm text-red-700 font-body" role="alert">{errors.note}</p>}
+      </div>
 
       <div className="pt-2">
         <label className="flex items-start gap-3 cursor-pointer">
@@ -154,62 +155,12 @@ function DetailsStep({ instanceId, onIntentCreated }: DetailsStepProps) {
       )}
 
       <Button type="submit" disabled={submitting} fullWidth className="md:w-auto">
-        {submitting ? "Pripravljam plačilo…" : "Naprej k plačilu →"}
+        {submitting ? "Pošiljam prijavo…" : "Pošlji prijavo →"}
       </Button>
-    </form>
-  );
-}
-
-// === Step 2: payment ===
-
-function PaymentStep({ customerEmail }: { customerEmail: string }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!stripe || !elements) return;
-
-    setSubmitting(true);
-    setError(null);
-
-    const { error: submitError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/tecaji/hvala`,
-        receipt_email: customerEmail || undefined,
-      },
-    });
-
-    if (submitError) {
-      setError(submitError.message ?? "Napaka pri plačilu. Poskusite znova.");
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h2 className="text-[22px] font-semibold text-navy font-heading mb-2">
-          Plačilo
-        </h2>
-        <p className="text-sm text-muted-text font-body mb-6">
-          Plačilo poteka varno preko Stripe. Sprejemamo kartice, Apple Pay in Google Pay.
-        </p>
-        <PaymentElement />
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body" role="alert">
-          {error}
-        </div>
-      )}
-
-      <Button type="submit" disabled={!stripe || submitting} fullWidth>
-        {submitting ? "Plačujem…" : "Plačaj in rezerviraj →"}
-      </Button>
+      <p className="font-body text-xs text-muted-text leading-relaxed">
+        Prijava še ne pomeni dokončne potrditve mesta. Samo vas kontaktira z
+        nadaljnjimi informacijami in računom.
+      </p>
     </form>
   );
 }

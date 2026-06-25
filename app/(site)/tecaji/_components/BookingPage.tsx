@@ -38,6 +38,11 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
         <Overline>Prijava na tečaj</Overline>
         <SectionHeading className="mb-10">{course.fullName}</SectionHeading>
+        <p className="mb-10 max-w-2xl font-body text-body leading-relaxed">
+          Pošljite prijavo za izbrani termin. Samo bo prijavo preveril in vam
+          poslal nadaljnje informacije za potrditev udeležbe in plačilo oziroma
+          račun.
+        </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
           <BookingFlow instanceId={instance._id} />
@@ -56,14 +61,15 @@ export async function BookingPage({ courseType, instanceId }: Props) {
                 €{course.price}
               </p>
               <p className="text-sm text-muted-text font-body mb-6">
-                Vse vključeno. Brez skritih stroškov.
+                Račun prejmete po potrditvi prijave.
               </p>
 
               <CheckList items={[...course.booking.sidebarItems]} />
 
               <p className="mt-6 pt-6 border-t border-border-custom text-xs text-muted-text font-body leading-relaxed">
                 Globinski del (morje) se izvaja maj–avgust. Termin izberete po
-                zaključenem bazenskem delu.
+                zaključenem bazenskem delu. Prijava še ni dokončna potrditev
+                mesta.
               </p>
             </div>
           </aside>

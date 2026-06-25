@@ -118,7 +118,7 @@ function Hero() {
           </p>
           <div className="mb-10">
             <Button asChild>
-              <a href="#termini">Rezervirajte mesto →</a>
+              <a href="#termini">Pošljite prijavo →</a>
             </Button>
           </div>
         </div>
@@ -316,7 +316,7 @@ async function DatesAndBooking() {
                     ) : (
                       <Button asChild size="sm">
                         <Link href={`/tecaji/master/prijava?instanceId=${course._id}`}>
-                          Rezerviraj →
+                          Prijava →
                         </Link>
                       </Button>
                     )}

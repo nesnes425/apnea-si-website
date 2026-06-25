@@ -16,6 +16,11 @@ export const bookingFormSchema = z.object({
     .trim()
     .min(6, "Vnesite veljavno telefonsko številko.")
     .max(30, "Telefonska številka je predolga."),
+  note: z
+    .string()
+    .trim()
+    .max(1000, "Opomba je predolga.")
+    .optional(),
   acceptTerms: z.boolean().refine((v) => v === true, {
     error: "Za nadaljevanje morate sprejeti pogoje poslovanja.",
   }),
