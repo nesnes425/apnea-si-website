@@ -56,7 +56,7 @@ export default function KontaktPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/30 to-transparent" />
         <div className="relative w-full max-w-6xl px-6 mx-auto pb-12 md:pb-16">
           <h1 className="text-[36px] md:text-[48px] font-bold leading-[1.08] tracking-[-0.02em] text-white font-heading">
-            Piši nam
+            Pišite nam
           </h1>
           <p className="text-[17px] text-white/70 font-body mt-3 max-w-lg">
             Z veseljem odgovorimo na vaša vprašanja in vam pomagamo pri prvih

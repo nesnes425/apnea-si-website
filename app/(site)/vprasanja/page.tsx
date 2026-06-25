@@ -292,12 +292,12 @@ export default function VprasanjaPage() {
     <>
       <FAQPageJsonLd items={allFaqs} />
       {/* Header with section navigation */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="pt-16 pb-8 md:pt-20 md:pb-10">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <h1 className="text-[36px] md:text-[48px] font-bold leading-[1.08] tracking-[-0.02em] text-navy mb-4">
             Pogosta vprašanja
           </h1>
-          <p className="text-[17px] text-body leading-[1.6] font-body mb-10">
+          <p className="max-w-2xl mx-auto text-[17px] text-body leading-[1.6] font-body mb-8">
             Odgovori na najpogostejša vprašanja o tečajih, treningih in
             darilnih bonih. Če ne najdete odgovora,{" "}
             <Link
@@ -310,7 +310,7 @@ export default function VprasanjaPage() {
           </p>
 
           {/* Jump links */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             {sections.map((section) => (
               <a
                 key={section.id}
@@ -329,7 +329,13 @@ export default function VprasanjaPage() {
         <section
           key={section.id}
           id={section.id}
-          className={sectionIndex % 2 === 1 ? "bg-surface py-16 md:py-20" : "py-16 md:py-20"}
+          className={
+            sectionIndex === 0
+              ? "pt-8 pb-16 md:pt-10 md:pb-20"
+              : sectionIndex % 2 === 1
+                ? "bg-surface py-16 md:py-20"
+                : "py-16 md:py-20"
+          }
         >
           <div className="max-w-3xl mx-auto px-6">
             <div className="flex items-baseline gap-4 mb-8">
