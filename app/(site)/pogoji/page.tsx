@@ -4,15 +4,17 @@ import { siteConfig } from "@/lib/config";
 export const metadata = {
   title: "Splošni pogoji poslovanja",
   description:
-    "Splošni pogoji poslovanja — tečaji in treningi prostega potapljanja. Apnea Slovenija.",
+    "Splošni pogoji poslovanja za tečaje in treninge prostega potapljanja. Apnea Slovenija.",
   alternates: { canonical: "/pogoji" },
 };
 
 const tocSections = [
+  { id: "ponudnika", label: "Ponudnika" },
   { id: "podatki", label: "Varstvo podatkov" },
   { id: "zdravje", label: "Zdravstvena sposobnost" },
-  { id: "tecaji", label: "Tečaji — plačila in odpovedi" },
-  { id: "treningi", label: "Treningi — članarina" },
+  { id: "tecaji", label: "Tečaji - plačila in odpovedi" },
+  { id: "boni", label: "Darilni boni" },
+  { id: "treningi", label: "Treningi - članarina" },
   { id: "certifikat", label: "SSI certifikat" },
   { id: "pritozbe", label: "Pritožbe" },
   { id: "koncne", label: "Končne določbe" },
@@ -53,6 +55,29 @@ export default function PogojiPage() {
             </p>
 
             <div className="prose-apnea">
+              <h2 id="ponudnika">Ponudnika storitev</h2>
+              <p>
+                Storitve na spletni strani izvajata dva ponudnika. Tečaje,
+                delavnice, darilne bone in podobne enkratne aktivnosti izvaja{" "}
+                <strong>
+                  Inženirske in športne storitve, Samo Jeranko s.p.
+                </strong>
+                , Saveljska cesta 70A, 1000 Ljubljana, matična številka:
+                7153937000, davčna številka: 39983757.
+              </p>
+              <p>
+                Treninge, članstvo in društvene programe izvaja{" "}
+                <strong>Športno društvo Apnea Slovenija</strong>, Saveljska
+                cesta 70A, 1000 Ljubljana, matična številka: 4068939000,
+                davčna številka: SI 50585479.
+              </p>
+              <p>
+                Zaradi podobnosti storitev ponudnika na isti spletni strani
+                skupaj določata te splošne pogoje. Kadar je v besedilu uporabljen
+                izraz ponudnik, se nanaša na tistega ponudnika, ki izvaja
+                konkretno storitev.
+              </p>
+
               <h2 id="podatki">Varstvo osebnih podatkov</h2>
               <p>
                 Ponudnika pri poslovanju neizogibno srečujeta z osebnimi podatki
@@ -73,7 +98,7 @@ export default function PogojiPage() {
               </p>
 
               <h2 id="tecaji">
-                Tečaji in delavnice — sistem plačevanja in rezervacij
+                Tečaji in delavnice, sistem plačevanja in rezervacij
               </h2>
               <p>
                 <strong>Nakup:</strong> Tečaj ali delavnico je mogoče naročiti
@@ -125,7 +150,32 @@ export default function PogojiPage() {
                 petka, razen zakonom določenih praznikov in dela prostih dni.
               </p>
 
-              <h2 id="treningi">Treningi — letna članarina in vadnina</h2>
+              <h2 id="boni">Darilni boni</h2>
+              <p>
+                Darilni boni se naročijo prek spletnega obrazca ali po dogovoru
+                s ponudnikom. Pri naročilu uporabnik izbere stopnjo tečaja,
+                od katere je odvisna tudi cena bona, vnese svoje podatke in ime
+                prejemnika bona.
+              </p>
+              <p>
+                Po prejemu naročila ponudnik uporabniku po elektronski pošti
+                pošlje račun oziroma podatke za plačilo. Darilni bon se izda po
+                potrditvi naročila in plačilu. Način pošiljanja oziroma
+                prevzema bona se dogovori ob naročilu, bon pa se lahko pošlje
+                po e-pošti, po pošti ali prevzame osebno.
+              </p>
+              <p>
+                Darilni bon velja eno leto od dneva nakupa, razen če je bilo ob
+                nakupu izrecno dogovorjeno drugače. Prejemnik bona se na izbrani
+                termin tečaja prijavi po elektronski pošti na{" "}
+                <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+              </p>
+              <p>
+                Po dogovoru je mogoče naročiti tudi vrednostni bon, ki ga
+                prejemnik izkoristi za eno od aktivnosti ponudnika.
+              </p>
+
+              <h2 id="treningi">Treningi, letna članarina in vadnina</h2>
               <p>
                 Treningi se izvajajo preko društva{" "}
                 <strong>Športno društvo Apnea Slovenija</strong>.

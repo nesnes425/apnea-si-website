@@ -37,7 +37,7 @@ function FacebookIcon({ className }: { className?: string }) {
 export const metadata = {
   title: "Kontakt",
   description:
-    "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
+    "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Samo Jeranko s.p. in Športno društvo Apnea Slovenija.",
   alternates: { canonical: "/kontakt" },
 };
 
@@ -65,7 +65,7 @@ export default function KontaktPage() {
         </div>
       </section>
 
-      {/* Contact info + form — two column */}
+      {/* Contact info + form */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-[1fr_1fr] gap-16 md:gap-24">
@@ -98,9 +98,20 @@ export default function KontaktPage() {
 
                 <div>
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
-                    Naslov
+                    Podatki ponudnikov
+                  </p>
+                  <p className="text-[17px] text-navy font-body leading-relaxed mb-4">
+                    Tečaje, delavnice in darilne bone izvaja:
+                    <br />
+                    Inženirske in športne storitve, Samo Jeranko s.p.
+                    <br />
+                    Saveljska cesta 70A
+                    <br />
+                    1000 Ljubljana
                   </p>
                   <p className="text-[17px] text-navy font-body leading-relaxed">
+                    Treninge in članstvo izvaja:
+                    <br />
                     Športno društvo Apnea Slovenija
                     <br />
                     Saveljska cesta 70A

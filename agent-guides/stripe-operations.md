@@ -44,6 +44,39 @@ Courses/vouchers: emailSent=true
 Trainings: trainingProcessed=true
 ```
 
+## Training Minimax Invoicing
+
+Training payments can create a Minimax issued invoice before the Brevo customer email
+is sent. This is currently a **test-mode only** integration because FURS tax
+confirmation is not configured yet.
+
+Environment flag:
+
+```text
+MINIMAX_TRAINING_INVOICING_ENABLED=true
+```
+
+When enabled, the training webhook:
+
+1. Confirms the Sanity training hold.
+2. Creates or resumes a Minimax issued invoice from Stripe PaymentIntent metadata.
+3. Runs `generatepdf` by default, not fiscal `issueAndGeneratepdf`.
+4. Attaches the generated PDF to the customer confirmation email.
+5. Marks the PaymentIntent with Minimax metadata:
+
+```text
+minimaxInvoiceStatus=completed|failed
+minimaxInvoiceMode=test_non_fiscal
+minimaxFiscalized=false
+minimaxIssuedInvoiceId=<id>
+minimaxInvoiceNumber=<number>
+minimaxPdfGenerated=true|false
+```
+
+If Minimax invoice/PDF creation fails, the customer confirmation email is not sent.
+The webhook alerts the admin address and returns an error so Stripe retries. Do not
+enable this in live mode until Minimax/FURS davčno potrjevanje is configured and tested.
+
 ## MCP Setup
 
 Use Stripe MCP for inspection and operator help. Confirm whether it is connected to

@@ -146,15 +146,15 @@ function DetailsStep({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      <Input label="Ime in priimek" id="fullName" name="fullName" autoComplete="name" required error={errors.fullName} />
-      <Input label="E-pošta" id="email" name="email" type="email" autoComplete="email" required error={errors.email} />
-      <Input label="Telefon" id="phone" name="phone" type="tel" autoComplete="tel" required error={errors.phone} />
+      <Input label="Ime in priimek *" id="fullName" name="fullName" autoComplete="name" required error={errors.fullName} />
+      <Input label="E-pošta *" id="email" name="email" type="email" autoComplete="email" required error={errors.email} />
+      <Input label="Telefon *" id="phone" name="phone" type="tel" autoComplete="tel" required error={errors.phone} />
       <div>
         <label className="flex cursor-pointer items-start gap-3">
           <input type="checkbox" name="acceptTerms" className="mt-1 h-4 w-4 shrink-0 accent-gold" />
           <span className="text-sm leading-relaxed text-body">
             Strinjam se s <a href="/pogoji" target="_blank" className="text-gold underline">pogoji poslovanja</a> in{" "}
-            <a href="/zasebnost" target="_blank" className="text-gold underline">politiko zasebnosti</a>.
+            <a href="/zasebnost" target="_blank" className="text-gold underline">politiko zasebnosti</a>. *
           </span>
         </label>
         {errors.acceptTerms && <p className="mt-1 text-sm text-red-700" role="alert">{errors.acceptTerms}</p>}
@@ -234,14 +234,14 @@ function PaymentStep({
       <div>
         <h2 className="mb-2 text-[22px] font-semibold text-navy">Plačilo članarine</h2>
         <p className="mb-6 text-sm leading-relaxed text-muted-text">
-          S plačilom letne članarine v višini {membershipFee} € dokončno
-          rezervirate mesto v izbrani skupini. Plačilo poteka varno prek Stripe.
+          Danes plačate {membershipFee} € letne članarine. S plačilom je vaše
+          mesto v skupini potrjeno.
         </p>
         <PaymentElement />
       </div>
       {error && <p className="border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">{error}</p>}
       <Button type="submit" disabled={!stripe || submitting || secondsRemaining === 0} fullWidth>
-        {submitting ? "Plačujem…" : `Plačajte ${membershipFee} € in rezervirajte mesto →`}
+        {submitting ? "Plačujem…" : `Plačajte ${membershipFee} € članarine →`}
       </Button>
     </form>
   );

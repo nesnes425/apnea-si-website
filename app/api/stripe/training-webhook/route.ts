@@ -13,6 +13,11 @@ import {
   trainingNotificationEmail,
 } from "@/lib/brevo/emails/training-notification";
 import { siteConfig } from "@/lib/config";
+import {
+  createTrainingMinimaxInvoice,
+  isTrainingMinimaxInvoicingEnabled,
+  type MinimaxTrainingInvoiceResult,
+} from "@/lib/minimax/training-invoice";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -78,19 +83,113 @@ async function findOrCreateTrainingGroupList(groupId: string, name: string): Pro
   return listId;
 }
 
+function trimMetadataValue(value: string, maxLength = 450) {
+  return value.length > maxLength ? `${value.slice(0, maxLength - 1)}…` : value;
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function sendMinimaxFailureAlert(params: {
+  intent: Stripe.PaymentIntent;
+  data: TrainingMetadata;
+  membershipFee: number;
+  error: unknown;
+}) {
+  const message = errorMessage(params.error);
+  const subject = `Minimax račun ni bil ustvarjen: ${params.data.customerName}`;
+  const text = [
+    "Stripe testno placilo je uspelo, Minimax racun pa ni bil ustvarjen.",
+    "",
+    `PaymentIntent: ${params.intent.id}`,
+    `Znesek: ${params.membershipFee} EUR`,
+    `Stranka: ${params.data.customerName}`,
+    `Email: ${params.data.customerEmail}`,
+    `Telefon: ${params.data.customerPhone}`,
+    `Trening: ${params.data.program}, ${params.data.venue}, ${params.data.weekday} ${params.data.time}`,
+    "",
+    `Napaka: ${message}`,
+    "",
+    "Customer email ni bil poslan. Stripe webhook se bo ponovno poskusil izvesti.",
+  ].join("\n");
+
+  await sendTransactionalEmail({
+    to: { email: process.env.BREVO_NOTIFY_EMAIL ?? siteConfig.email },
+    subject,
+    text,
+    html: text.replace(/\n/g, "<br />"),
+    replyTo: { email: params.data.customerEmail, name: params.data.customerName },
+  });
+}
+
+async function createMinimaxInvoiceForTraining(params: {
+  intent: Stripe.PaymentIntent;
+  data: TrainingMetadata;
+  membershipFee: number;
+}): Promise<MinimaxTrainingInvoiceResult | undefined> {
+  if (!isTrainingMinimaxInvoicingEnabled()) return undefined;
+
+  try {
+    const invoice = await createTrainingMinimaxInvoice({
+      intent: params.intent,
+      membershipFee: params.membershipFee,
+    });
+    const metadata = {
+      ...params.intent.metadata,
+      minimaxInvoiceStatus: "completed",
+      minimaxInvoiceMode: "test_non_fiscal",
+      minimaxFiscalized: "false",
+      minimaxIssuedInvoiceId: String(invoice.issuedInvoiceId),
+      minimaxInvoiceNumber: invoice.invoiceNumber ?? String(invoice.issuedInvoiceId),
+      minimaxPdfGenerated: invoice.pdf ? "true" : "false",
+    };
+
+    await trainingStripe.paymentIntents.update(params.intent.id, { metadata });
+
+    if (!invoice.pdf && process.env.MINIMAX_TRAINING_REQUIRE_PDF !== "false") {
+      throw new Error(`Minimax invoice ${invoice.issuedInvoiceId} did not return a PDF attachment`);
+    }
+
+    return invoice;
+  } catch (error) {
+    if (params.intent.metadata.minimaxFailureAlertSent !== "true") {
+      try {
+        await sendMinimaxFailureAlert({ ...params, error });
+      } catch (alertError) {
+        console.error("Unable to send Minimax failure alert", alertError);
+      }
+    }
+
+    await trainingStripe.paymentIntents.update(params.intent.id, {
+      metadata: {
+        ...params.intent.metadata,
+        minimaxInvoiceStatus: "failed",
+        minimaxInvoiceMode: "test_non_fiscal",
+        minimaxFiscalized: "false",
+        minimaxFailureAlertSent: "true",
+        minimaxLastError: trimMetadataValue(errorMessage(error)),
+      },
+    });
+    throw error;
+  }
+}
+
 async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
-  if (intent.metadata.trainingProcessed === "true") return;
-  const data = validateTrainingMetadata(intent.metadata);
+  const currentIntent = await trainingStripe.paymentIntents.retrieve(intent.id);
+  if (currentIntent.metadata.trainingProcessed === "true") return;
+  const data = validateTrainingMetadata(currentIntent.metadata);
   if (!data) return;
 
   const confirmation = await confirmTrainingHold({
     groupId: data.groupId,
     tokenHash: data.holdTokenHash,
-    paymentIntentId: intent.id,
+    paymentIntentId: currentIntent.id,
   });
   const settings = await getTrainingSettings();
-  const membershipFee = (intent.amount ?? Math.round((settings?.membershipFee ?? 35) * 100)) / 100;
-  const emailData = { ...data, membershipFee, paymentIntentId: intent.id };
+  const membershipFee =
+    (currentIntent.amount ?? Math.round((settings?.membershipFee ?? 35) * 100)) / 100;
+  const emailData = { ...data, membershipFee, paymentIntentId: currentIntent.id };
 
   if (!confirmation.ok) {
     const alert = trainingCapacityConflictEmail(emailData);
@@ -102,18 +201,26 @@ async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
         html: alert.html,
         replyTo: { email: data.customerEmail, name: data.customerName },
       }),
-      trainingStripe.paymentIntents.update(intent.id, {
-        metadata: { ...intent.metadata, trainingCapacityConflict: "true" },
+      trainingStripe.paymentIntents.update(currentIntent.id, {
+        metadata: { ...currentIntent.metadata, trainingCapacityConflict: "true" },
       }),
     ]);
     return;
   }
 
+  const minimaxInvoice = await createMinimaxInvoiceForTraining({
+    intent: currentIntent,
+    data,
+    membershipFee,
+  });
   const listName = `Trening · ${data.venue} · ${data.weekday} ${data.time} · ${data.program}`;
   const groupListId = await findOrCreateTrainingGroupList(data.groupId, listName);
   const { first, last } = splitName(data.customerName);
   const customerContent = trainingConfirmationEmail(emailData);
   const notificationContent = trainingNotificationEmail(emailData);
+  const invoiceAttachment = minimaxInvoice?.pdf
+    ? [{ name: minimaxInvoice.pdf.fileName, contentBase64: minimaxInvoice.pdf.contentBase64 }]
+    : undefined;
 
   await Promise.all([
     upsertContact({
@@ -129,6 +236,7 @@ async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
       text: customerContent.text,
       html: customerContent.html,
       replyTo: { email: siteConfig.email, name: "Apnea Slovenija" },
+      attachments: invoiceAttachment,
     }),
     sendTransactionalEmail({
       to: { email: process.env.BREVO_NOTIFY_EMAIL ?? siteConfig.email },
@@ -139,8 +247,22 @@ async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
     }),
   ]);
 
-  await trainingStripe.paymentIntents.update(intent.id, {
-    metadata: { ...intent.metadata, trainingProcessed: "true" },
+  await trainingStripe.paymentIntents.update(currentIntent.id, {
+    metadata: {
+      ...currentIntent.metadata,
+      ...(minimaxInvoice
+        ? {
+            minimaxInvoiceStatus: "completed",
+            minimaxInvoiceMode: "test_non_fiscal",
+            minimaxFiscalized: "false",
+            minimaxIssuedInvoiceId: String(minimaxInvoice.issuedInvoiceId),
+            minimaxInvoiceNumber:
+              minimaxInvoice.invoiceNumber ?? String(minimaxInvoice.issuedInvoiceId),
+            minimaxPdfGenerated: minimaxInvoice.pdf ? "true" : "false",
+          }
+        : {}),
+      trainingProcessed: "true",
+    },
   });
 }
 
