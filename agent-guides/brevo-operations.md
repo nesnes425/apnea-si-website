@@ -1,6 +1,6 @@
 # Brevo Operations Guide
 
-Last updated: June 12, 2026
+Last updated: June 25, 2026
 
 Use this when Samo or Katarina asks Claude Code / Codex about Apnea.si contacts, lists,
 transactional email, or campaigns in Brevo.
@@ -13,6 +13,7 @@ One Brevo account is used for:
 - Training confirmation emails
 - Gift voucher delivery
 - Contact and speaking inquiry notifications
+- Homepage newsletter / izenačevanje video signups
 - Course-date contact lists
 - Course alumni lists
 - Training-group contact lists
@@ -67,6 +68,11 @@ MCP workflow has been reviewed and tested.
 
 The website automatically manages:
 
+- Homepage newsletter / izenačevanje video signups into `Apnea.si Newsletter`
+  (list ID `9`, env `BREVO_LIST_APNEA_NEWSLETTER`) and
+  `20230330_Izenačevanje Prijave` (list ID `20`, env
+  `BREVO_LIST_IZENACEVANJE_PRIJAVE`). Brevo automation owns sending template
+  `20230615_Izenačevanje tlaka` after the contact joins the izenačevanje list.
 - A list for each course date
 - Alumni lists for beginner, advanced, and master courses
 - A list for each training group
@@ -81,6 +87,8 @@ The website needs `BREVO_API_KEY` in local/Vercel environment variables. It also
 - `BREVO_FROM_EMAIL`
 - `BREVO_FROM_NAME`
 - `BREVO_NOTIFY_EMAIL`
+- `BREVO_LIST_APNEA_NEWSLETTER`
+- `BREVO_LIST_IZENACEVANJE_PRIJAVE`
 - `BREVO_FOLDER_TECAJNIKI`
 - `BREVO_FOLDER_TRAININGS`
 - `BREVO_LIST_ALUMNI_ZACETNI`

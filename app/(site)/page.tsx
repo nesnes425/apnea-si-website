@@ -8,6 +8,7 @@ import { GoogleTestimonials } from "@/components/blocks/GoogleTestimonials";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
 import { pageMetadata } from "@/lib/seo";
 import { homeGoogleReviews } from "@/lib/testimonials";
+import { LeadMagnetSignup } from "./LeadMagnetSignup";
 
 export const metadata = pageMetadata({
   title: "Apnea Slovenija - šola prostega potapljanja",
@@ -352,34 +353,21 @@ export default function HomePage() {
       <section className="py-20 md:py-28">
         <div className="max-w-2xl mx-auto px-6 text-center">
           <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-            Brezplačni vodič + novice
+            Brezplačen posnetek + novice
           </p>
           <SectionHeading center className="mb-4">
-            Prijavite se na novice in prejmite vodič za izenačevanje pritiska
+            Prejmite posnetek predavanja o izenačevanju pritiska
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
             <strong className="text-navy">
-              Kako pravilno izenačiti pritisk v ušesih
+              Kako pravilno izenačiti pritisk v ušesih:
             </strong>{" "}
-            : Valsalva in Frenzel tehnika, razloženi preprosto, korak za
-            korakom. Prejmite vodič brezplačno ob prijavi na naše novice.
+            tehniki Valsalva in Frenzel, razloženi preprosto, korak za korakom.
+            Posnetek prejmete ob prijavi na naše novice.
           </p>
-          <div className="flex gap-3 max-w-md mx-auto">
-            <label htmlFor="leadmagnet-email" className="sr-only">
-              E-pošta
-            </label>
-            <input
-              id="leadmagnet-email"
-              type="email"
-              placeholder="vas@email.si"
-              className="flex-1 border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-            />
-            <Button type="button" size="sm" className="py-3">
-              Prijavite se →
-            </Button>
-          </div>
+          <LeadMagnetSignup />
           <p className="text-xs text-muted-text font-body mt-4">
-            Brezplačen vodič + novice o tečajih in treningih. Brez spama.
+            Brezplačen posnetek + novice o tečajih in treningih. Brez spama.
             Odjavite se kadarkoli.
           </p>
         </div>

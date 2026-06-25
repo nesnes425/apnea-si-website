@@ -81,6 +81,20 @@ export async function upsertContact(params: {
   }
 }
 
+export async function upsertEmailContact(params: {
+  email: string;
+  listIds: number[];
+}): Promise<void> {
+  await brevoFetch("/contacts", {
+    method: "POST",
+    body: JSON.stringify({
+      email: params.email,
+      listIds: params.listIds,
+      updateEnabled: true,
+    }),
+  });
+}
+
 export type EmailAttachment = {
   name: string; // filename, e.g. "darilni-bon.pdf"
   contentBase64: string; // base64-encoded file contents

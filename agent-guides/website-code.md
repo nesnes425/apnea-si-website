@@ -1,6 +1,6 @@
 # Website Code Guide
 
-Last updated: June 11, 2026
+Last updated: June 25, 2026
 
 Use this when Samo or Katarina asks Claude Code / Codex to change Apnea.si website code.
 
@@ -137,6 +137,8 @@ Important local/Vercel variables include:
   - `BREVO_FROM_EMAIL`
   - `BREVO_FROM_NAME`
   - `BREVO_NOTIFY_EMAIL`
+  - `BREVO_LIST_APNEA_NEWSLETTER`
+  - `BREVO_LIST_IZENACEVANJE_PRIJAVE`
   - `BREVO_LIST_ALUMNI_*`
   - `BREVO_FOLDER_TECAJNIKI`
   - `BREVO_FOLDER_TRAININGS`
