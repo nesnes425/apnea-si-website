@@ -6,13 +6,11 @@ import { CheckList } from "@/components/blocks/CheckList";
 import { GiftVoucherFlow } from "./GiftVoucherFlow";
 
 export const metadata = {
-  title: "Nakup darilnega bona — Apnea Slovenija",
-  description: "Podarite tečaj prostega potapljanja. Digitalni darilni bon, veljaven 1 leto.",
+  title: "Povpraševanje za darilni bon — Apnea Slovenija",
+  description: "Pošljite povpraševanje za darilni bon za tečaj prostega potapljanja.",
   robots: { index: false, follow: false },
 };
 
-// Payment page — never useful to prerender, and prerender evaluates the
-// client-side Stripe loader which throws without NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.
 export const dynamic = "force-dynamic";
 
 export default function GiftVoucherPurchasePage() {
@@ -28,8 +26,12 @@ export default function GiftVoucherPurchasePage() {
           ← Nazaj na darilni bon
         </Link>
 
-        <Overline>Nakup darilnega bona</Overline>
+        <Overline>Povpraševanje za darilni bon</Overline>
         <SectionHeading className="mb-10">{voucher.fullName}</SectionHeading>
+        <p className="mb-10 max-w-2xl font-body text-body leading-relaxed">
+          Pošljite podatke za darilni bon. Samo vam bo poslal nadaljnje
+          informacije za plačilo oziroma račun, bon pa uredimo po potrditvi.
+        </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
           <GiftVoucherFlow />
@@ -45,7 +47,7 @@ export default function GiftVoucherPurchasePage() {
                 €{voucher.price}
               </p>
               <p className="text-sm text-muted-text font-body mb-6">
-                Vse vključeno. Brez skritih stroškov.
+                Račun prejmete po potrditvi povpraševanja.
               </p>
 
               <CheckList
@@ -58,7 +60,8 @@ export default function GiftVoucherPurchasePage() {
               />
 
               <p className="mt-6 pt-6 border-t border-border-custom text-xs text-muted-text font-body leading-relaxed">
-                Bon prejmete vi in obdarjenec po e-pošti takoj po plačilu. Termin tečaja izberete v dogovoru z nami.
+                Bon še ni izdan ob oddaji obrazca. Po potrditvi in plačilu ga
+                uredimo ter pošljemo po e-pošti.
               </p>
             </div>
           </aside>

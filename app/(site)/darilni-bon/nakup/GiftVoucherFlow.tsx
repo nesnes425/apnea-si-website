@@ -1,54 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import type { Appearance } from "@stripe/stripe-js";
-import { getStripe } from "@/lib/stripe/client-side";
-import { createGiftVoucherPaymentIntent } from "@/lib/stripe/gift-voucher-actions";
+import { submitGiftVoucherRequest } from "@/lib/gift-voucher-request-actions";
 import { giftVoucherFormSchema, type GiftVoucherFormInput } from "@/lib/gift-voucher-schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type IntentState = { clientSecret: string };
-
-const stripePromise = getStripe();
-
-const elementsAppearance: Appearance = {
-  theme: "stripe",
-  variables: {
-    colorPrimary: "#d3a356",
-    colorText: "#33404f",
-    colorDanger: "#b3261e",
-    fontFamily: "Roboto, system-ui, sans-serif",
-    borderRadius: "0px",
-    spacingUnit: "4px",
-  },
-};
-
 export function GiftVoucherFlow() {
-  const [intent, setIntent] = useState<IntentState | null>(null);
+  const [sent, setSent] = useState(false);
 
-  if (intent) {
+  if (sent) {
     return (
-      <Elements
-        stripe={stripePromise}
-        options={{ clientSecret: intent.clientSecret, appearance: elementsAppearance, locale: "sl" }}
-      >
-        <PaymentStep />
-      </Elements>
+      <div className="border border-gold/30 bg-white p-8">
+        <h2 className="mb-3 font-heading text-[24px] font-semibold text-navy">
+          Povpraševanje je poslano
+        </h2>
+        <p className="font-body text-body leading-relaxed">
+          Hvala. Na e-pošto smo vam poslali potrditev prejema. Samo bo preveril
+          podatke in vam poslal nadaljnje informacije za plačilo oziroma račun.
+        </p>
+        <p className="mt-4 font-body text-sm text-muted-text leading-relaxed">
+          Darilni bon še ni izdan. Uredimo ga po potrditvi in plačilu.
+        </p>
+      </div>
     );
   }
 
-  return <DetailsStep onIntentCreated={setIntent} />;
+  return <DetailsStep onSent={() => setSent(true)} />;
 }
 
-// === Step 1: buyer + recipient details ===
-
 type DetailsStepProps = {
-  onIntentCreated: (intent: IntentState) => void;
+  onSent: () => void;
 };
 
-function DetailsStep({ onIntentCreated }: DetailsStepProps) {
+function DetailsStep({ onSent }: DetailsStepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -79,14 +64,14 @@ function DetailsStep({ onIntentCreated }: DetailsStepProps) {
     }
 
     setSubmitting(true);
-    const result = await createGiftVoucherPaymentIntent(parsed.data);
+    const result = await submitGiftVoucherRequest(parsed.data);
     setSubmitting(false);
 
     if (!result.ok) {
       setServerError(result.error);
       return;
     }
-    onIntentCreated({ clientSecret: result.clientSecret });
+    onSent();
   }
 
   return (
@@ -152,59 +137,12 @@ function DetailsStep({ onIntentCreated }: DetailsStepProps) {
       )}
 
       <Button type="submit" disabled={submitting} fullWidth className="md:w-auto">
-        {submitting ? "Pripravljam plačilo…" : "Naprej k plačilu →"}
+        {submitting ? "Pošiljam povpraševanje…" : "Pošlji povpraševanje →"}
       </Button>
-    </form>
-  );
-}
-
-// === Step 2: payment ===
-
-function PaymentStep() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!stripe || !elements) return;
-
-    setSubmitting(true);
-    setError(null);
-
-    const { error: submitError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/darilni-bon/hvala`,
-      },
-    });
-
-    if (submitError) {
-      setError(submitError.message ?? "Napaka pri plačilu. Poskusite znova.");
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h2 className="text-[22px] font-semibold text-navy font-heading mb-2">Plačilo</h2>
-        <p className="text-sm text-muted-text font-body mb-6">
-          Plačilo poteka varno preko Stripe. Sprejemamo kartice, Apple Pay in Google Pay.
-        </p>
-        <PaymentElement />
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm font-body" role="alert">
-          {error}
-        </div>
-      )}
-
-      <Button type="submit" disabled={!stripe || submitting} fullWidth>
-        {submitting ? "Plačujem…" : "Plačaj in pošlji bon →"}
-      </Button>
+      <p className="font-body text-xs text-muted-text leading-relaxed">
+        Povpraševanje še ne pomeni izdanega bona. Bon uredimo po potrditvi in
+        plačilu.
+      </p>
     </form>
   );
 }

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
@@ -11,13 +10,13 @@ import { PhotoGallery } from "@/components/blocks/PhotoGallery";
 export const metadata = {
   title: "Darilni bon za tečaj prostega potapljanja",
   description:
-    "Podarite izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, 395 €. Velja 1 leto. Digitalni bon po e-pošti.",
+    "Podarite izkušnjo prostega potapljanja. Darilni bon za začetni tečaj, 395 €. Pošljite povpraševanje in bon uredimo po potrditvi.",
 };
 
 const faqs = [
   {
     q: "Kako deluje darilni bon?",
-    a: "Po nakupu prejmete digitalni bon s kodo po e-pošti. Prejemnik se s kodo bona prijavi na izbrani termin tečaja po e-pošti na info@apnea.si. Bon velja 1 leto od nakupa.",
+    a: "Pošljete povpraševanje, Samo vam potrdi podatke in pošlje informacije za plačilo oziroma račun. Po potrditvi uredimo digitalni bon. Prejemnik se z bonom prijavi na izbrani termin tečaja po e-pošti na info@apnea.si.",
   },
   {
     q: "Ali lahko prejemnik izbere termin in lokacijo?",
@@ -29,7 +28,7 @@ const faqs = [
   },
   {
     q: "Koliko časa velja bon?",
-    a: "1 leto od datuma nakupa. V tem času se prejemnik prijavi na poljuben termin tečaja.",
+    a: "1 leto od datuma izdaje bona. V tem času se prejemnik prijavi na poljuben termin tečaja.",
   },
   {
     q: "Kaj če prejemnik že ima začetni tečaj?",
@@ -81,7 +80,7 @@ export default function DarilniBonPage() {
               {siteConfig.courses.zacetni.price} €
             </p>
             <Button asChild>
-              <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
+              <a href="/darilni-bon/nakup">Pošljite povpraševanje →</a>
             </Button>
           </div>
         </div>
@@ -204,18 +203,18 @@ export default function DarilniBonPage() {
                 {[
                   {
                     step: "1",
-                    title: "Kupite darilni bon",
-                    text: "Opravite plačilo bona, ki stane 395 € (začetni tečaj prostega potapljanja, SSI Level 1).",
+                    title: "Pošljete povpraševanje",
+                    text: "Vpišete svoje podatke, ime obdarjenca in morebitno osebno sporočilo.",
                   },
                   {
                     step: "2",
-                    title: "Prejmete digitalni bon",
-                    text: "Po plačilu prejmete bon s kodo po e-pošti, pripravljen za tiskanje ali pošiljanje prejemniku.",
+                    title: "Uredimo potrditev in plačilo",
+                    text: "Samo vam potrdi podatke in pošlje informacije za plačilo oziroma račun.",
                   },
                   {
                     step: "3",
-                    title: "Prejemnik izbere termin",
-                    text: "Prejemnik se s kodo bona prijavi na izbrani termin in lokacijo tečaja.",
+                    title: "Prejmete digitalni bon",
+                    text: "Po potrditvi uredimo digitalni bon. Prejemnik se nato prijavi na izbrani termin in lokacijo tečaja.",
                   },
                 ].map((item) => (
                   <li key={item.step} className="flex gap-6 items-start">
@@ -253,7 +252,7 @@ export default function DarilniBonPage() {
                     "Digitalno učno gradivo",
                     "Video analiza potopov",
                     "Prejemnik izbere termin in lokacijo",
-                    "Velja 1 leto od nakupa",
+                    "Velja 1 leto od izdaje",
                   ]}
                 />
 
@@ -261,7 +260,7 @@ export default function DarilniBonPage() {
                   href="/darilni-bon/nakup"
                   className="block w-full mt-8 bg-gold text-white py-4 text-[15px] font-medium tracking-[0.02em] font-body hover:bg-gold-hover transition-colors text-center"
                 >
-                  Kupite darilni bon →
+                  Pošljite povpraševanje →
                 </a>
 
                 <p className="mt-6 text-sm text-muted-text font-body text-center">
@@ -310,7 +309,7 @@ export default function DarilniBonPage() {
             gladino in si tečaj zapomnil za vedno.
           </p>
           <Button asChild size="xl">
-            <a href="/darilni-bon/nakup">Kupite darilni bon →</a>
+            <a href="/darilni-bon/nakup">Pošljite povpraševanje →</a>
           </Button>
         </div>
       </section>
