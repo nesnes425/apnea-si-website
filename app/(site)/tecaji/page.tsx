@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
-import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { pageMetadata } from "@/lib/seo";
 
@@ -108,15 +107,16 @@ export default function TecajiPage() {
         </div>
       </section>
 
-      <SocialProofBar />
-
       {/* Course cards */}
       <Section className="py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
-          <Overline>Programi</Overline>
+          <Overline>Tečaji</Overline>
           <SectionHeading>
-            Izberite tečaj glede na izkušnje in cilj
+            Izberite svoj tečaj
           </SectionHeading>
+          <p className="mt-4 text-[17px] text-body leading-[1.7] font-body">
+            Od prvih potopov do 40 m globine in profesionalnim tehnikam.
+          </p>
         </div>
         <div className="space-y-8">
           {courses.map((course) => (

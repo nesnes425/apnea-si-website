@@ -98,26 +98,24 @@ export default function KontaktPage() {
 
                 <div>
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
-                    Podatki ponudnikov
+                    Podatki
                   </p>
-                  <p className="text-[17px] text-navy font-body leading-relaxed mb-4">
-                    Tečaje, delavnice in darilne bone izvaja:
-                    <br />
-                    Inženirske in športne storitve, Samo Jeranko s.p.
-                    <br />
-                    Saveljska cesta 70A
-                    <br />
-                    1000 Ljubljana
-                  </p>
-                  <p className="text-[17px] text-navy font-body leading-relaxed">
-                    Treninge in članstvo izvaja:
-                    <br />
-                    Športno društvo Apnea Slovenija
-                    <br />
-                    Saveljska cesta 70A
-                    <br />
-                    1000 Ljubljana
-                  </p>
+                  <div className="space-y-4">
+                    <p className="text-[17px] text-navy font-body leading-relaxed">
+                      Inženirske in športne storitve, Samo Jeranko s.p.
+                      <br />
+                      Saveljska cesta 70A
+                      <br />
+                      1000 Ljubljana
+                    </p>
+                    <p className="text-[17px] text-navy font-body leading-relaxed">
+                      Športno društvo Apnea Slovenija
+                      <br />
+                      Saveljska cesta 70A
+                      <br />
+                      1000 Ljubljana
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -151,7 +149,7 @@ export default function KontaktPage() {
             {/* Right: form */}
             <div>
               <h2 className="text-[24px] md:text-[28px] font-semibold mb-8">
-                Pošljite nam sporočilo
+                Pošljite sporočilo
               </h2>
 
               <ContactForm />

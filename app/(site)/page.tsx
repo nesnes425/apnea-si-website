@@ -247,22 +247,22 @@ export default function HomePage() {
                 />
               </div>
               {/* Offset accent photos — overlapping bottom-right */}
-              <div className="absolute bottom-[-30px] right-[-10px] flex gap-3">
-                <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
+              <div className="absolute bottom-[-62px] right-[-10px] flex gap-3">
+                <div className="relative w-[195px] h-[195px] md:w-[230px] md:h-[230px] shadow-lg">
                   <Image
                     src="/images/domov-samo-2.webp"
                     alt="Samo na TEDx Ljubljana"
                     fill
-                    sizes="(max-width: 768px) 180px, 210px"
+                    sizes="(max-width: 768px) 195px, 230px"
                     className="object-cover"
                   />
                 </div>
-                <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
+                <div className="relative w-[195px] h-[195px] md:w-[230px] md:h-[230px] shadow-lg">
                   <Image
                     src="/images/domov-samo-3.webp"
                     alt="Samo na svetovnem prvenstvu"
                     fill
-                    sizes="(max-width: 768px) 180px, 210px"
+                    sizes="(max-width: 768px) 195px, 230px"
                     className="object-cover"
                     style={{ objectPosition: "center 20%" }}
                   />
