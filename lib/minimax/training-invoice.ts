@@ -101,8 +101,13 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData) {
     ].join("\n"),
     Currency: fk(currencyId),
     IssuedInvoiceReportTemplate: fk(reportTemplateId),
+    Status: "O",
     PricesOnInvoice: "D",
+    RecurringInvoice: "N",
+    InvoiceForPeriod: "N",
     InvoiceType: "R",
+    PaymentStatus: "Osnutek",
+    AssociationWithStock: "N",
     DescriptionBelow:
       "Plačano preko Stripe. Davčno potrjevanje bo omogočeno pred produkcijskim zagonom.",
     IssuedInvoiceRows: [
