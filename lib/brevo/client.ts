@@ -48,15 +48,47 @@ export async function upsertContact(params: {
   phone: string;
   listIds: number[];
 }): Promise<void> {
-  await brevoFetch("/contacts", {
-    method: "POST",
-    body: JSON.stringify({
+  const body = {
       email: params.email,
       attributes: {
         FIRSTNAME: params.firstName,
         LASTNAME: params.lastName,
         SMS: params.phone,
       },
+      listIds: params.listIds,
+      updateEnabled: true,
+  };
+
+  try {
+    await brevoFetch("/contacts", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes("duplicate_parameter") || !message.includes("SMS")) throw error;
+
+    await brevoFetch("/contacts", {
+      method: "POST",
+      body: JSON.stringify({
+        ...body,
+        attributes: {
+          FIRSTNAME: params.firstName,
+          LASTNAME: params.lastName,
+        },
+      }),
+    });
+  }
+}
+
+export async function upsertEmailContact(params: {
+  email: string;
+  listIds: number[];
+}): Promise<void> {
+  await brevoFetch("/contacts", {
+    method: "POST",
+    body: JSON.stringify({
+      email: params.email,
       listIds: params.listIds,
       updateEnabled: true,
     }),

@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
@@ -10,19 +10,15 @@ import { LocalBusinessJsonLd, PersonSamoJsonLd } from "@/components/seo/Structur
 
 const SITE_URL = "https://apnea.si";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Prosto potapljanje, potapljanje na vdih in potapljanje na dah",
   description:
     "Kaj je prosto potapljanje oziroma potapljanje na vdih, kaj se dogaja v telesu pod vodo, kako začeti varno in zakaj je znanje nujno tudi za podvodni ribolov.",
-  alternates: { canonical: "/prosto-potapljanje" },
-  openGraph: {
-    title: "Prosto potapljanje, potapljanje na vdih in potapljanje na dah",
-    description:
-      "Izčrpen vodnik Apnea.si: fiziologija, izenačevanje, varnost, discipline, podvodni ribolov in prvi koraki v prostem potapljanju.",
-    url: `${SITE_URL}/prosto-potapljanje`,
-    type: "article",
-  },
-};
+  path: "/prosto-potapljanje",
+  image: "/images/prosto-potapljanje-hero.webp",
+  imageAlt: "Prosto potapljanje oziroma potapljanje na vdih",
+  type: "article",
+});
 
 const physiologyFacts = [
   {

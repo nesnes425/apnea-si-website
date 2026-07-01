@@ -2,7 +2,7 @@ import { BookingPage } from "../../_components/BookingPage";
 
 export const metadata = {
   title: "Prijava — Začetni tečaj prostega potapljanja",
-  description: "Rezervirajte mesto na začetnem tečaju prostega potapljanja.",
+  description: "Pošljite prijavo za začetni tečaj prostega potapljanja.",
   robots: { index: false, follow: false },
 };
 

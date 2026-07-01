@@ -4,28 +4,20 @@ import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { InstagramFeed } from "@/components/blocks/InstagramFeed";
+import { GoogleTestimonials } from "@/components/blocks/GoogleTestimonials";
 import { LocalBusinessJsonLd } from "@/components/seo/StructuredData";
+import { pageMetadata } from "@/lib/seo";
+import { homeGoogleReviews } from "@/lib/testimonials";
+import { LeadMagnetSignup } from "./LeadMagnetSignup";
 
-const heroChoices = [
-  {
-    label: "Prvič pod gladino?",
-    title: "Začetni tečaj",
-    text: "Naučite se osnov, s katerimi se pod gladino podate mirno, samozavestno in z užitkom.",
-    href: "/tecaji/zacetni",
-  },
-  {
-    label: "Želite redno napredovati?",
-    title: "Treningi",
-    text: "Celoletne skupine za tehniko, kondicijo, rezultate in občutek skupnosti tudi po koncu poletja.",
-    href: "/treningi",
-  },
-  {
-    label: "Iščete posebno darilo?",
-    title: "Darilni bon",
-    text: "Podarite izkušnjo, ki ostane: začetni tečaj prostega potapljanja z ekipo Apnea.si.",
-    href: "/darilni-bon",
-  },
-];
+export const metadata = pageMetadata({
+  title: "Apnea Slovenija - šola prostega potapljanja",
+  description:
+    "Tečaji prostega potapljanja, celoletni treningi in darilni boni z ekipo Apnea Slovenija. Naučite se potopiti mirno, samozavestno in z užitkom.",
+  path: "/",
+  image: "/images/domov-hero.webp",
+  imageAlt: "Samo Jeranko in Apnea Slovenija pri prostem potapljanju",
+});
 
 export default function HomePage() {
   return (
@@ -40,6 +32,7 @@ export default function HomePage() {
             src="/images/domov-hero.webp"
             alt="Samo Jeranko med prostim potapljanjem"
             fill
+            sizes="100vw"
             className="object-cover"
             style={{ objectPosition: "right center" }}
             priority
@@ -72,29 +65,15 @@ export default function HomePage() {
                     Poglejte treninge →
                   </Link>
                 </div>
-              </div>
-
-              <div className="mt-16 grid gap-4 md:grid-cols-3">
-                {heroChoices.map((choice) => (
+                <p className="mt-5 text-[15px] text-white/65 font-body">
+                  Še ne poznate potapljanja na vdih?{" "}
                   <Link
-                    key={choice.href}
-                    href={choice.href}
-                    className="group border border-white/15 bg-white/95 p-6 transition-colors hover:border-gold"
+                    href="/prosto-potapljanje"
+                    className="text-gold hover:text-gold-hover transition-colors"
                   >
-                    <p className="text-[12px] font-medium uppercase tracking-[0.09em] text-gold font-body mb-3">
-                      {choice.label}
-                    </p>
-                    <h2 className="text-[24px] font-semibold leading-tight text-navy font-heading mb-3">
-                      {choice.title}
-                    </h2>
-                    <p className="text-[15px] text-body leading-[1.65] font-body mb-5">
-                      {choice.text}
-                    </p>
-                    <span className="text-[14px] font-medium text-gold group-hover:text-gold-hover transition-colors font-body">
-                      Izberite pot →
-                    </span>
+                    Preberite več o prostem potapljanju →
                   </Link>
-                ))}
+                </p>
               </div>
             </div>
           </div>
@@ -106,18 +85,19 @@ export default function HomePage() {
           ============================================ */}
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="relative md:min-h-[560px]">
-            {/* Image — takes ~60% width, full height */}
-            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:left-0 md:w-[60%]">
+          <div className="relative md:h-[520px]">
+            {/* Image */}
+            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:left-0 md:w-[52%]">
               <Image
                 src="/images/domov-tecaji.webp"
                 alt="Tečaj prostega potapljanja"
                 fill
+                sizes="(max-width: 768px) 100vw, 52vw"
                 className="object-cover"
               />
             </div>
-            {/* Text card — overlaps image from the right */}
-            <div className="relative md:ml-auto md:w-[48%] md:my-10 bg-white p-8 md:p-10 shadow-lg">
+            {/* Text card */}
+            <div className="relative bg-white p-8 shadow-lg md:ml-auto md:flex md:h-full md:w-[48%] md:flex-col md:justify-center md:p-10">
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
                 Začetni tečaj
               </p>
@@ -165,18 +145,19 @@ export default function HomePage() {
           ============================================ */}
       <section className="pb-20 md:pb-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="relative md:min-h-[480px]">
-            {/* Image — right-aligned, full height */}
-            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:right-0 md:w-[60%]">
+          <div className="relative md:h-[520px]">
+            {/* Image */}
+            <div className="relative aspect-[4/3] md:aspect-auto md:absolute md:inset-y-0 md:right-0 md:w-[52%]">
               <Image
                 src="/images/domov-treningi.webp"
                 alt="Trening v bazenu"
                 fill
+                sizes="(max-width: 768px) 100vw, 52vw"
                 className="object-cover"
               />
             </div>
-            {/* Text card — overlaps image from the left, navy */}
-            <div className="relative md:w-[48%] md:my-10 bg-navy p-8 md:p-10 shadow-lg">
+            {/* Text card */}
+            <div className="relative bg-navy p-8 shadow-lg md:flex md:h-full md:w-[48%] md:flex-col md:justify-center md:p-10">
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
                 Treningi
               </p>
@@ -194,6 +175,21 @@ export default function HomePage() {
                 </span>
                 <span className="text-sm text-white/50 font-body">/mesec</span>
               </div>
+              <div className="space-y-1.5 mb-6">
+                {[
+                  "Celoletni treningi v več krajih",
+                  "Skupine za začetnike in izkušene potapljače",
+                  "Redna vadba, tehnika in skupnost",
+                ].map((item) => (
+                  <p
+                    key={item}
+                    className="text-[14px] text-white/75 font-body flex gap-3 items-start"
+                  >
+                    <span className="text-gold shrink-0">✓</span>
+                    {item}
+                  </p>
+                ))}
+              </div>
               <Button asChild className="self-start">
                 <Link href="/treningi">Več o treningih →</Link>
               </Button>
@@ -203,53 +199,37 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          5. TESTIMONIALS — hand-picked Google reviews
+          5. GIFT VOUCHER — secondary path, not a third pillar
           ============================================ */}
-      <section className="bg-surface py-16 md:py-20">
+      <section className="pb-20 md:pb-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body">
-              {siteConfig.stats.googleReviews} ocen na Google · {siteConfig.stats.googleRating} ★
-            </p>
-            <a
-              href="https://www.google.com/maps/place/Apnea+Slovenija/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[15px] text-gold font-medium font-body hover:text-gold-hover transition-colors"
-            >
-              Preberite vse ocene na Google →
-            </a>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { text: "Zelo strokovno izpeljan tečaj. Zelo priporočam. Izveš veliko uporabnih stvari.", name: "Peter Pajk" },
-              { text: "Odličen tečaj z vrhunsko ekipo – strokovno, sproščeno in z veliko prakse. Res prava izkušnja, ki jo priporočam vsakemu.", name: "Mitja Mohorič" },
-              { text: "Hvala za vso znanje, pomoč in podporo pri srkanju novega znanja pri potopih na vdih. Resnično profesionalci na vseh področjih. Ekipa kapo dol.", name: "david kozjek" },
-            ].map((review, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 border-l-2 border-gold/30"
-              >
-                <div className="flex gap-0.5 text-gold mb-3">
-                  {[...Array(5)].map((_, j) => (
-                    <span key={j} className="text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-[15px] text-body font-body leading-relaxed mb-4">
-                  &ldquo;{review.text}&rdquo;
-                </p>
-                <p className="text-[13px] text-navy font-medium font-body">
-                  {review.name}
-                </p>
-              </div>
-            ))}
+          <div className="border border-border-custom bg-white px-7 py-8 md:flex md:items-center md:justify-between md:gap-10 md:px-10">
+            <div className="max-w-2xl">
+              <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
+                Darilni bon
+              </p>
+              <h2 className="text-[24px] md:text-[30px] font-semibold leading-[1.15] tracking-[-0.01em] text-navy mb-3">
+                Iščete darilo za nekoga, ki ima rad morje?
+              </h2>
+              <p className="text-[16px] text-body leading-[1.7] font-body">
+                Podarite začetni tečaj prostega potapljanja. Darilni bon
+                uredimo hitro, obdarjenec pa si termin izbere kasneje.
+              </p>
+            </div>
+            <Button asChild className="mt-6 md:mt-0">
+              <Link href="/darilni-bon">Poglejte darilni bon →</Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* ============================================
-          6. SAMO — quote-led, editorial photo collage
+          6. TESTIMONIALS — hand-picked Google reviews
+          ============================================ */}
+      <GoogleTestimonials reviews={homeGoogleReviews} />
+
+      {/* ============================================
+          7. SAMO — quote-led, editorial photo collage
           ============================================ */}
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6">
@@ -262,24 +242,27 @@ export default function HomePage() {
                   src="/images/domov-samo-1.webp"
                   alt="Samo Jeranko"
                   fill
+                  sizes="(max-width: 768px) 85vw, 42vw"
                   className="object-cover"
                 />
               </div>
               {/* Offset accent photos — overlapping bottom-right */}
-              <div className="absolute bottom-[-30px] right-[-10px] flex gap-3">
-                <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
+              <div className="absolute bottom-[-62px] right-[-10px] flex gap-3">
+                <div className="relative w-[195px] h-[195px] md:w-[230px] md:h-[230px] shadow-lg">
                   <Image
                     src="/images/domov-samo-2.webp"
                     alt="Samo na TEDx Ljubljana"
                     fill
+                    sizes="(max-width: 768px) 195px, 230px"
                     className="object-cover"
                   />
                 </div>
-                <div className="relative w-[180px] h-[180px] md:w-[210px] md:h-[210px] shadow-lg">
+                <div className="relative w-[195px] h-[195px] md:w-[230px] md:h-[230px] shadow-lg">
                   <Image
                     src="/images/domov-samo-3.webp"
                     alt="Samo na svetovnem prvenstvu"
                     fill
+                    sizes="(max-width: 768px) 195px, 230px"
                     className="object-cover"
                     style={{ objectPosition: "center 20%" }}
                   />
@@ -290,12 +273,12 @@ export default function HomePage() {
             {/* Text */}
             <div className="md:pt-8 mt-8 md:mt-0">
               <h2 className="text-[26px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.01em] mb-6 italic font-heading">
-                &ldquo;Hotel sem tisto, kar sem občutil na globini, deliti z
+                &ldquo;Želel sem tisto, kar sem občutil na globini, deliti z
                 drugimi.&rdquo;
               </h2>
               <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
                 <strong className="text-navy">Samo Jeranko</strong> je eden
-                najuspešnejših slovenskih prostih potapljačev, nosilec 10
+                najuspešnejših slovenskih prostih potapljačev, nosilec 7
                 medalj s svetovnih prvenstev in SSI Instructor Trainer. V
                 zadnjih 15 letih je naučil prostega potapljanja več kot 2000
                 ljudi in zgradil največjo šolo v Sloveniji.
@@ -331,21 +314,21 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          7. INSTAGRAM — community invitation via Elfsight
+          8. INSTAGRAM — live Elfsight feed
           ============================================ */}
       <section className="bg-surface py-16 md:py-20">
         <div className="max-w-6xl mx-auto px-6 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-2">
-                Pridružite se nam
+                Instagram
               </p>
               <p className="text-[22px] md:text-[26px] font-semibold text-navy font-heading">
-                Vstopite v naš svet na Instagramu
+                Pridružite se nam tudi na Instagramu
               </p>
             </div>
             <a
-              href="https://www.instagram.com/apnea.si/"
+              href={siteConfig.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[15px] text-gold font-medium font-body hover:text-gold-hover transition-colors shrink-0"
@@ -361,39 +344,27 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          8. LEAD MAGNET — newsletter + free guide, centered
+          9. LEAD MAGNET — newsletter + free guide, centered
           ============================================ */}
       <section className="py-20 md:py-28">
-        <div className="max-w-2xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-4">
-            Brezplačni vodič + novice
+            Brezplačen posnetek + novice
           </p>
           <SectionHeading center className="mb-4">
-            Prijavite se na novice in prejmite vodič za izenačevanje pritiska
+            Prijavite se na novice in prejmite predavanje o izenačevanju
+            pritiska
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
             <strong className="text-navy">
-              Kako pravilno izenačiti pritisk v ušesih
+              Kako pravilno izenačiti pritisk v ušesih:
             </strong>{" "}
-            : Valsalva in Frenzel tehniku, razloženi preprosto, korak za
-            korakom. Prejmite vodič brezplačno ob prijavi na naše novice.
+            tehniki Valsalva in Frenzel, razloženi preprosto, korak za korakom.
           </p>
-          <div className="flex gap-3 max-w-md mx-auto">
-            <label htmlFor="leadmagnet-email" className="sr-only">
-              E-pošta
-            </label>
-            <input
-              id="leadmagnet-email"
-              type="email"
-              placeholder="vas@email.si"
-              className="flex-1 border border-border-custom px-4 py-3 text-[15px] font-body text-navy placeholder:text-muted-text focus:outline-none focus:border-gold transition-colors"
-            />
-            <Button type="button" size="sm" className="py-3">
-              Prijavite se →
-            </Button>
-          </div>
+          <LeadMagnetSignup />
           <p className="text-xs text-muted-text font-body mt-4">
-            Brez spama. Odjavite se kadarkoli.
+            Brezplačen posnetek + novice o tečajih in treningih. Brez spama.
+            Odjavite se kadarkoli.
           </p>
         </div>
       </section>

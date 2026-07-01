@@ -1,15 +1,18 @@
 import Image from "next/image";
-import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { LocalBusinessJsonLd, PersonSamoJsonLd } from "@/components/seo/StructuredData";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "O nas",
   description:
     "Apnea Slovenija je največja šola prostega potapljanja v Sloveniji. Od enega potapljača do skupnosti 350+ ljudi. Zgodba Sama Jeranka in ljudi, ki se potapljajo z njim.",
-};
+  path: "/o-nas",
+  image: "/images/onas-hero.webp",
+  imageAlt: "Ekipa Apnea Slovenija in Samo Jeranko",
+});
 
 // === Community stories ===
 
@@ -84,7 +87,7 @@ export default function ONasPage() {
                 Kasneje je odkril prosto potapljanje in podvodni ribolov in se
                 v oba takoj zaljubil. Študiral je strojništvo, a morje ga je
                 neprestano vleklo k sebi. Leta 2008 je prvič tekmoval in hitro
-                so začele prihajati medalje. Osvojil je 10 medalj na svetovnih
+                so začele prihajati medalje. Osvojil je 7 medalj na svetovnih
                 prvenstvih in postavil 19 državnih rekordov.
               </p>
 
@@ -124,7 +127,7 @@ export default function ONasPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { number: "10x", label: "medalja na SP" },
+                  { number: "7x", label: "medalja na SP" },
                   { number: "19", label: "državnih rekordov" },
                   { number: "-110m", label: "osebni rekord" },
                   { number: "8 min", label: "statična apneja" },

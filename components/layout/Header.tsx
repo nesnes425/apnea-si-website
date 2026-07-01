@@ -16,11 +16,11 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
-            src="/images/placeholder/logo.png"
+            src="/images/logo-apnea-horizontal-v3.png"
             alt="Apnea Slovenija"
-            width={56}
-            height={56}
-            className="h-12 w-auto brightness-0 invert"
+            width={224}
+            height={64}
+            className="h-14 w-auto"
           />
         </Link>
 

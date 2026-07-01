@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -12,12 +13,18 @@ import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Master tečaj prostega potapljanja — SSI Level 3",
   description:
     "Obvladajte Mouthfill izenačevanje in dosezite 30–40 m. SSI Level 3 certifikat + 2 brezplačna vodena treninga. 550 €.",
-};
+  path: "/tecaji/master",
+  image: "/images/tecaji-master-hero.webp",
+  imageAlt: "Master tečaj prostega potapljanja Apnea Slovenija",
+});
+
+export const revalidate = 60;
 
 // === Data ===
 
@@ -116,7 +123,7 @@ function Hero() {
           </p>
           <div className="mb-10">
             <Button asChild>
-              <a href="#termini">Rezervirajte mesto →</a>
+              <a href="#termini">Pošljite prijavo →</a>
             </Button>
           </div>
         </div>
@@ -314,7 +321,7 @@ async function DatesAndBooking() {
                     ) : (
                       <Button asChild size="sm">
                         <Link href={`/tecaji/master/prijava?instanceId=${course._id}`}>
-                          Rezerviraj →
+                          Prijava →
                         </Link>
                       </Button>
                     )}
@@ -385,6 +392,15 @@ export default function MasterTecajPage() {
       <CourseStructure />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         heading="Globina, ki jo razumete. Ne le dosežete."
         description={`Master tečaj prostega potapljanja: Mouthfill, 30–40 m, 2 vodena treninga. ${siteConfig.courses.master.price} €.`}

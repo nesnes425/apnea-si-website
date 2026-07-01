@@ -1,20 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
+import { pageMetadata } from "@/lib/seo";
 import { getBlogPosts, getBlogPostCount } from "@/lib/sanity/queries";
 import type { BlogPost } from "@/lib/sanity/types";
-import type { Metadata } from "next";
 
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 
 const POSTS_PER_PAGE = 12;
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Novice",
   description:
     "Nasveti, reportaže in novice iz sveta prostega potapljanja. Apnea Slovenija blog.",
-};
+  path: "/novice",
+  image: "/images/prosto-potapljanje-hero.webp",
+  imageAlt: "Novice in nasveti Apnea Slovenija",
+});
 
 interface Props {
   searchParams: Promise<{ stran?: string }>;

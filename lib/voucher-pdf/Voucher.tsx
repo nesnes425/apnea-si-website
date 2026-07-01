@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import path from "node:path";
 import { Document, Page, Text, View, StyleSheet, Font, pdf } from "@react-pdf/renderer";
 

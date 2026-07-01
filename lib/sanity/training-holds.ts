@@ -15,7 +15,7 @@ type HoldResult =
 
 export type ConfirmTrainingHoldResult =
   | { ok: true; alreadyConfirmed: boolean }
-  | { ok: false; reason: "capacity_conflict" | "group_missing" };
+  | { ok: false; reason: "capacity_conflict" | "group_missing" | "hold_missing" };
 
 const MAX_MUTATION_ATTEMPTS = 4;
 
@@ -171,11 +171,19 @@ export async function confirmTrainingHold(params: {
     if (confirmedIds.includes(params.paymentIntentId)) {
       return { ok: true, alreadyConfirmed: true };
     }
+    const now = Date.now();
+    const matchingHold = (group.holds ?? []).find(
+      (hold) =>
+        hold.tokenHash === params.tokenHash &&
+        new Date(hold.expiresAt).getTime() > now
+    );
+    if (!matchingHold) {
+      return { ok: false, reason: "hold_missing" };
+    }
     if (group.confirmedSpots >= group.capacity) {
       return { ok: false, reason: "capacity_conflict" };
     }
 
-    const now = Date.now();
     const remainingHolds = (group.holds ?? []).filter(
       (hold) =>
         hold.tokenHash !== params.tokenHash &&

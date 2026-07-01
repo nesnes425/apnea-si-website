@@ -1,18 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/blocks/Section";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
-import { SocialProofBar } from "@/components/blocks/SocialProofBar";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
-import { CheckList } from "@/components/blocks/CheckList";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Tečaji prostega potapljanja",
   description:
     "SSI certificirani tečaji prostega potapljanja v Sloveniji. Od prvega potopa na en vdih do naprednih tehnik izenačevanja in globine. Začetni, nadaljevalni in master tečaj.",
-};
+  path: "/tecaji",
+  image: "/images/tecaji-CTA.webp",
+  imageAlt: "Tečaji prostega potapljanja Apnea Slovenija",
+});
 
 const courses = [
   {
@@ -22,14 +25,11 @@ const courses = [
     description:
       "Za vse, ki želite pod morsko gladino doživeti več kot samo pogled s površine. Naučite se zadrževanja diha, izenačevanja, tehnike potopa in osnov, s katerimi se v vodi počutite mirno in samozavestno.",
     depth: "do 20 m",
-    hours: "6 h teorije + 3 h bazen + 6 h morje",
+    hours: ["6 h teorije", "3 h bazen", "6 h morje"],
     prereq: "Brez predznanja, znati morate plavati 200 m",
-    includes: [
-      "SSI Freediving Level 1 certifikat",
-      "Digitalno učno gradivo",
-      "Video analiza",
-      "Oprema za izposojo",
-    ],
+    image: "/images/tecaji-zacetni-hero.webp",
+    imageAlt: "Skupina na začetnem tečaju prostega potapljanja v bazenu",
+    imagePosition: "center 48%",
     href: "/tecaji/zacetni",
     highlight: true,
   },
@@ -40,14 +40,11 @@ const courses = [
     description:
       "Za tiste, ki ste po začetnem tečaju ugotovili, da želite globlje, mirneje in z boljšo tehniko. Naučite se Frenzel izenačevanja, prostega pada in dela na globinah, kjer se prosto potapljanje odpre na novo.",
     depth: "25–35 m",
-    hours: "8 h teorije + 3 h bazen + 8 h morje",
+    hours: ["8 h teorije", "3 h bazen", "8 h morje"],
     prereq: "Opravljen začetni tečaj (Level 1)",
-    includes: [
-      "SSI Freediving Level 2 certifikat",
-      "Globinski del na Hrvaškem",
-      "Video analiza",
-      "Zavarovanje med tečajem",
-    ],
+    image: "/images/tecaji-nadaljevalni-hero.webp",
+    imageAlt: "Nadaljevalni tečaj prostega potapljanja v morju",
+    imagePosition: "center 52%",
     href: "/tecaji/nadaljevalni",
     highlight: false,
   },
@@ -58,14 +55,11 @@ const courses = [
     description:
       "Za izkušene potapljače, ki želijo razumeti napredne tehnike in se pripraviti na globine do 40 metrov. Mouthfill izenačevanje, več globinskega dela in 2 vodena treninga po zaključku.",
     depth: "30–40 m",
-    hours: "10 h teorije + 3 h bazen + 12 h morje",
+    hours: ["10 h teorije", "3 h bazen", "12 h morje"],
     prereq: "Opravljen nadaljevalni tečaj (Level 2)",
-    includes: [
-      "SSI Freediving Level 3 certifikat",
-      "2 brezplačna vodena treninga",
-      "Video analiza",
-      "Zavarovanje med tečajem",
-    ],
+    image: "/images/tecaji-master-hero.webp",
+    imageAlt: "Master tečaj prostega potapljanja",
+    imagePosition: "center 52%",
     href: "/tecaji/master",
     highlight: false,
   },
@@ -75,49 +69,92 @@ export default function TecajiPage() {
   return (
     <>
       {/* Hero */}
-      <Section>
-        <div className="max-w-2xl">
-          <Overline>Tečaji prostega potapljanja</Overline>
-          <h1 className="text-[36px] md:text-[52px] font-bold leading-[1.08] tracking-[-0.02em] text-navy mb-6">
-            Naučite se prostega potapljanja, od prvega potopa do naprednih globin
-          </h1>
-          <p className="text-[17px] md:text-[20px] text-body leading-[1.6] font-body">
-            Če želite bolje doživeti morje, napredovati v podvodnem ribolovu
-            ali končno ugotoviti, kaj vaše telo zmore na en vdih, začnite tukaj.
-            Tečaji so SSI certificirani in jih vodi{" "}
-            <strong className="text-navy">
-              Samo Jeranko
-            </strong>
-            , eden najboljših slovenskih potapljačev na vdih in izkušen učitelj
-            začetnikov, rekreativcev in tekmovalcev.
-          </p>
+      <section className="relative min-h-[580px] md:min-h-[640px] flex items-end overflow-hidden">
+        <Image
+          src="/images/tecaji-zacetni-hero.webp"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          style={{ objectPosition: "center 45%" }}
+        />
+        <div className="absolute inset-0 bg-navy/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/35 to-transparent" />
+        <div className="relative w-full max-w-6xl mx-auto px-6 pb-14 md:pb-20">
+          <div className="max-w-3xl">
+            <Overline>Tečaji prostega potapljanja</Overline>
+            <h1 className="text-[36px] md:text-[56px] font-bold leading-[1.04] text-white mb-6">
+              Naučite se prostega potapljanja, od prvega potopa do naprednih globin
+            </h1>
+            <p className="text-[17px] md:text-[20px] text-white/78 leading-[1.6] font-body max-w-2xl">
+              Če želite bolje doživeti morje, napredovati v podvodnem ribolovu
+              ali končno ugotoviti, kaj vaše telo zmore na en vdih, začnite
+              tukaj. Tečaji so SSI certificirani in jih vodi{" "}
+              <strong className="text-white">Samo Jeranko</strong>.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href="#zacetni">Izberite tečaj →</Link>
+              </Button>
+              <Link
+                href="/prosto-potapljanje"
+                className="inline-flex items-center px-6 py-4 text-[15px] font-medium text-white/85 font-body hover:text-gold transition-colors"
+              >
+                Kaj je prosto potapljanje?
+              </Link>
+            </div>
+          </div>
         </div>
-      </Section>
-
-      <SocialProofBar />
+      </section>
 
       {/* Course cards */}
-      <Section>
-        <div className="space-y-12">
+      <Section className="py-16 md:py-20">
+        <div className="mb-10 max-w-2xl">
+          <Overline>Tečaji</Overline>
+          <SectionHeading>
+            Izberite svoj tečaj
+          </SectionHeading>
+          <p className="mt-4 text-[17px] text-body leading-[1.7] font-body">
+            Od prvih potopov do 40 m globine in profesionalnim tehnikam.
+          </p>
+        </div>
+        <div className="space-y-8">
           {courses.map((course) => (
             <div
               key={course.key}
-              className={`grid md:grid-cols-[1fr_320px] gap-10 p-8 md:p-10 border ${
+              id={course.key}
+              className={`grid overflow-hidden border bg-white md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)_220px] ${
                 course.highlight
-                  ? "border-gold bg-gold-pale"
-                  : "border-border-custom bg-white"
+                  ? "border-gold"
+                  : "border-border-custom"
               }`}
             >
-              <div>
+              <div className="relative min-h-[220px] lg:min-h-[260px]">
+                <Image
+                  src={course.image}
+                  alt={course.imageAlt}
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: course.imagePosition }}
+                  sizes="(min-width: 1024px) 260px, 100vw"
+                />
+                {course.highlight && (
+                  <div className="absolute left-4 top-4 bg-gold px-3 py-1 text-[12px] font-medium uppercase text-white font-body">
+                    Najbolj priljubljen
+                  </div>
+                )}
+              </div>
+
+              <div className="p-7 md:p-8">
                 <Overline>{course.overline}</Overline>
                 <h2 className="text-[28px] md:text-[32px] font-semibold leading-[1.15] mb-4">
                   {course.title}
                 </h2>
-                <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
+                <p className="text-[16px] text-body leading-[1.7] font-body mb-6">
                   {course.description}
                 </p>
 
-                <div className="grid sm:grid-cols-3 gap-6 mb-6">
+                <div className="grid gap-5 sm:grid-cols-3 mb-6">
                   <div>
                     <p className="text-sm text-muted-text font-body mb-1">
                       Globina
@@ -131,7 +168,11 @@ export default function TecajiPage() {
                       Obseg
                     </p>
                     <p className="text-[17px] font-medium text-navy font-body">
-                      {course.hours}
+                      {course.hours.map((line) => (
+                        <span key={line} className="block">
+                          {line}
+                        </span>
+                      ))}
                     </p>
                   </div>
                   <div>
@@ -144,16 +185,12 @@ export default function TecajiPage() {
                   </div>
                 </div>
 
-                <CheckList items={course.includes} columns={2} />
               </div>
 
-              <div className="flex flex-col justify-between">
+              <div className="flex flex-col justify-between border-t border-border-custom p-7 md:col-span-2 md:p-8 lg:col-span-1 lg:border-l lg:border-t-0">
                 <div>
-                  <p className="text-[40px] font-bold text-navy font-heading leading-none mb-2">
+                  <p className="text-[36px] font-bold text-navy font-heading leading-none mb-2">
                     {siteConfig.courses[course.key].price} €
-                  </p>
-                  <p className="text-sm text-muted-text font-body mb-6">
-                    Vse vključeno
                   </p>
                 </div>
                 <Button asChild className="text-center">

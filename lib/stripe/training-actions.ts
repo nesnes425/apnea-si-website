@@ -58,6 +58,9 @@ export async function createTrainingPaymentIntent(
         customerName: parsed.data.fullName,
         customerEmail: parsed.data.email,
         customerPhone: parsed.data.phone,
+        customerAddress: parsed.data.address,
+        customerPostalCode: parsed.data.postalCode,
+        customerCity: parsed.data.city,
       },
     });
 

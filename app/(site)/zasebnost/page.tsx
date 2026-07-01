@@ -4,13 +4,15 @@ import { siteConfig } from "@/lib/config";
 export const metadata = {
   title: "Politika zasebnosti",
   description:
-    "Politika zasebnosti in izjava o varstvu osebnih podatkov — Apnea Slovenija.",
+    "Politika zasebnosti in izjava o varstvu osebnih podatkov, Apnea Slovenija.",
+  alternates: { canonical: "/zasebnost" },
 };
 
 const tocSections = [
   { id: "upravljalca", label: "Upravljalca" },
   { id: "pridobivanje", label: "Pridobivanje podatkov" },
   { id: "zbiranje", label: "Katere podatke zbiramo" },
+  { id: "obdelovalci", label: "Zunanji ponudniki" },
   { id: "pravice", label: "Vaše pravice" },
   { id: "piskotki", label: "Piškotki" },
   { id: "pritozbe", label: "Pritožbe" },
@@ -71,9 +73,11 @@ export default function ZasebnostPage() {
               <p>
                 Upravljalca se zavezujeta k varovanju zaupnosti vaših osebnih
                 podatkov. Zbrane informacije bosta uporabila izključno za
-                navedene namene in zakonske obveznosti. Osebni podatki ne bodo
-                posredovani tretjim osebam brez vašega izrecnega soglasja,
-                razen v primerih, ki jih zahteva zakon.
+                navedene namene in zakonske obveznosti. Osebni podatki se
+                posredujejo tretjim osebam samo, kadar je to potrebno za
+                izvedbo storitve, izpolnitev zakonskih obveznosti ali uporabo
+                pogodbenih obdelovalcev, ki za upravljalca zagotavljajo
+                tehnične, plačilne, e-poštne ali računovodske storitve.
               </p>
 
               <h2 id="pridobivanje">Pridobivanje osebnih podatkov</h2>
@@ -108,8 +112,24 @@ export default function ZasebnostPage() {
               <h3>Plačila (Stripe)</h3>
               <p>
                 Plačila obdelujemo preko ponudnika Stripe. Podatkov o plačilnih
-                karticah ne shranjujemo na naših strežnikih — te obdeluje
+                karticah ne shranjujemo na naših strežnikih, saj jih obdeluje
                 izključno Stripe v skladu s PCI DSS standardi.
+              </p>
+              <p>
+                Pri spletni prijavi na trening se podatki, ki so potrebni za
+                plačilo članarine, potrditev prijave in izdajo računa, posredujejo
+                ponudniku Stripe in se uporabijo za izvedbo plačila. Ti podatki
+                lahko vključujejo ime in priimek, e-pošto, telefon, izbrani
+                program, lokacijo, termin in identifikator plačila.
+              </p>
+
+              <h3>Treningi in članstvo</h3>
+              <p>
+                Za namen prijave na treninge, rezervacije mesta v skupini,
+                plačila članarine, članstva v ŠD Apnea Slovenija in izdaje
+                računov zbiramo kontaktne podatke udeleženca, izbrano skupino,
+                lokacijo, termin in podatke, ki so potrebni za računovodsko
+                obdelavo.
               </p>
 
               <h3>E-poštna obvestila (Brevo)</h3>
@@ -117,6 +137,16 @@ export default function ZasebnostPage() {
                 Če se prijavite na obvestila, vaš e-naslov shranimo v sistemu
                 Brevo. Lahko se kadarkoli odjavite s klikom na povezavo v
                 vsakem sporočilu.
+              </p>
+
+              <h2 id="obdelovalci">Zunanji ponudniki in pogodbeni obdelovalci</h2>
+              <p>
+                Za delovanje spletne strani, obrazcev, e-poštnih obvestil,
+                plačil, analitike in izdaje računov lahko uporabljamo zunanje
+                ponudnike, med drugim Vercel, Sanity, Brevo, Stripe, Google
+                Analytics, Meta Pixel in Minimax. Ti ponudniki osebne podatke
+                obdelujejo samo v obsegu, ki je potreben za izvedbo posamezne
+                storitve.
               </p>
 
               <h2 id="pravice">Vaše pravice</h2>

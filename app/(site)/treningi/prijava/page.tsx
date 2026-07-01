@@ -43,9 +43,9 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
               Rezervirajte mesto v skupini
             </h1>
             <p className="mb-8 text-body">
-              Po oddaji podatkov bomo mesto v izbrani skupini zadržali{" "}
-              {settings?.holdMinutes ?? 15} minut. Nato na isti strani plačate
-              letno članarino, s čimer dokončno rezervirate svoje mesto.
+              Po oddaji podatkov bomo mesto zadržali {settings?.holdMinutes ?? 15} minut.
+              Danes plačate samo {membershipFee} € letne članarine. S plačilom je
+              vaše mesto v skupini potrjeno.
             </p>
             <TrainingSignupForm
               groupId={group._id}
@@ -56,17 +56,14 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
           </section>
           <aside className="self-start border border-border-custom bg-white p-7">
             <Overline>Izbrana skupina</Overline>
-            <h2 className="mb-1 text-[24px] font-semibold text-navy">{group.program.name}</h2>
-            <p className="mb-5 text-body">{group.venue.name}, {group.venue.city}</p>
+            <h2 className="mb-2 text-[24px] font-semibold leading-tight text-navy">
+              {group.program.name}
+            </h2>
+            <p className="mb-1 text-body">{group.venue.name}, {group.venue.city}</p>
+            <p className="mb-5 text-sm font-medium text-navy">
+              {group.weekday}, {group.startTime}–{group.endTime}
+            </p>
             <dl className="space-y-3 border-t border-border-custom pt-5 text-sm">
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted-text">Termin</dt>
-                <dd className="font-medium text-navy">{group.weekday}, {group.startTime}–{group.endTime}</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted-text">Prosta mesta</dt>
-                <dd className="font-medium text-navy">{Math.max(0, group.availableSpots)}</dd>
-              </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-text">Mesečna vadnina</dt>
                 <dd className="font-medium text-navy">{pricing.monthlyDisplayPrice} €/mesec</dd>
@@ -75,18 +72,17 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
                 <dt className="text-muted-text">Plačilo vadnine</dt>
                 <dd className="text-right font-medium text-navy">
                   {pricing.secondInstallmentAmount > 0
-                    ? `${pricing.firstInstallmentAmount} € + ${pricing.secondInstallmentAmount} €`
+                    ? `1. obrok ${pricing.firstInstallmentAmount} €, 2. obrok ${pricing.secondInstallmentAmount} €`
                     : `${pricing.firstInstallmentAmount} € enkratno`}
                 </dd>
               </div>
               <div className="border-t border-border-custom pt-3">
                 <div className="flex justify-between gap-4">
                   <dt className="font-medium text-navy">Danes plačate</dt>
-                  <dd className="font-semibold text-navy">{membershipFee} €</dd>
+                  <dd className="text-right font-semibold text-navy">{membershipFee} € članarine</dd>
                 </div>
-                <p className="mt-2 text-xs leading-relaxed text-muted-text">
-                  S plačilom letne članarine potrdite članstvo v ŠD Apnea
-                  Slovenija in rezervirate mesto v izbrani skupini.
+                <p className="mt-2 text-sm leading-relaxed text-navy">
+                  S plačilom članarine je vaše mesto v skupini potrjeno.
                 </p>
               </div>
             </dl>

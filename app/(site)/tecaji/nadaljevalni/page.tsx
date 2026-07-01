@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,18 @@ import { FAQ } from "@/components/blocks/FAQ";
 import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Nadaljevalni tečaj prostega potapljanja — SSI Level 2",
   description:
     "Poglobite znanje prostega potapljanja. Frenzel izenačevanje, potopi do 35 m. SSI Level 2 certifikat. 415 €.",
-};
+  path: "/tecaji/nadaljevalni",
+  image: "/images/tecaji-nadaljevalni-hero.webp",
+  imageAlt: "Nadaljevalni tečaj prostega potapljanja Apnea Slovenija",
+});
+
+export const revalidate = 60;
 
 // === Data ===
 
@@ -129,7 +136,7 @@ function Hero() {
           </p>
           <div className="mb-10">
             <Button asChild>
-              <a href="#termini">Rezervirajte mesto →</a>
+              <a href="#termini">Pošljite prijavo →</a>
             </Button>
           </div>
         </div>
@@ -331,7 +338,7 @@ async function DatesAndBooking() {
                     ) : (
                       <Button asChild size="sm">
                         <Link href={`/tecaji/nadaljevalni/prijava?instanceId=${course._id}`}>
-                          Rezerviraj →
+                          Prijava →
                         </Link>
                       </Button>
                     )}
@@ -425,6 +432,15 @@ export default function NadaljevalniTecajPage() {
       <CourseStructure />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         heading="Odkrijte, kaj se skriva pod 30 metri"
         description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m. ${siteConfig.courses.nadaljevalni.price} €.`}

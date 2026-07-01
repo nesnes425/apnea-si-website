@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,18 @@ import { FinalCTA } from "@/components/blocks/FinalCTA";
 import { Testimonials } from "@/components/blocks/Testimonials";
 import { CheckList } from "@/components/blocks/CheckList";
 import { PhotoGallery } from "@/components/blocks/PhotoGallery";
+import { ContextLinks } from "@/components/blocks/ContextLinks";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Začetni tečaj prostega potapljanja | SSI Level 1",
   description:
-    "Naučite se prostega potapljanja s Samom Jerankom. Potopite se do 20 m, zadržite dih več kot 2 minuti in odkrijte nov način doživljanja morja. SSI Level 1 certifikat. 395 €.",
-};
+    "Začetni tečaj prostega potapljanja s Samom Jerankom: varni potopi do 20 m in zadrževanje sape več kot 2 minuti. SSI Level 1 certifikat. 395 €.",
+  path: "/tecaji/zacetni",
+  image: "/images/tecaji-zacetni-hero.webp",
+  imageAlt: "Začetni tečaj prostega potapljanja Apnea Slovenija",
+});
+
+export const revalidate = 60;
 
 // === Page-specific data ===
 
@@ -38,22 +45,22 @@ const stories = [
   {
     icon: "/images/icons/fish.webp",
     title: "Postani boljši podvodni ribič",
-    text: "Navdihujejo vas posnetki podvodnega ribolova, a veste, da bi za mirne in učinkovite potope potrebovali boljšo osnovo? Na tečaju se naučite tehnike potapljanja, zadrževanja diha in gibanja pod vodo, da se v morju počutite bolj samozavestno in pod gladino ostanete dlje.",
+    text: "Sanjate o kapitalnem ulovu, ko se lahko ribi dovolj globoko mirno približate? Podvodni ribolov zahteva maksimalno varnost, popolno tehniko potopa in brezhibno izenačevanje. Vse to vas naučimo na tečaju.",
   },
   {
     icon: "/images/icons/shell.webp",
-    title: "Otroku prinesi zaklad z morskega dna",
-    text: "Otrok opazi čudovito školjko na dnu. Vi se potopite, jo poberete in mu pokažete, da morje ni samo nekaj, kar opazujemo s površine. Tečaj vam da znanje, da takšni trenutki postanejo dostopni.",
+    title: "Družinsko šnorklanje in nabiranje školjk",
+    text: "Želite varno deliti ljubezen do morja in narave s svojo družino? Naj ne bo morsko dno nekaj nedostopnega, kar opazujemo z gladine. Na tečaju osvojite znanje za varno nabiranje školjk in raziskovanje morskih globin.",
   },
   {
     icon: "/images/icons/dolphin.webp",
     title: "Plavaj z delfini in raziskuj morje",
-    text: "Maldivi, Tenerife, Hrvaška. Podvodni svet čaka. Toda brez pravilne tehnike ostanete na površini. Tečaj vam da osnove, da se pod vodo sprostite, pravilno potapljate in uživate v vsakem potopu brez bolečin v ušesih.",
+    text: "Ste na svojih sanjskih počitnicah, a z gladine žalostno opazujete vodiča, kako lahkotno plava z mantami in delfini? Osvojite veščine prostega potapljanja za uživanje v novih, nepozabnih morskih doživetjih.",
   },
   {
     icon: "/images/icons/keys.webp",
-    title: "Reši, kar pade v vodo",
-    text: "Ključi, očala, GoPro. Vsako poletje kdo kaj izgubi v morju. Z osnovami prostega potapljanja to ni več problem. Le telefona vam verjetno ne bo uspelo rešiti.",
+    title: "Reši zapeto sidro",
+    text: "Vsak mornar se je že srečal z zapetim sidrom, zavozlanim propelerjem ali predmetom, ki je padel v morje. Zato je znanje prostega potapljanja nujna veščina za vsakega odgovornega kapitana.",
   },
 ];
 
@@ -64,9 +71,11 @@ const coursePhases = [
     duration: "6 ur",
     items: [
       "Dihalne tehnike in fiziologija",
-      "Potapljaški refleks in izenačevanje",
+      "Potapljaški refleks",
+      "Izenačevanje pritiska",
       "Varnost in postopki reševanja",
       "Digitalno učno gradivo v slovenščini",
+      "Video analiza",
     ],
   },
   {
@@ -74,10 +83,12 @@ const coursePhases = [
     title: "Bazen",
     duration: "3 ure",
     items: [
-      "Statična apneja: zadrževanje diha",
+      "Statična apneja: zadrževanje diha v mirovanju",
       "Dinamična apneja: plavanje pod vodo",
-      "Pravilna tehnika potapljanja",
-      "Video analiza vaših potopov",
+      "Pravilna tehnika plavanja pod vodo",
+      "Reševanje in varnost",
+      "Dihalne in sprostitvene vaje",
+      "1 inštruktor na do 6 udeležencev",
     ],
   },
   {
@@ -86,9 +97,9 @@ const coursePhases = [
     duration: "6 ur",
     items: [
       "Potopi od 10 do 20 metrov globine",
-      "Izenačevanje na globini",
+      "Izenačevanje pritiska",
       "Dihalne vaje pred in po potopu",
-      "1 inštruktor na 4 udeležence",
+      "1 inštruktor na do 4 udeležence",
     ],
   },
 ];
@@ -122,14 +133,14 @@ const faqs = [
   },
   {
     q: "Kakšna kondicija je potrebna?",
-    a: "Posebna kondicija ni potrebna. Prosto potapljanje je bolj stvar sproščenosti kot fizične moči. Na tečaju se naučite pravilnih tehnik dihanja in sprostitve.",
+    a: "Potrebna je splošna psihofizična pripravljenost. To pomeni, da ste zdravi brez kroničnih bolezni. Prosto potapljanje temelji na sproščenosti in ne na fizični moči. Na tečaju se naučite pravilne tehnike plavanja s plavutmi, dihanja in sproščanja.",
   },
   {
-    q: "Koliko je najnižja starost za udeležbo na tečaju?",
+    q: "Ali je tečaj primeren za otroke?",
     a: "Minimalna starost je 12 let. Mladoletni udeleženci potrebujejo pisno soglasje staršev.",
   },
   {
-    q: "Kaj moram prinesti s seboj?",
+    q: "Kakšno opremo potrebujem?",
     a: "Kopalke, brisačo in dobro voljo. Vso opremo (masko, plavuti, utežni pas, obleko) si lahko izposodite pri naši partnerski trgovini Aquamanija.",
   },
   {
@@ -138,7 +149,7 @@ const faqs = [
   },
   {
     q: "Kdaj in kje poteka globinski del?",
-    a: "Globinski del (morje) se izvaja od maja do avgusta. Termin in lokacijo izberete po zaključenem bazenskem delu, za izvedbo pa imate 8 mesecev časa.",
+    a: "Globinski del tečaja poteka na morju (Krk – Omišalj) ali na Bledu. Julija in avgusta smo navadno na Bledu, v drugih terminih pa na morju.",
   },
 ];
 
@@ -160,21 +171,22 @@ function Hero() {
 
       <div className="relative w-full max-w-6xl px-6 mx-auto py-16 md:py-20">
         <div className="max-w-lg">
-          <Overline>Začetni tečaj</Overline>
+          <Overline>Začetni tečaj prostega potapljanja</Overline>
           <h1 className="text-[34px] md:text-[50px] font-bold leading-[1.08] tracking-[-0.02em] text-navy mb-5">
-            Potopite se do 20 metrov na en sam vdih
+            Potopite se do 20 metrov z enim vdihom
           </h1>
           <p className="text-[17px] md:text-[19px] text-body leading-[1.6] font-body mb-3">
-            Začetni tečaj prostega potapljanja vas popelje od prvega
-            zadrževanja diha do občutka, da se pod morsko gladino znajdete
-            mirno, samozavestno in z dobrim znanjem.
+            Začetni tečaj prostega potapljanja vas vodi od prvega stika z
+            masko do razumevanja fiziologije, varnosti, dihanja in
+            izenačevanja tlaka. Opremimo vas z znanjem za lahkotne in varne
+            potope.
           </p>
           <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
             €{siteConfig.courses.zacetni.price}
           </p>
           <div className="mb-10">
             <Button asChild>
-              <a href="#termini">Rezervirajte mesto →</a>
+              <a href="#termini">Prijave →</a>
             </Button>
           </div>
 
@@ -197,9 +209,9 @@ function Hero() {
 function StoriesSection() {
   return (
     <Section>
-      <Overline>V kateri zgodbi se najdete?</Overline>
+      <Overline>V čem želite napredovati?</Overline>
       <SectionHeading className="mb-16 max-w-2xl">
-        Prosto potapljanje ni samo šport, ampak nov način doživljanja morja
+        Prosto potapljanje ni le šport, je nov način raziskovanja narave
       </SectionHeading>
 
       <div className="grid md:grid-cols-2 gap-x-16 gap-y-0">
@@ -226,7 +238,18 @@ function StoriesSection() {
       </div>
 
       <p className="mt-12 text-[17px] text-navy font-medium font-body border-l-4 border-gold pl-6 max-w-2xl">
-        Ne potrebujete predznanja ali posebne kondicije. Dovolj je, da lahko preplavate 200 metrov in da ste stari vsaj 12 let.
+        Ne potrebujete predznanja ali vrhunske kondicije. Dovolj je, da ste
+        stari vsaj 12 let, v dobri psihofizični kondiciji in lahkotno
+        preplavate 200 m brez ustavljanja.
+      </p>
+      <p className="mt-6 max-w-2xl text-[15px] leading-[1.7] text-muted-text font-body">
+        Če želite najprej razumeti osnove športa, preberite še razlago{" "}
+        <Link
+          href="/prosto-potapljanje"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          kaj je prosto potapljanje →
+        </Link>
       </p>
     </Section>
   );
@@ -264,9 +287,6 @@ function OutcomePromise() {
                 60% udeležencev se udobno potopi globlje kot 15 metrov že na
                 drugi dan globinskega dela tečaja.
               </p>
-              <p className="text-[15px] text-muted-text font-body mt-1 italic">
-                Nekateri brez težav dosežejo tudi 18+ metrov.
-              </p>
             </div>
           </div>
         </div>
@@ -302,13 +322,14 @@ function Instructor() {
           <p className="text-[17px] text-body leading-[1.7] font-body mb-10">
             Eden najboljših potapljačev na svetu in izkušen inštruktor, ki je v
             zadnjih 15 letih naučil prostega potapljanja več kot 2000 ljudi, od
-            popolnih začetnikov do tekmovalcev. Zna razložiti vse na preprost in
-            umirjen način.
+            popolnih začetnikov do vrhunskih prostih potapljačev. Z vami bo
+            delil znanje in veščine, ki jih pri svojih potopih uporabljajo
+            svetovni rekorderji.
           </p>
 
           <div className="grid grid-cols-2 gap-8">
             {[
-              { number: "10x", label: "medalja na SP" },
+              { number: "7x", label: "medalja na SP" },
               { number: "2000+", label: "potapljačev" },
               { number: "19x", label: "državni rekorder" },
               { number: "SSI", label: "Instructor Trainer" },
@@ -335,11 +356,11 @@ function CourseStructure() {
       <div className="max-w-6xl mx-auto px-6">
         <Overline>Potek tečaja</Overline>
         <SectionHeading className="mb-6 max-w-2xl">
-          Tri faze do vašega prvega potopa
+          Trije koraki do vašega prvega potopa
         </SectionHeading>
         <p className="text-[17px] text-body leading-[1.7] font-body mb-14 max-w-2xl">
-          Tečaj je zasnovan tako, da vas postopoma vodi od teorije do
-          samozavestnega potapljanja v morju. Vsaka faza gradi na prejšnji.
+          Tečaj je zasnovan tako, da vas strukturirano vodi od teorije do
+          samostojnega potapljanja v morju.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -369,8 +390,9 @@ function CourseStructure() {
             items={[
               "SSI Freediving Level 1 certifikat",
               "Dihalne vaje in raztezanje",
+              "8-tedenski program treninga",
               "Oprema na voljo za izposojo",
-              "Majhne skupine (maks. 6 v bazenu)",
+              "Individualni pristop",
             ]}
             columns={4}
           />
@@ -429,7 +451,7 @@ async function DatesAndBooking() {
                     ) : (
                       <Button asChild size="sm">
                         <Link href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}>
-                          Rezerviraj →
+                          Prijava →
                         </Link>
                       </Button>
                     )}
@@ -484,6 +506,7 @@ async function DatesAndBooking() {
                   "Digitalno učno gradivo",
                   "Video analiza potopov",
                   "Dihalne vaje in raztezanje",
+                  "8-tedenski program treningov",
                   "Oprema za izposojo",
                 ]}
               />
@@ -512,7 +535,7 @@ export default function ZacetniTecajPage() {
     <>
       <CourseJsonLd
         name={siteConfig.courses.zacetni.fullName}
-        description="SSI Freediving Level 1: tečaj za začetnike. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 10x medaljer s svetovnih prvenstev."
+        description="SSI Freediving Level 1: začetni tečaj prostega potapljanja. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 7x medalist s svetovnih prvenstev."
         url="https://apnea.si/tecaji/zacetni"
         priceInEuros={siteConfig.courses.zacetni.price}
       />
@@ -525,6 +548,15 @@ export default function ZacetniTecajPage() {
       <Testimonials reviews={reviews} />
       <DatesAndBooking />
       <FAQ items={faqs} />
+      <ContextLinks>
+        Iščete še bolj praktične odgovore o opremi, prijavi ali poteku?{" "}
+        <Link
+          href="/vprasanja"
+          className="text-gold hover:text-gold-hover transition-colors"
+        >
+          Odprite celoten FAQ →
+        </Link>
+      </ContextLinks>
       <FinalCTA
         backgroundImage="/images/tecaji-zacetni-CTA.webp"
         heading="Odkrijte, kaj zmorete pod morsko gladino"

@@ -80,6 +80,13 @@ export function Footer() {
                 </a>
               </li>
               <li className="pt-1">
+                Tečaji in darilni boni:
+                <br />
+                Samo Jeranko s.p.
+              </li>
+              <li>
+                Treningi:
+                <br />
                 Športno društvo Apnea Slovenija
                 <br />
                 Saveljska cesta 70A
@@ -145,7 +152,7 @@ export function Footer() {
             © {new Date().getFullYear()} {siteConfig.name}. Vse pravice pridržane.
           </p>
           <p className="text-xs text-white/40 font-body">
-            Samo Jeranko s.p. · ŠD Apnea Slovenija
+            Tečaji in darilni boni: Samo Jeranko s.p. · Treningi: ŠD Apnea Slovenija
           </p>
         </div>
       </div>

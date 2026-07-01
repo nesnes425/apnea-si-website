@@ -193,13 +193,13 @@ function htmlToPortableText(html, imageAssetMap) {
       if (headingText) {
         blocks.push(makeTextBlock(headingText, "h3"));
       }
-      const bodyBlock = parseContentToBlock(bodyContent, imageAssetMap);
+      const bodyBlock = parseContentToBlock(bodyContent);
       if (bodyBlock) blocks.push(bodyBlock);
       continue;
     }
 
     // Regular paragraph with inline markup
-    const block = parseContentToBlock(content, imageAssetMap);
+    const block = parseContentToBlock(content);
     if (block) blocks.push(block);
   }
 
@@ -254,7 +254,7 @@ function isImageBlock(html) {
 
 // --- Inline markup parsing (bold, italic, links) ---
 
-function parseContentToBlock(content, imageAssetMap) {
+function parseContentToBlock(content) {
   // Split on <br> for line handling
   const lines = content.split(/<br\s*\/?>/gi);
   const allText = lines.map((l) => decodeEntities(stripTags(l)).trim()).join("\n").trim();

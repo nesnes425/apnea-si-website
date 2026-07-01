@@ -1,10 +1,11 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import imageUrlBuilder from "@sanity/image-url";
+import type { PortableTextBlock } from "@portabletext/types";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
 import Image from "next/image";
 import Link from "next/link";
 
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 
 function urlFor(source: { asset: { _ref: string } }) {
   return builder.image(source);
@@ -60,11 +61,6 @@ const components: PortableTextComponents = {
             className="w-full h-auto"
             sizes="(max-width: 768px) 100vw, 800px"
           />
-          {value.alt && (
-            <figcaption className="text-sm text-muted-text mt-2 text-center">
-              {value.alt}
-            </figcaption>
-          )}
         </figure>
       );
     },
@@ -120,8 +116,7 @@ const components: PortableTextComponents = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function PortableTextRenderer({ value }: { value: any[] }) {
+export function PortableTextRenderer({ value }: { value: PortableTextBlock[] }) {
   return (
     <div className="prose-apnea">
       <PortableText value={value} components={components} />

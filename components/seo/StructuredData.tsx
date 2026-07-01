@@ -52,14 +52,14 @@ export function PersonSamoJsonLd() {
         name: "Samo Jeranko",
         jobTitle: "Inštruktor prostega potapljanja",
         url: `${SITE_URL}/o-nas`,
-        image: `${SITE_URL}/images/placeholder/samo-portrait.jpg`,
+        image: `${SITE_URL}/images/onas-samo.webp`,
         worksFor: { "@id": `${SITE_URL}#localbusiness` },
         sameAs: [
           siteConfig.social.instagram,
           siteConfig.social.linkedin,
         ],
         award: [
-          "10x medalja na svetovnem prvenstvu",
+          "7x medalja na svetovnem prvenstvu",
           "19x državni rekord",
           "SSI Freediving Instructor Trainer",
         ],
@@ -84,7 +84,13 @@ export function CourseJsonLd({ name, description, url, priceInEuros }: CourseJso
         name,
         description,
         url,
-        provider: { "@id": `${SITE_URL}#localbusiness` },
+        provider: {
+          "@type": "Organization",
+          "@id": `${SITE_URL}#localbusiness`,
+          name: "Apnea Slovenija",
+          url: SITE_URL,
+        },
+        image: `${SITE_URL}/images/og-default.jpg`,
         offers: {
           "@type": "Offer",
           price: String(priceInEuros),

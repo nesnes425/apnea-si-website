@@ -37,7 +37,8 @@ function FacebookIcon({ className }: { className?: string }) {
 export const metadata = {
   title: "Kontakt",
   description:
-    "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Športno društvo Apnea Slovenija, Saveljska cesta 70A, Ljubljana.",
+    "Stopite v stik z Apnea Slovenija. E-pošta: info@apnea.si, telefon: +386 41 874 187. Samo Jeranko s.p. in Športno društvo Apnea Slovenija.",
+  alternates: { canonical: "/kontakt" },
 };
 
 export default function KontaktPage() {
@@ -55,7 +56,7 @@ export default function KontaktPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/30 to-transparent" />
         <div className="relative w-full max-w-6xl px-6 mx-auto pb-12 md:pb-16">
           <h1 className="text-[36px] md:text-[48px] font-bold leading-[1.08] tracking-[-0.02em] text-white font-heading">
-            Piši nam
+            Pišite nam
           </h1>
           <p className="text-[17px] text-white/70 font-body mt-3 max-w-lg">
             Z veseljem odgovorimo na vaša vprašanja in vam pomagamo pri prvih
@@ -64,7 +65,7 @@ export default function KontaktPage() {
         </div>
       </section>
 
-      {/* Contact info + form — two column */}
+      {/* Contact info + form */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-[1fr_1fr] gap-16 md:gap-24">
@@ -97,15 +98,24 @@ export default function KontaktPage() {
 
                 <div>
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-gold font-body mb-3">
-                    Naslov
+                    Podatki
                   </p>
-                  <p className="text-[17px] text-navy font-body leading-relaxed">
-                    Športno društvo Apnea Slovenija
-                    <br />
-                    Saveljska cesta 70A
-                    <br />
-                    1000 Ljubljana
-                  </p>
+                  <div className="space-y-4">
+                    <p className="text-[17px] text-navy font-body leading-relaxed">
+                      Inženirske in športne storitve, Samo Jeranko s.p.
+                      <br />
+                      Saveljska cesta 70A
+                      <br />
+                      1000 Ljubljana
+                    </p>
+                    <p className="text-[17px] text-navy font-body leading-relaxed">
+                      Športno društvo Apnea Slovenija
+                      <br />
+                      Saveljska cesta 70A
+                      <br />
+                      1000 Ljubljana
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -139,7 +149,7 @@ export default function KontaktPage() {
             {/* Right: form */}
             <div>
               <h2 className="text-[24px] md:text-[28px] font-semibold mb-8">
-                Pošljite nam sporočilo
+                Pošljite sporočilo
               </h2>
 
               <ContactForm />

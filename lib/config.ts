@@ -23,6 +23,8 @@ export const siteConfig = {
     instagram: "https://www.instagram.com/apnea.si/",
     facebook: "https://www.facebook.com/apnea.si",
     linkedin: "https://www.linkedin.com/in/samo-jeranko-745272a0",
+    googleReviews:
+      "https://www.google.com/maps/place/Apnea.Si/@46.0920397,14.5002603,17z/data=!4m8!3m7!1s0x476532d7cc9bd17f:0x760c67431d22d557!8m2!3d46.092036!4d14.5028352!9m1!1b1!16s%2Fg%2F11b6jgvkgg?entry=ttu",
   },
 
   // Stats (for social proof sections)
@@ -31,7 +33,7 @@ export const siteConfig = {
     googleReviews: "245+",
     googleRating: "5.0",
     yearsExperience: "15+",
-    worldChampionshipMedals: "10",
+    worldChampionshipMedals: "7",
     coachingMedals: "15",
     nationalRecords: "46",
   },
@@ -127,10 +129,9 @@ export const siteConfig = {
         { label: "Master tečaj", href: "/tecaji/master" },
       ],
     },
-    { label: "Prosto potapljanje", href: "/prosto-potapljanje" },
     { label: "Treningi", href: "/treningi" },
-    { label: "Predavanja", href: "/predavanja" },
     { label: "Darilni bon", href: "/darilni-bon" },
+    { label: "Predavanja", href: "/predavanja" },
     { label: "Novice", href: "/novice" },
     { label: "O nas", href: "/o-nas" },
     { label: "FAQ", href: "/vprasanja" },
@@ -147,7 +148,7 @@ export const siteConfig = {
       { label: "Treningi", href: "/treningi" },
       { label: "Predavanja", href: "/predavanja" },
       { label: "Darilni bon", href: "/darilni-bon" },
-      { label: "Vprašanja", href: "/vprasanja" },
+      { label: "FAQ", href: "/vprasanja" },
     ],
     legal: [
       { label: "Zasebnost", href: "/zasebnost" },
