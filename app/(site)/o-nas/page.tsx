@@ -20,7 +20,7 @@ const communityStories = [
     years: "8 let z nami",
     image: "/images/onas-polona.webp",
     story:
-      "Prišla je kot navdušenka, ki je želela poskusiti potapljanje v bazenu. Danes plava 150 metrov pod vodo brez plavuti in je ena tistih ljudi, ki najbolje pokažejo, kam lahko pripelje redna vadba. Postala je trenerka, ki vodi skupine v bazenu, pomaga pri organizaciji kluba in je prisotna na tekmovanjih.",
+      "Prišla je kot navdušenka, ki je želela poskusiti potapljanje v bazenu. Danes plava 175 metrov pod vodo brez plavuti in je ena tistih ljudi, ki najbolje pokažejo, kam lahko pripelje redna vadba. Postala je trenerka, ki vodi skupine v bazenu, pomaga pri organizaciji kluba in je prisotna na tekmovanjih.",
   },
   {
     name: "Matevž",

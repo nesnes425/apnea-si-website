@@ -48,7 +48,7 @@ const sections = [
     title: "Darilni boni",
     description: "Nakup, veljavnost, uporaba",
     faqs: [
-      { q: "Kako naročim darilni bon?", a: "Preko strani Darilni bon. Izberete tečaj, plačate in prejmete digitalni bon po e-pošti. Bon velja 1 leto." },
+      { q: "Kako naročim darilni bon?", a: <>Preko strani <Link href="/darilni-bon" className="text-gold hover:text-gold-hover transition-colors">Darilni bon</Link>. Izberete tečaj, plačate in prejmete digitalni bon po e-pošti. Bon velja 1 leto.</> },
       { q: "Imam darilni bon — kako se prijavim?", a: "Čim prej pišite na info@apnea.si z želenim terminom tečaja, da si zagotovite mesto." },
       { q: "Koliko časa velja darilni bon?", a: "1 leto od izdaje, ali dlje po dogovoru." },
     ],
