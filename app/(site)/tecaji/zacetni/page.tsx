@@ -38,12 +38,12 @@ const stories = [
   {
     icon: "/images/icons/fish.webp",
     title: "Postani boljši podvodni ribič",
-    text: "Navdihujejo vas posnetki podvodnega ribolova, a veste, da bi za mirne in učinkovite potope potrebovali boljšo osnovo? Na tečaju se naučite tehnike potapljanja, zadrževanja diha in gibanja pod vodo, da se v morju počutite bolj samozavestno in ostanete dlje.",
+    text: "Navdihujejo vas posnetki podvodnega ribolova, a veste, da bi za mirne in učinkovite potope potrebovali boljšo osnovo? Na tečaju se naučite tehnike potapljanja, zadrževanja diha in gibanja pod vodo, da se v morju počutite bolj samozavestno in pod gladino ostanete dlje.",
   },
   {
     icon: "/images/icons/shell.webp",
     title: "Otroku prinesi zaklad z morskega dna",
-    text: "Otrok opazi čudovito školjko na dnu. Vi se potopite, jo poberete in mu pokažete, da morje ni samo nekaj, kar opazujemo z gladine. Tečaj vam da znanje, da takšni trenutki postanejo dostopni.",
+    text: "Otrok opazi čudovito školjko na dnu. Vi se potopite, jo poberete in mu pokažete, da morje ni samo nekaj, kar opazujemo s površine. Tečaj vam da znanje, da takšni trenutki postanejo dostopni.",
   },
   {
     icon: "/images/icons/dolphin.webp",
@@ -122,10 +122,10 @@ const faqs = [
   },
   {
     q: "Kakšna kondicija je potrebna?",
-    a: "Posebna kondicija ni potrebna. Prosto potapljanje je bolj stvar sproščenosti kot fizične moči. Na tečaju se naučite pravilne tehnike dihanja in sprostitve.",
+    a: "Posebna kondicija ni potrebna. Prosto potapljanje je bolj stvar sproščenosti kot fizične moči. Na tečaju se naučite pravilnih tehnik dihanja in sprostitve.",
   },
   {
-    q: "Koliko sem star/a moram biti?",
+    q: "Koliko je najnižja starost za udeležbo na tečaju?",
     a: "Minimalna starost je 12 let. Mladoletni udeleženci potrebujejo pisno soglasje staršev.",
   },
   {
@@ -226,8 +226,7 @@ function StoriesSection() {
       </div>
 
       <p className="mt-12 text-[17px] text-navy font-medium font-body border-l-4 border-gold pl-6 max-w-2xl">
-        Ne potrebujete predznanja ali posebne kondicije. Dovolj je, da znate
-        plavati 200 metrov in da ste stari vsaj 12 let.
+        Ne potrebujete predznanja ali posebne kondicije. Dovolj je, da lahko preplavate 200 metrov in da ste stari vsaj 12 let.
       </p>
     </Section>
   );
@@ -262,7 +261,7 @@ function OutcomePromise() {
                 15 m
               </p>
               <p className="text-[17px] text-body leading-[1.6] font-body mt-3">
-                60% udeležencev se udobno potopi globlje kot 15 metrov, že na
+                60% udeležencev se udobno potopi globlje kot 15 metrov že na
                 drugi dan globinskega dela tečaja.
               </p>
               <p className="text-[15px] text-muted-text font-body mt-1 italic">
