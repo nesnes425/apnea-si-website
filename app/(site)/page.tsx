@@ -10,13 +10,13 @@ const heroChoices = [
   {
     label: "Prvič pod gladino?",
     title: "Začetni tečaj",
-    text: "Naučite se osnov, s katerimi se pod vodo premaknete mirno, samozavestno in z užitkom.",
+    text: "Naučite se osnov, s katerimi se pod gladino podate mirno, samozavestno in z užitkom.",
     href: "/tecaji/zacetni",
   },
   {
     label: "Želite redno napredovati?",
     title: "Treningi",
-    text: "Celoletne skupine za tehniko, kondicijo, rezultate in občutek skupnosti tudi izven poletja.",
+    text: "Celoletne skupine za tehniko, kondicijo, rezultate in občutek skupnosti tudi po koncu poletja.",
     href: "/treningi",
   },
   {
@@ -57,7 +57,7 @@ export default function HomePage() {
                   Vstopite v svet prostega potapljanja
                 </h1>
                 <p className="text-[18px] md:text-[21px] text-white/80 leading-[1.65] font-body max-w-2xl mb-8">
-                  Naučite se potopiti samozavestno, varno in z užitkom. Tečaji
+                  Naučite se potapljati samozavestno, varno in z užitkom. Tečaji
                   in treningi prostega potapljanja po Sloveniji pod vodstvom
                   Sama Jeranka in ekipe Apnea.si.
                 </p>
@@ -122,10 +122,10 @@ export default function HomePage() {
                 Začetni tečaj
               </p>
               <h2 className="text-[26px] md:text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] mb-3">
-                Naučite se potopiti mirno, samozavestno in z užitkom
+                Naučite se potapljati mirno, samozavestno in z užitkom
               </h2>
               <p className="text-[16px] text-body leading-[1.7] font-body mb-5">
-                Od prvega zadrževanja diha do samozavestnega potapljanja v
+                Od prvega zadrževanja diha do suverenega potapljanja v
                 morju. Teorija, bazen in morski del, vse pod vodstvom Sama
                 Jeranka in ekipe izkušenih inštruktorjev.
               </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
                 {[
                   "95% udeležencev zadrži dih več kot 2 minuti",
                   "Potopi do 20 metrov v morju",
-                  "Majhne skupine, 1 inštruktor na 4",
+                  "Majhne skupine, 1 inštruktor na 4 udeležence",
                 ].map((item) => (
                   <p
                     key={item}
@@ -184,7 +184,7 @@ export default function HomePage() {
                 Ostanite povezani z morjem tudi med letom
               </h2>
               <p className="text-[16px] text-white/70 leading-[1.7] font-body mb-5">
-                Celoletni vodeni treningi v Ljubljani, Novi Gorici, Velenju,
+                Celoletni vodeni treningi v Ljubljani, Kranju, Radovljici, Novi Gorici, Velenju,
                 Novem mestu in Kopru. Redna vadba vam pomaga ohraniti tehniko,
                 napredovati in ostati del skupnosti prostih potapljačev.
               </p>
@@ -375,7 +375,7 @@ export default function HomePage() {
             <strong className="text-navy">
               Kako pravilno izenačiti pritisk v ušesih
             </strong>{" "}
-            : Valsalva in Frenzel tehnika, razloženi preprosto, korak za
+            : Valsalva in Frenzel tehniku, razloženi preprosto, korak za
             korakom. Prejmite vodič brezplačno ob prijavi na naše novice.
           </p>
           <div className="flex gap-3 max-w-md mx-auto">
@@ -393,8 +393,7 @@ export default function HomePage() {
             </Button>
           </div>
           <p className="text-xs text-muted-text font-body mt-4">
-            Brezplačen vodič + novice o tečajih in treningih. Brez spama.
-            Odjavite se kadarkoli.
+            Brez spama. Odjavite se kadarkoli.
           </p>
         </div>
       </section>
