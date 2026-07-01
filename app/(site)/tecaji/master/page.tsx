@@ -68,7 +68,7 @@ const faqs = [
   },
   {
     q: "Do katere globine se bom potopil/a?",
-    a: "Cilj tečaja je 30–40 metrov. Natančna globina je odvisna od vašega napredka in udobnosti. Varnost je vedno na prvem mestu.",
+    a: "Cilj tečaja je 30–40 metrov. Natančna globina je odvisna od vašega napredka in sproščenosti. Varnost je vedno na prvem mestu.",
   },
   {
     q: "Kaj je vključeno poleg tečaja?",
@@ -108,7 +108,7 @@ function Hero() {
           </h1>
           <p className="text-[17px] md:text-[19px] text-body leading-[1.6] font-body mb-3">
             Naučite se Mouthfill izenačevanja, najnaprednejše tehnike, ki
-            odpira vrata globin, kamor se je mogoče potopiti le z znanji
+            odpira vrata globin, kamor se je mogoče potopiti le z znanjem
             najboljših. Po tečaju prejmete 2 brezplačna vodena treninga.
           </p>
           <p className="text-[20px] md:text-[22px] font-semibold text-navy font-heading mb-8">
@@ -136,7 +136,7 @@ function WhyMaster() {
           </SectionHeading>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-6">
             Na nadaljevalnem tečaju ste spoznali Frenzel in globino do 35
-            metrov. Toda tam se Frenzel začne ustaviti — pljuča so preveč
+            metrov. Toda tam te Frenzel počasi ustavi — pljuča so preveč
             stisnjena. Mouthfill je tehnika, ki to mejo premika.
           </p>
           <p className="text-[17px] text-body leading-[1.7] font-body mb-8">
