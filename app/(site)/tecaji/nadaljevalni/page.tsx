@@ -61,7 +61,7 @@ const coursePhases = [
 const faqs = [
   {
     q: "Kakšen je predpogoj za nadaljevalni tečaj?",
-    a: "Opravljen začetni tečaj prostega potapljanja (SSI Level 1 ali enakovredno). Znati morate preplavati 400 metrov na površini. Minimalna starost je 16 let.",
+    a: "Opravljen začetni tečaj prostega potapljanja (SSI Level 1 ali enakovredno). Biti morate sposobni preplavati 400 metrov na površini. Minimalna starost je 16 let.",
   },
   {
     q: "Kaj je Frenzel tehnika?",
@@ -73,7 +73,7 @@ const faqs = [
   },
   {
     q: "Kje poteka globinski del?",
-    a: "Globinski del se izvaja na Hrvaškem, običajno na otoku Krku. Voda je čista in topla, pogoji so idealni za globinsko delo. Poteka čez vikend (petek–nedelja).",
+    a: "Globinski del se izvaja na Hrvaškem, običajno na otoku Krk. Voda je čista in topla, pogoji so idealni za globinsko delo. Poteka čez vikend (petek–nedelja).",
   },
   {
     q: "Kaj moram prinesti s seboj?",
