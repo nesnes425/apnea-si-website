@@ -145,7 +145,7 @@ export default function ProstoPotapljanjePage() {
               Prosto potapljanje: kaj se zgodi, ko se pod vodo zanesete samo na en vdih
             </h1>
             <p className="text-[18px] md:text-[20px] text-body leading-[1.65] font-body mb-8">
-              Prosto potapljanje, potapljanje na vdih ali potapljanje na dah je najčistejši stik z vodo. Ni jeklenk, ni hrupa regulatorja in ni občutka, da ste gost v tujem svetu. Pod gladino greste s svojim telesom, svojim dihom in znanjem, ki odloči, ali bo potop napet ali miren.
+              Prosto potapljanje, potapljanje na vdih ali potapljanje na dah je najbolj pristen stik z vodo. Ni jeklenk, ni hrupa regulatorja in ni občutka, da ste gost v tujem svetu. Pod gladino greste s svojim telesom, svojim dihom in znanjem, ki odloči, ali bo potop napet ali miren.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild size="xl">
@@ -265,13 +265,13 @@ export default function ProstoPotapljanjePage() {
             </SectionHeading>
             <div className="space-y-6 text-[17px] text-body leading-[1.8] font-body">
               <p>
-                Rekordi niso cilj začetnega tečaja, so pa dober opomnik, kako napačna je predstava, da se človek pod vodo takoj znajde na robu svojih zmožnosti. Tekmovalci so v disciplinah prostega potapljanja dosegli globine, razdalje in čase, ki so se še pred nekaj desetletji zdeli nemogoči.
+                Rekordi niso cilj začetnega tečaja, so pa dober opomnik, kako napačna je predstava, da se človek pod vodo takoj znajde na robu svojih zmožnosti. Tekmovalci so v disciplinah prostega potapljanja v zadnjih letih dosegli globine, razdalje in čase, ki so se še pred nekaj desetletji zdeli nemogoči.
               </p>
               <p>
                 Po trenutnih AIDA podatkih je moški rekord v globinski disciplini stalne obtežitve 136 metrov, najdaljša moška dinamična apnea s plavutmi pa 319 metrov. V statični apnei je AIDA moški rekord 11 minut in 35 sekund, Guinnessov rekord z vnaprejšnjim dihanjem kisika pa je 29 minut in 3 sekunde. Med ženskami so številke prav tako izjemne: v AIDA tabeli je stalna obtežitev pri 123 metrih, dinamična apnea s plavutmi pa pri 280 metrih.
               </p>
               <p>
-                Ti podatki niso navodilo za posnemanje. So dokaz, da je prosto potapljanje resen šport, v katerem se srečajo fiziologija, tehnika, trening in velika mera samopoznavanja. Za večino ljudi je najpomembnejši prvi preskok precej bližje: ugotoviti, da se lahko pod vodo sprostijo in premaknejo veliko bolj mirno, kot so pričakovali.
+                Ti podatki niso navodilo za posnemanje. So dokaz, da je prosto potapljanje resen šport, v katerem se srečajo fiziologija, tehnika, trening in velika mera samopoznavanja. Za večino ljudi je najpomembnejši prvi preskok precej bližje: ugotoviti, da se lahko pod vodo sprostijo in gibajo veliko bolj mirno, kot so pričakovali.
               </p>
             </div>
           </div>
