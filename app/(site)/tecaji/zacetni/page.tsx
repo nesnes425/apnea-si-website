@@ -385,18 +385,11 @@ function CourseStructure() {
           ))}
         </div>
 
-        <div className="mt-10">
-          <CheckList
-            items={[
-              "SSI Freediving Level 1 certifikat",
-              "Dihalne vaje in raztezanje",
-              "8-tedenski program treninga",
-              "Oprema na voljo za izposojo (doplačilo 40 €, brezplačno ob nakupu kosa opreme)",
-              "Individualni pristop",
-            ]}
-            columns={4}
-          />
-        </div>
+        <p className="mt-10 max-w-3xl text-[14px] text-muted-text font-body leading-[1.6]">
+          Cena vključuje SSI Freediving Level 1 certifikat in individualni
+          pristop inštruktorja. Oprema je na voljo za izposojo z doplačilom
+          (40 €, brezplačno ob nakupu kosa opreme).
+        </p>
       </div>
 
       <div className="mt-12 md:mt-14">
