@@ -33,8 +33,7 @@ export default function HomePage() {
             alt="Samo Jeranko med prostim potapljanjem"
             fill
             sizes="100vw"
-            className="object-cover"
-            style={{ objectPosition: "right center" }}
+            className="object-cover object-[50%_center] md:object-[right_center]"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy-dark/70 to-navy-dark/15" />

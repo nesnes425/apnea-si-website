@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: "Ali bon vključuje opremo?",
-    a: "Bon vključuje celoten tečaj (teorija, bazen, morje, certifikat). Oprema se izposoja ločeno pri naši partnerski trgovini Aquamanija.",
+    a: "Bon vključuje celoten tečaj (teorija, bazen, morje, certifikat). Izposoja opreme je možna pri naši partnerski trgovini Aquamanija.",
   },
   {
     q: "Koliko časa velja bon?",
@@ -182,10 +182,10 @@ export default function DarilniBonPage() {
           PHOTO GALLERY — show what they'll experience
           ============================================ */}
       <section className="bg-surface py-16">
-        <div className="max-w-6xl mx-auto px-6 mb-8">
-          <p className="text-sm text-muted-text font-body">
+        <div className="max-w-6xl mx-auto px-6 mb-8 md:mb-10">
+          <h2 className="text-[24px] md:text-[32px] font-semibold leading-[1.15] tracking-[-0.01em] text-navy">
             To je izkušnja, ki jo podarite.
-          </p>
+          </h2>
         </div>
         <PhotoGallery photos={giftPhotos} />
       </section>

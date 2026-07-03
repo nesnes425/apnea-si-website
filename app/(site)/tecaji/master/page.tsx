@@ -343,7 +343,7 @@ async function DatesAndBooking() {
                 €{siteConfig.courses.master.price}
               </p>
               <p className="text-sm text-muted-text font-body mb-8">
-                Vse vključeno. Brez skritih stroškov.
+                Master tečaj prostega potapljanja
               </p>
 
               <CheckList

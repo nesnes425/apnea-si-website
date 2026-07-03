@@ -20,7 +20,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={cn("py-24", surface && "bg-surface", className)}
+      className={cn("py-16 md:py-24", surface && "bg-surface", className)}
     >
       <div
         className={cn(

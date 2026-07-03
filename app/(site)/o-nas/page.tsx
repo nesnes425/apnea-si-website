@@ -43,6 +43,44 @@ const communityStories = [
   },
 ];
 
+const partnerLogos = [
+  {
+    name: "ELES",
+    src: "/images/partners/partner-eles.webp",
+    width: 360,
+    height: 120,
+    className: "h-12 w-auto md:h-14",
+  },
+  {
+    name: "BTC City",
+    src: "/images/partners/partner-btc-city.webp",
+    width: 220,
+    height: 247,
+    className: "h-16 w-auto md:h-20",
+  },
+  {
+    name: "Mares",
+    src: "/images/partners/partner-mares.webp",
+    width: 360,
+    height: 109,
+    className: "h-11 w-auto md:h-12",
+  },
+  {
+    name: "Highfield Boats",
+    src: "/images/partners/partner-highfield.webp",
+    width: 360,
+    height: 124,
+    className: "h-10 w-auto md:h-12",
+  },
+  {
+    name: "Mestna občina Ljubljana",
+    src: "/images/partners/partner-mol.webp",
+    width: 360,
+    height: 126,
+    className: "h-11 w-auto md:h-12",
+  },
+];
+
 // === Page ===
 
 export default function ONasPage() {
@@ -298,17 +336,21 @@ export default function ONasPage() {
           ============================================ */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-wrap justify-center gap-12 items-center">
-            {["Mares", "SSI", "BTC City", "ELES", "Highfield Boats"].map(
-              (partner) => (
-                <span
-                  key={partner}
-                  className="text-[15px] text-navy/30 font-medium font-body"
-                >
-                  {partner}
-                </span>
-              )
-            )}
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 md:gap-x-16">
+            {partnerLogos.map((partner) => (
+              <div
+                key={partner.name}
+                className="flex h-20 w-36 items-center justify-center md:w-40"
+              >
+                <Image
+                  src={partner.src}
+                  alt={`${partner.name} logotip`}
+                  width={partner.width}
+                  height={partner.height}
+                  className={`${partner.className} object-contain opacity-65 grayscale transition-opacity hover:opacity-90`}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>

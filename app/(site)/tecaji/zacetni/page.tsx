@@ -399,7 +399,7 @@ function CourseStructure() {
         </div>
       </div>
 
-      <div className="mt-16 pb-8">
+      <div className="mt-12 md:mt-14">
         <PhotoGallery photos={coursePhotos} />
       </div>
     </section>
@@ -496,7 +496,7 @@ async function DatesAndBooking() {
                 €{siteConfig.courses.zacetni.price}
               </p>
               <p className="text-sm text-muted-text font-body mb-8">
-                Vse vključeno. Brez skritih stroškov.
+                Začetni tečaj prostega potapljanja
               </p>
 
               <CheckList
@@ -507,7 +507,6 @@ async function DatesAndBooking() {
                   "Video analiza potopov",
                   "Dihalne vaje in raztezanje",
                   "8-tedenski program treningov",
-                  "Oprema za izposojo",
                 ]}
               />
 

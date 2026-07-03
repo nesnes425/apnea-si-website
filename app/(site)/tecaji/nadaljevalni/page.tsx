@@ -286,7 +286,7 @@ function CourseStructure() {
         </div>
       </div>
 
-      <div className="mt-16 pb-8">
+      <div className="mt-12 md:mt-14">
         <PhotoGallery photos={coursePhotos} />
       </div>
     </section>
@@ -383,7 +383,7 @@ async function DatesAndBooking() {
                 €{siteConfig.courses.nadaljevalni.price}
               </p>
               <p className="text-sm text-muted-text font-body mb-8">
-                Vse vključeno. Brez skritih stroškov.
+                Nadaljevalni tečaj prostega potapljanja
               </p>
 
               <CheckList

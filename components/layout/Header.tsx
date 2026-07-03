@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
 export function Header() {
@@ -81,25 +82,24 @@ export function Header() {
 
         {/* Mobile hamburger */}
         <button
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2 text-white/80"
+          className="flex h-11 w-11 items-center justify-center text-white/80 transition-colors hover:text-gold focus-visible:text-gold lg:hidden"
           aria-label={mobileOpen ? "Zapri meni" : "Odpri meni"}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
           {mobileOpen ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
+            <X aria-hidden="true" size={26} strokeWidth={2} />
           ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 12h18M3 6h18M3 18h18" />
-            </svg>
+            <Menu aria-hidden="true" size={26} strokeWidth={2} />
           )}
         </button>
       </div>
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="lg:hidden bg-navy-dark border-t border-white/10">
+        <nav id="mobile-navigation" className="lg:hidden bg-navy-dark border-t border-white/10">
           <div className="px-6 py-6 flex flex-col gap-1">
             {siteConfig.nav.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
