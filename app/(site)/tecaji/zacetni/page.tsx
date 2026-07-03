@@ -163,7 +163,7 @@ function Hero() {
         alt="Prosto potapljanje v čistem jezeru"
         fill
         className="object-cover"
-        style={{ objectPosition: "70% center" }}
+        style={{ objectPosition: "50% center" }}
         priority
       />
       <div className="absolute inset-0 bg-gradient-to-r from-white from-[40%] via-white/80 via-[55%] to-transparent to-[75%]" />

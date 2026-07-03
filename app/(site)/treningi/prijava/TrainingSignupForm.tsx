@@ -178,6 +178,16 @@ function DetailsStep({
       <Button type="submit" disabled={submitting} fullWidth>
         {submitting ? "Pripravljam plačilo…" : "Naprej k plačilu →"}
       </Button>
+      <p className="text-center text-sm leading-relaxed text-muted-text">
+        Če imate dodatna vprašanja, nam pišite na{" "}
+        <a
+          href="mailto:info@apnea.si"
+          className="font-medium text-gold hover:text-gold-hover"
+        >
+          info@apnea.si
+        </a>
+        .
+      </p>
     </form>
   );
 }
