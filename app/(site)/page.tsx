@@ -113,7 +113,7 @@ export default function HomePage() {
                   {siteConfig.courses.zacetni.price} €
                 </span>
                 <span className="text-sm text-muted-text font-body">
-                  SSI Level 1 · vse vključeno
+                  SSI Level 1 · teorija, bazen, morje
                 </span>
               </div>
               <div className="space-y-1.5 mb-6">

@@ -391,7 +391,7 @@ function CourseStructure() {
               "SSI Freediving Level 1 certifikat",
               "Dihalne vaje in raztezanje",
               "8-tedenski program treninga",
-              "Oprema na voljo za izposojo",
+              "Oprema na voljo za izposojo (doplačilo 40 €, brezplačno ob nakupu kosa opreme)",
               "Individualni pristop",
             ]}
             columns={4}
