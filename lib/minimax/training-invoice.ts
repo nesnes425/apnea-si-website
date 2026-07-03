@@ -36,7 +36,6 @@ type TrainingInvoiceData = {
 export type MinimaxTrainingInvoiceResult = {
   issuedInvoiceId: number;
   invoiceNumber?: string;
-  fiscalized: false;
   pdf?: {
     fileName: string;
     contentBase64: string;
@@ -171,8 +170,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
     AddresseeCountry: fk(countryId),
     DocumentReference: data.paymentIntentId,
     Notes: [
-      "Ustvarjeno samodejno iz Stripe testnega plačila.",
-      "Davčno potrjevanje ni izvedeno v tej testni fazi.",
+      "Ustvarjeno samodejno ob spletnem plačilu prek Stripe (apnea.si).",
       `Kupec: ${data.customerName}, ${data.customerEmail}, ${data.customerPhone}`,
     ].join("\n"),
     Currency: fk(currencyId),
@@ -185,7 +183,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
     PaymentStatus: "Osnutek",
     AssociationWithStock: "N",
     DescriptionBelow:
-      "Plačano preko Stripe. Davčno potrjevanje bo omogočeno pred produkcijskim zagonom.",
+      "Plačano s plačilno kartico prek sistema Stripe na apnea.si.",
     IssuedInvoiceRows: [
       {
         Item: { ID: itemId },
@@ -428,7 +426,6 @@ export async function createTrainingMinimaxInvoice(params: {
   return {
     issuedInvoiceId,
     invoiceNumber,
-    fiscalized: false,
     pdf,
   };
 }

@@ -70,7 +70,6 @@ function makeDeps(intent = paymentIntent()) {
       return {
         issuedInvoiceId: 42,
         invoiceNumber: "1/2026",
-        fiscalized: false,
         pdf: {
           fileName: "racun.pdf",
           contentBase64: "JVBERi0x",
@@ -153,7 +152,6 @@ describe("processTrainingPaymentSucceeded", () => {
       return {
         issuedInvoiceId: 43,
         invoiceNumber: "2/2026",
-        fiscalized: false,
       };
     };
 

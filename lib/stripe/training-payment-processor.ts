@@ -110,8 +110,6 @@ function completedMinimaxMetadata(
   return {
     ...metadata,
     minimaxInvoiceStatus: "completed",
-    minimaxInvoiceMode: "test_non_fiscal",
-    minimaxFiscalized: "false",
     minimaxIssuedInvoiceId: String(invoice.issuedInvoiceId),
     minimaxInvoiceNumber: invoice.invoiceNumber ?? String(invoice.issuedInvoiceId),
     minimaxPdfGenerated: invoice.pdf ? "true" : "false",
@@ -188,8 +186,6 @@ async function createMinimaxInvoiceForTraining(params: {
     await params.deps.updatePaymentIntent(params.intent.id, {
       ...params.intent.metadata,
       minimaxInvoiceStatus: "failed",
-      minimaxInvoiceMode: "test_non_fiscal",
-      minimaxFiscalized: "false",
       minimaxFailureAlertSent: "true",
       minimaxLastError: trimMetadataValue(errorMessage(error)),
     });
