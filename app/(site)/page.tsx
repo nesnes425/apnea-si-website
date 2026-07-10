@@ -313,7 +313,7 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          8. INSTAGRAM — live Elfsight feed
+          8. INSTAGRAM — static preview grid
           ============================================ */}
       <section className="bg-surface py-16 md:py-20">
         <div className="max-w-6xl mx-auto px-6 mb-8">
