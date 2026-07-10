@@ -146,6 +146,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
   const paymentMethodId = readOptionalEnvNumber("MINIMAX_TRAINING_PAYMENT_METHOD_ID");
   const cashRegisterId = readOptionalEnvNumber("MINIMAX_TRAINING_CASH_REGISTER_ID");
   const revenueId = readOptionalEnvNumber("MINIMAX_TRAINING_REVENUE_ID");
+  const employeeId = readOptionalEnvNumber("MINIMAX_TRAINING_EMPLOYEE_ID");
   const vatRateId = readOptionalEnvNumber("MINIMAX_TRAINING_VAT_RATE_ID");
   const countryId = readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
 
@@ -160,6 +161,7 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
   return {
     DocumentNumbering: { ID: documentNumberingId },
     Customer: { ID: customerId },
+    Employee: fk(employeeId),
     DateIssued: issuedAt,
     DateTransaction: issuedAt,
     DateDue: issuedAt,
