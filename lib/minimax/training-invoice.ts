@@ -72,7 +72,7 @@ function isoDateOnly(date: Date) {
 }
 
 function customerCode(data: TrainingInvoiceData) {
-  const key = data.customerEmail || `${data.customerName}-${data.customerPhone}`;
+  const key = data.paymentIntentId || data.customerEmail || `${data.customerName}-${data.customerPhone}`;
   const hash = createHash("sha256").update(key.toLowerCase()).digest("hex").slice(0, 12);
   return `APNEA-${hash.toUpperCase()}`;
 }

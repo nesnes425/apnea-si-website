@@ -83,7 +83,6 @@ export function TrainingSignupForm({
       >
         <PaymentStep
           groupId={groupId}
-          customerEmail={intent.email}
           token={intent.token}
           expiresAt={intent.expiresAt}
           membershipFee={membershipFee}
@@ -194,13 +193,11 @@ function DetailsStep({
 
 function PaymentStep({
   groupId,
-  customerEmail,
   token,
   expiresAt,
   membershipFee,
 }: {
   groupId: string;
-  customerEmail: string;
   token: string;
   expiresAt: string;
   membershipFee: number;
@@ -242,7 +239,6 @@ function PaymentStep({
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/treningi/hvala`,
-        receipt_email: customerEmail,
       },
     });
     if (submitError) {
