@@ -70,8 +70,21 @@ const patternRedirects: { source: string; destination: string }[] = [
   { source: "/events/:path*", destination: "/tecaji" },
   { source: "/eventi", destination: "/tecaji" },
   { source: "/eventi/:path*", destination: "/tecaji" },
+  { source: "/dogodki", destination: "/tecaji" },
+  { source: "/dogodki/:path*", destination: "/tecaji" },
   { source: "/all-events", destination: "/tecaji" },
   { source: "/all-events/:path*", destination: "/tecaji" },
+  { source: "/calendar", destination: "/tecaji" },
+  { source: "/calendar/:path*", destination: "/tecaji" },
+
+  // Old event taxonomies → the current course/training entry points
+  { source: "/apnea-category/treningi", destination: "/treningi" },
+  { source: "/apnea-category/treningi/", destination: "/treningi" },
+  { source: "/apnea-category/:path*", destination: "/tecaji" },
+  { source: "/event_categories/:path*", destination: "/tecaji" },
+  { source: "/event_tags/trening", destination: "/treningi" },
+  { source: "/event_tags/trening/", destination: "/treningi" },
+  { source: "/event_tags/:path*", destination: "/tecaji" },
 ];
 
 async function getMigratedSlugs(): Promise<string[]> {

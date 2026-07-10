@@ -21,6 +21,12 @@ const redirectChecks = [
   ["/category/nasveti/", "/novice"],
   ["/tag/izenacevanje/", "/novice"],
   ["/events/nek-star-dogodek/", "/tecaji"],
+  ["/dogodki/zacetni-tecaj-potapljanja-na-vdih-ljubljana-maj/", "/tecaji"],
+  ["/calendar/calendar/", "/tecaji"],
+  ["/apnea-category/treningi/", "/treningi"],
+  ["/apnea-category/tecaji/", "/tecaji"],
+  ["/event_categories/course/", "/tecaji"],
+  ["/event_tags/trening/", "/treningi"],
   [
     "/2017/07/16/10-nasvetov-za-uspesno-izenacevanje/",
     "/novice/10-nasvetov-za-uspesno-izenacevanje",
