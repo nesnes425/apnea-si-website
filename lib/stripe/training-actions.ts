@@ -44,7 +44,6 @@ export async function createTrainingPaymentIntent(
       amount,
       currency: "eur",
       automatic_payment_methods: { enabled: true },
-      receipt_email: parsed.data.email,
       description: `Letna članarina ŠD Apnea Slovenija — ${group.program.name}, ${group.venue.name}`,
       metadata: {
         type: "training_membership",
