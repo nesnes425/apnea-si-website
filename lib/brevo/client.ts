@@ -1,7 +1,7 @@
 import { readEnv } from "@/lib/env";
 
 const BREVO_API = "https://api.brevo.com/v3";
-const REQUEST_TIMEOUT_MS = 4000;
+const REQUEST_TIMEOUT_MS = 10000;
 
 function authHeaders() {
   return {

@@ -121,6 +121,24 @@ describe("processTrainingPaymentSucceeded", () => {
     assert.equal(finalUpdate?.minimaxPdfGenerated, "true");
   });
 
+  test("recovers a retry after Minimax invoice creation without reconfirming the hold", async () => {
+    const { deps, state } = makeDeps(
+      paymentIntent({ minimaxIssuedInvoiceId: "42", minimaxPdfGenerated: "true" })
+    );
+    deps.confirmTrainingHold = async () => {
+      state.confirmCalls += 1;
+      return { ok: false, reason: "hold_missing" };
+    };
+
+    await processTrainingPaymentSucceeded(state.intent, deps);
+
+    assert.equal(state.confirmCalls, 0);
+    assert.equal(state.emails[0].to.email, "ana@example.com");
+    const finalUpdate = state.updates.at(-1)?.metadata;
+    assert.equal(finalUpdate?.trainingHoldConfirmed, "true");
+    assert.equal(finalUpdate?.trainingProcessed, "true");
+  });
+
   test("does not send normal customer confirmation when Minimax fails", async () => {
     const { deps, state } = makeDeps();
     deps.createTrainingMinimaxInvoice = async () => {

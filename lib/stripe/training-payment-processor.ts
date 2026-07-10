@@ -199,43 +199,62 @@ export async function processTrainingPaymentSucceeded(
 ) {
   const currentIntent = await deps.retrievePaymentIntent(intent.id);
   if (currentIntent.metadata.trainingProcessed === "true") return;
+  let metadata: Stripe.MetadataParam = { ...currentIntent.metadata };
   const data = validateTrainingMetadata(currentIntent.metadata);
   if (!data) return;
 
-  const confirmation = await deps.confirmTrainingHold({
-    groupId: data.groupId,
-    tokenHash: data.holdTokenHash,
-    paymentIntentId: currentIntent.id,
-  });
+  const holdAlreadyConfirmed =
+    currentIntent.metadata.trainingHoldConfirmed === "true" ||
+    Boolean(currentIntent.metadata.minimaxIssuedInvoiceId);
+  if (!holdAlreadyConfirmed) {
+    const confirmation = await deps.confirmTrainingHold({
+      groupId: data.groupId,
+      tokenHash: data.holdTokenHash,
+      paymentIntentId: currentIntent.id,
+    });
+    if (!confirmation.ok) {
+      const settings = await deps.getTrainingSettings();
+      const membershipFee =
+        (currentIntent.amount ?? Math.round((settings?.membershipFee ?? 35) * 100)) / 100;
+      const emailData = { ...data, membershipFee, paymentIntentId: currentIntent.id };
+      const alert = trainingCapacityConflictEmail(emailData);
+      await Promise.all([
+        deps.sendTransactionalEmail({
+          to: { email: deps.notifyEmail },
+          subject: alert.subject,
+          text: alert.text,
+          html: alert.html,
+          replyTo: { email: data.customerEmail, name: data.customerName },
+        }),
+        deps.updatePaymentIntent(currentIntent.id, {
+          ...metadata,
+          trainingCapacityConflict: "true",
+        }),
+      ]);
+      return;
+    }
+
+    metadata = { ...metadata, trainingHoldConfirmed: "true" };
+    await deps.updatePaymentIntent(currentIntent.id, metadata);
+  } else if (currentIntent.metadata.trainingHoldConfirmed !== "true") {
+    metadata = { ...metadata, trainingHoldConfirmed: "true" };
+    await deps.updatePaymentIntent(currentIntent.id, metadata);
+  }
+
   const settings = await deps.getTrainingSettings();
   const membershipFee =
     (currentIntent.amount ?? Math.round((settings?.membershipFee ?? 35) * 100)) / 100;
   const emailData = { ...data, membershipFee, paymentIntentId: currentIntent.id };
 
-  if (!confirmation.ok) {
-    const alert = trainingCapacityConflictEmail(emailData);
-    await Promise.all([
-      deps.sendTransactionalEmail({
-        to: { email: deps.notifyEmail },
-        subject: alert.subject,
-        text: alert.text,
-        html: alert.html,
-        replyTo: { email: data.customerEmail, name: data.customerName },
-      }),
-      deps.updatePaymentIntent(currentIntent.id, {
-        ...currentIntent.metadata,
-        trainingCapacityConflict: "true",
-      }),
-    ]);
-    return;
-  }
-
   const minimaxInvoice = await createMinimaxInvoiceForTraining({
     deps,
-    intent: currentIntent,
+    intent: { ...currentIntent, metadata: metadata as Stripe.Metadata },
     data,
     membershipFee,
   });
+  if (minimaxInvoice) {
+    metadata = completedMinimaxMetadata(metadata as Stripe.Metadata, minimaxInvoice);
+  }
   const listName = `Trening · ${data.venue} · ${data.weekday} ${data.time} · ${data.program}`;
   const groupListId = await deps.findOrCreateTrainingGroupList(data.groupId, listName);
   const { first, last } = splitName(data.customerName);
@@ -245,21 +264,22 @@ export async function processTrainingPaymentSucceeded(
     ? [{ name: minimaxInvoice.pdf.fileName, contentBase64: minimaxInvoice.pdf.contentBase64 }]
     : undefined;
 
-  await Promise.all([
+  await deps.sendTransactionalEmail({
+    to: { email: data.customerEmail, name: data.customerName },
+    subject: customerContent.subject,
+    text: customerContent.text,
+    html: customerContent.html,
+    replyTo: { email: deps.siteEmail, name: "Apnea Slovenija" },
+    attachments: invoiceAttachment,
+  });
+
+  const followupResults = await Promise.allSettled([
     deps.upsertContact({
       email: data.customerEmail,
       firstName: first,
       lastName: last,
       phone: data.customerPhone,
       listIds: [groupListId],
-    }),
-    deps.sendTransactionalEmail({
-      to: { email: data.customerEmail, name: data.customerName },
-      subject: customerContent.subject,
-      text: customerContent.text,
-      html: customerContent.html,
-      replyTo: { email: deps.siteEmail, name: "Apnea Slovenija" },
-      attachments: invoiceAttachment,
     }),
     deps.sendTransactionalEmail({
       to: { email: deps.notifyEmail },
@@ -269,10 +289,14 @@ export async function processTrainingPaymentSucceeded(
       replyTo: { email: data.customerEmail, name: data.customerName },
     }),
   ]);
+  followupResults.forEach((result, index) => {
+    if (result.status === "rejected") {
+      console.error(index === 0 ? "Unable to upsert training contact" : "Unable to send training admin notification", result.reason);
+    }
+  });
 
   await deps.updatePaymentIntent(currentIntent.id, {
-    ...currentIntent.metadata,
-    ...(minimaxInvoice ? completedMinimaxMetadata(currentIntent.metadata, minimaxInvoice) : {}),
+    ...metadata,
     trainingProcessed: "true",
   });
 }

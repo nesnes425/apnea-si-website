@@ -15,6 +15,7 @@ import { processTrainingPaymentSucceeded } from "@/lib/stripe/training-payment-p
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 async function findOrCreateTrainingGroupList(groupId: string, name: string): Promise<number> {
   const group = await getTrainingGroup(groupId);
