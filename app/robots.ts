@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://apnea.si/sitemap.xml",
-    host: "https://apnea.si",
+    sitemap: "https://www.apnea.si/sitemap.xml",
+    host: "https://www.apnea.si",
   };
 }

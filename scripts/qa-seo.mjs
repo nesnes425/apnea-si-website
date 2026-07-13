@@ -73,7 +73,7 @@ async function checkSitemap() {
   const res = await fetch(`${baseUrl}/sitemap.xml`);
   const xml = await res.text();
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
-  const expectedHost = "https://apnea.si";
+  const expectedHost = "https://www.apnea.si";
 
   return {
     status: res.status,
@@ -94,7 +94,7 @@ async function checkRobots() {
   const text = await res.text();
   return {
     status: res.status,
-    hasSitemap: text.includes("Sitemap: https://apnea.si/sitemap.xml"),
+    hasSitemap: text.includes("Sitemap: https://www.apnea.si/sitemap.xml"),
     disallowsApi: text.includes("Disallow: /api/"),
     disallowsStudio: text.includes("Disallow: /studio/"),
     disallowsCourseSignup: text.includes("Disallow: /tecaji/*/prijava"),

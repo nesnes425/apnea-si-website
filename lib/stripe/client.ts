@@ -9,7 +9,7 @@ function getStripeInstance(): Stripe {
     throw new Error("Missing STRIPE_SECRET_KEY environment variable");
   }
   _stripe = new Stripe(secretKey, {
-    appInfo: { name: "apnea.si", url: "https://apnea.si" },
+    appInfo: { name: "apnea.si", url: "https://www.apnea.si" },
   });
   return _stripe;
 }

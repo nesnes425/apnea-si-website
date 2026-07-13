@@ -9,7 +9,7 @@ import type { BlogPost } from "@/lib/sanity/types";
 import type { Metadata } from "next";
 
 const builder = createImageUrlBuilder(sanityClient);
-const SITE_URL = "https://apnea.si";
+const SITE_URL = "https://www.apnea.si";
 
 interface Props {
   params: Promise<{ slug: string }>;

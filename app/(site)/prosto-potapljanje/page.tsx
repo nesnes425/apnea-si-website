@@ -8,7 +8,7 @@ import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
 import { LocalBusinessJsonLd, PersonSamoJsonLd } from "@/components/seo/StructuredData";
 
-const SITE_URL = "https://apnea.si";
+const SITE_URL = "https://www.apnea.si";
 
 export const metadata = pageMetadata({
   title: "Prosto potapljanje, potapljanje na vdih in potapljanje na dah",

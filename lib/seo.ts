@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const SITE_URL = "https://apnea.si";
+const SITE_URL = "https://www.apnea.si";
 const DEFAULT_IMAGE = "/images/og-default.jpg";
 const DEFAULT_IMAGE_ALT = "Apnea Slovenija - tečaji in treningi prostega potapljanja";
 

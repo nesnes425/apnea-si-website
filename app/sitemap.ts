@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { sanityFreshClient } from "@/lib/sanity/client";
 
-const SITE_URL = "https://apnea.si";
+const SITE_URL = "https://www.apnea.si";
 
 const staticRoutes: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },

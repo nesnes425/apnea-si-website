@@ -25,12 +25,12 @@ export const metadata: Metadata = {
   },
   description:
     "Največja šola prostega potapljanja v Sloveniji. SSI tečaji, treningi in klubsko potapljanje na 5 lokacijah. 2000+ potapljačev, 245+ Google ocen (5.0 ★).",
-  metadataBase: new URL("https://apnea.si"),
+  metadataBase: new URL("https://www.apnea.si"),
   openGraph: {
     title: "Apnea Slovenija — Šola prostega potapljanja",
     description:
       "SSI tečaji, celoletni treningi in klubsko prosto potapljanje v Sloveniji z ekipo Apnea Slovenija.",
-    url: "https://apnea.si",
+    url: "https://www.apnea.si",
     type: "website",
     locale: "sl_SI",
     siteName: "Apnea Slovenija",

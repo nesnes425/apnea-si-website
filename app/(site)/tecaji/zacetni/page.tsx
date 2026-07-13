@@ -528,7 +528,7 @@ export default function ZacetniTecajPage() {
       <CourseJsonLd
         name={siteConfig.courses.zacetni.fullName}
         description="SSI Freediving Level 1: začetni tečaj prostega potapljanja. Vključuje teorijo, bazenski in morski del. Vodi Samo Jeranko, 7x medalist s svetovnih prvenstev."
-        url="https://apnea.si/tecaji/zacetni"
+        url="https://www.apnea.si/tecaji/zacetni"
         priceInEuros={siteConfig.courses.zacetni.price}
       />
       <Hero />

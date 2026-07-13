@@ -422,7 +422,7 @@ export default function NadaljevalniTecajPage() {
       <CourseJsonLd
         name={siteConfig.courses.nadaljevalni.fullName}
         description="SSI Freediving Level 2 — tečaj za izkušene potapljače. Frenzel izenačevanje, ciljna globina 25–35 m. Vodi Samo Jeranko."
-        url="https://apnea.si/tecaji/nadaljevalni"
+        url="https://www.apnea.si/tecaji/nadaljevalni"
         priceInEuros={siteConfig.courses.nadaljevalni.price}
       />
       <Hero />

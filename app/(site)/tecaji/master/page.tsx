@@ -382,7 +382,7 @@ export default function MasterTecajPage() {
       <CourseJsonLd
         name={siteConfig.courses.master.fullName}
         description="SSI Freediving Level 3 — najvišja stopnja. Mouthfill izenačevanje, ciljna globina 30–40 m, vključeni 2 vodena treninga. Vodi Samo Jeranko."
-        url="https://apnea.si/tecaji/master"
+        url="https://www.apnea.si/tecaji/master"
         priceInEuros={siteConfig.courses.master.price}
       />
       <Hero />

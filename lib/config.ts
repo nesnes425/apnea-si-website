@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Apnea Slovenija",
-  url: "https://apnea.si",
+  url: "https://www.apnea.si",
   email: "info@apnea.si",
   phone: "+386 41 874 187",
   description:
