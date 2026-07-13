@@ -101,9 +101,9 @@ export default function ONasPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/40 to-transparent" />
         <div className="relative w-full max-w-6xl px-6 mx-auto pb-16 md:pb-20">
-          <p className="text-[56px] md:text-[72px] font-bold leading-[1.05] tracking-[-0.03em] text-white font-heading max-w-3xl">
+          <h1 className="text-[56px] md:text-[72px] font-bold leading-[1.05] tracking-[-0.03em] text-white font-heading max-w-3xl">
             Od enega potapljača do največje šole v Sloveniji
-          </p>
+          </h1>
         </div>
       </section>
 
