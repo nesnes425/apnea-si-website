@@ -6,12 +6,14 @@ import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { SubmissionSuccessCard } from "@/components/blocks/SubmissionSuccessCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { CourseDepthOption } from "@/lib/course-depth-options";
 
 type Props = {
   instanceId: string;
+  depthOptions?: CourseDepthOption[];
 };
 
-export function BookingFlow({ instanceId }: Props) {
+export function BookingFlow({ instanceId, depthOptions = [] }: Props) {
   const [sent, setSent] = useState(false);
 
   if (sent) {
@@ -33,15 +35,22 @@ export function BookingFlow({ instanceId }: Props) {
     );
   }
 
-  return <DetailsStep instanceId={instanceId} onSent={() => setSent(true)} />;
+  return (
+    <DetailsStep
+      instanceId={instanceId}
+      depthOptions={depthOptions}
+      onSent={() => setSent(true)}
+    />
+  );
 }
 
 type DetailsStepProps = {
   instanceId: string;
+  depthOptions: CourseDepthOption[];
   onSent: () => void;
 };
 
-function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
+function DetailsStep({ instanceId, depthOptions, onSent }: DetailsStepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -57,6 +66,7 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
       note: String(formData.get("note") ?? ""),
+      depthOptionId: String(formData.get("depthOptionId") ?? ""),
       acceptTerms: formData.get("acceptTerms") === "on",
       instanceId,
     };
@@ -69,6 +79,10 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
         fieldErrors[key] ??= issue.message;
       }
       setErrors(fieldErrors);
+      return;
+    }
+    if (depthOptions.length > 0 && !parsed.data.depthOptionId) {
+      setErrors({ depthOptionId: "Izberite termin globinskega dela." });
       return;
     }
 
@@ -118,6 +132,30 @@ function DetailsStep({ instanceId, onSent }: DetailsStepProps) {
           required
           error={errors.phone}
         />
+        {depthOptions.length > 0 && (
+          <div>
+            <label htmlFor="depthOptionId" className="mb-2 block font-body text-sm font-medium text-body">
+              Globinski del *
+            </label>
+            <select
+              id="depthOptionId"
+              name="depthOptionId"
+              required
+              defaultValue=""
+              className="w-full border border-border-custom bg-white px-4 py-3 font-body text-body outline-none transition-colors focus:border-gold"
+            >
+              <option value="" disabled>
+                Izberite termin globinskega dela
+              </option>
+              {depthOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errors.depthOptionId && <p className="mt-1 text-sm text-red-700 font-body" role="alert">{errors.depthOptionId}</p>}
+          </div>
+        )}
         <div>
           <label htmlFor="note" className="mb-2 block font-body text-sm font-medium text-body">
             Opomba ali vprašanje

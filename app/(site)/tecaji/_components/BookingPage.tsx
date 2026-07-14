@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { siteConfig, type CourseType } from "@/lib/config";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getCourseInstance } from "@/lib/sanity/queries";
+import { getCourseDepthOptions } from "@/lib/course-depth-options";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
@@ -25,6 +26,7 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
   const course = siteConfig.courses[courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
+  const depthOptions = getCourseDepthOptions(courseType);
 
   return (
     <section className="bg-surface min-h-screen py-16 md:py-24">
@@ -40,7 +42,7 @@ export async function BookingPage({ courseType, instanceId }: Props) {
         <SectionHeading className="mb-10">{course.fullName}</SectionHeading>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-12">
-          <BookingFlow instanceId={instance._id} />
+          <BookingFlow instanceId={instance._id} depthOptions={depthOptions} />
 
           <aside className="md:sticky md:top-24 self-start">
             <div className="bg-white p-8 border border-border-custom">
@@ -62,10 +64,9 @@ export async function BookingPage({ courseType, instanceId }: Props) {
               <CheckList items={[...course.booking.sidebarItems]} />
 
               <p className="mt-6 pt-6 border-t border-border-custom text-xs text-muted-text font-body leading-relaxed">
-                Globinski del (morje) se izvaja maj–avgust. Termin izberete po
-                zaključenem bazenskem delu. Prijava še ni dokončna potrditev
-                mesta. Za potrditev mesta je potrebna akontacija v višini 50 €,
-                ki jo poravnate po potrditvi prijave.
+                Globinski del izberete v obrazcu. Prijava še ni dokončna
+                potrditev mesta. Za potrditev mesta je potrebna akontacija v
+                višini 50 €, ki jo poravnate po potrditvi prijave.
               </p>
             </div>
           </aside>

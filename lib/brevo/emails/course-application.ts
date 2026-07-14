@@ -9,12 +9,18 @@ export type CourseApplicationEmailData = {
   courseName: string;
   dateRange: string;
   location: string;
+  depthDateRange?: string;
+  depthLocation?: string;
   priceInEuros: number;
 };
 
 export function courseApplicationConfirmationEmail(d: CourseApplicationEmailData) {
   const { first } = splitName(d.customerName);
   const subject = `Prijava prejeta: ${d.courseName}, ${d.dateRange}`;
+  const depthSelection =
+    d.depthDateRange && d.depthLocation
+      ? `${d.depthDateRange}, ${d.depthLocation}`
+      : "Termin globinskega dela uskladimo naknadno.";
 
   const text = `Pozdravljeni, ${first || d.customerName},
 
@@ -28,7 +34,7 @@ Bazenski del
 Cena: €${d.priceInEuros}
 
 GLOBINSKI DEL
-Globinski del (morje) se izvaja maj–avgust. Podrobnosti uskladimo po bazenskem delu tečaja.
+${depthSelection}
 
 VPRAŠANJA
 Pišite nam na ${siteConfig.email} ali pokličite ${siteConfig.phone}.
@@ -55,7 +61,7 @@ Apnea Slovenija`;
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
     <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.05em;color:#8a8377;text-transform:uppercase;">Globinski del</p>
-    <p>Globinski del (morje) se izvaja maj–avgust. Podrobnosti uskladimo po bazenskem delu tečaja.</p>
+    <p>${escapeHtml(depthSelection)}</p>
 
     <hr style="border:none;border-top:1px solid #e5e0d8;margin:28px 0;">
 
@@ -80,12 +86,17 @@ export function courseApplicationNotificationEmail(d: CourseApplicationEmailData
   const subject = `Nova prijava na tečaj: ${d.customerName} — ${d.courseName}, ${d.dateRange}`;
   const phoneHref = d.customerPhone.replace(/\s/g, "");
   const note = d.note?.trim();
+  const depthSelection =
+    d.depthDateRange && d.depthLocation
+      ? `${d.depthDateRange}, ${d.depthLocation}`
+      : "Ni izbrano.";
 
   const text = `Nova prijava na tečaj.
 
 Tečaj: ${d.courseName}
 Termin: ${d.dateRange}
 Lokacija: ${d.location}
+Globinski del: ${depthSelection}
 Cena: €${d.priceInEuros}
 
 Stranka:
@@ -111,6 +122,7 @@ Pomembno:
     <p style="margin:0;"><strong>Tečaj:</strong> ${escapeHtml(d.courseName)}<br>
     <strong>Termin:</strong> ${escapeHtml(d.dateRange)}<br>
     <strong>Lokacija:</strong> ${escapeHtml(d.location)}<br>
+    <strong>Globinski del:</strong> ${escapeHtml(depthSelection)}<br>
     <strong>Cena:</strong> €${d.priceInEuros}</p>
 
     <p style="margin:16px 0 0;"><strong>Stranka:</strong><br>

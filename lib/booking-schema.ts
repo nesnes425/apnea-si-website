@@ -21,6 +21,7 @@ export const bookingFormSchema = z.object({
     .trim()
     .max(1000, "Opomba je predolga.")
     .optional(),
+  depthOptionId: z.string().trim().optional(),
   acceptTerms: z.boolean().refine((v) => v === true, {
     error: "Za nadaljevanje morate sprejeti pogoje poslovanja.",
   }),

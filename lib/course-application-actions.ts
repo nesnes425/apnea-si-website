@@ -7,6 +7,7 @@ import {
 } from "@/lib/brevo/emails/course-application";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { siteConfig } from "@/lib/config";
+import { getCourseDepthOption, getCourseDepthOptions } from "@/lib/course-depth-options";
 import { readEnv } from "@/lib/env";
 import { getCourseInstance } from "@/lib/sanity/queries";
 import { formatCourseDateRange } from "@/lib/utils";
@@ -33,6 +34,11 @@ export async function submitCourseApplication(
   }
 
   const course = siteConfig.courses[instance.courseType];
+  const depthOptions = getCourseDepthOptions(instance.courseType);
+  const depthOption = getCourseDepthOption(instance.courseType, data.depthOptionId);
+  if (depthOptions.length > 0 && !depthOption) {
+    return { ok: false, error: "Izberite termin globinskega dela." };
+  }
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
   const emailData = {
     customerName: data.fullName,
@@ -42,6 +48,8 @@ export async function submitCourseApplication(
     courseName: course.fullName,
     dateRange,
     location: instance.location,
+    depthDateRange: depthOption?.dateRange,
+    depthLocation: depthOption?.location,
     priceInEuros: course.price,
   };
 

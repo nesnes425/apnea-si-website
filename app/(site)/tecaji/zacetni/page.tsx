@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { getCourseDepthOptions } from "@/lib/course-depth-options";
 import { pageMetadata } from "@/lib/seo";
 import { formatCourseDateRange } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
@@ -401,6 +402,7 @@ function CourseStructure() {
 
 async function DatesAndBooking() {
   const courses = await getUpcomingCourses("zacetni");
+  const depthOptions = getCourseDepthOptions("zacetni");
 
   return (
     <section id="termini" className="bg-surface py-24">
@@ -421,42 +423,62 @@ async function DatesAndBooking() {
                 in vas obvestimo, ko se odprejo prijave.
               </p>
             ) : (
-              <div className="divide-y divide-border-custom">
-                {courses.map((course) => (
-                  <div
-                    key={course._id}
-                    className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                      course.isFull ? "opacity-50" : ""
-                    }`}
-                  >
-                    <div>
-                      <p className="text-[17px] font-medium text-navy font-body">
-                        {formatCourseDateRange(course.startDate, course.endDate)}
-                      </p>
-                      <p className="text-sm text-muted-text font-body">
-                        {course.location} · Bazenski del
-                      </p>
+              <>
+                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.08em] text-navy/60 font-body">
+                  Teorija in bazen:
+                </p>
+                <div className="divide-y divide-border-custom">
+                  {courses.map((course) => (
+                    <div
+                      key={course._id}
+                      className={`py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                        course.isFull ? "opacity-50" : ""
+                      }`}
+                    >
+                      <div>
+                        <p className="text-[17px] font-medium text-navy font-body">
+                          {formatCourseDateRange(course.startDate, course.endDate)}
+                        </p>
+                        <p className="text-sm text-muted-text font-body">
+                          {course.location} · Teorija in bazen
+                        </p>
+                      </div>
+                      {course.isFull ? (
+                        <span className="text-sm text-muted-text font-body">
+                          Razprodano
+                        </span>
+                      ) : (
+                        <Button asChild size="sm">
+                          <Link href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}>
+                            Prijava →
+                          </Link>
+                        </Button>
+                      )}
                     </div>
-                    {course.isFull ? (
-                      <span className="text-sm text-muted-text font-body">
-                        Razprodano
-                      </span>
-                    ) : (
-                      <Button asChild size="sm">
-                        <Link href={`/tecaji/zacetni/prijava?instanceId=${course._id}`}>
-                          Prijava →
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
 
-            <p className="mt-6 text-sm text-muted-text font-body">
-              Globinski del (morje) se izvaja maj–avgust. Termin izberete po
-              zaključenem bazenskem delu.
-            </p>
+                {depthOptions.length > 0 && (
+                  <div className="mt-10 pt-8 border-t border-border-custom">
+                    <p className="mb-3 text-sm font-semibold uppercase tracking-[0.08em] text-navy/60 font-body">
+                      Globinski del:
+                    </p>
+                    <div className="divide-y divide-border-custom">
+                      {depthOptions.map((option) => (
+                        <div key={option.value} className="py-5">
+                          <p className="text-[17px] font-medium text-navy font-body">
+                            {option.dateRange}
+                          </p>
+                          <p className="text-sm text-muted-text font-body">
+                            {option.location} · Globinski del
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
 
             <div className="mt-10 pt-8 border-t border-border-custom">
               <p className="text-[15px] font-medium text-navy font-body mb-4">
