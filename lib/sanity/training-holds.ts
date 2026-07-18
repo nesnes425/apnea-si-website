@@ -14,7 +14,7 @@ type HoldResult =
   | { ok: false; error: string };
 
 export type ConfirmTrainingHoldResult =
-  | { ok: true; alreadyConfirmed: boolean }
+  | { ok: true; alreadyConfirmed: boolean; recoveredWithoutHold?: boolean }
   | { ok: false; reason: "capacity_conflict" | "group_missing" | "hold_missing" };
 
 const MAX_MUTATION_ATTEMPTS = 4;
@@ -177,9 +177,6 @@ export async function confirmTrainingHold(params: {
         hold.tokenHash === params.tokenHash &&
         new Date(hold.expiresAt).getTime() > now
     );
-    if (!matchingHold) {
-      return { ok: false, reason: "hold_missing" };
-    }
     if (group.confirmedSpots >= group.capacity) {
       return { ok: false, reason: "capacity_conflict" };
     }
@@ -200,7 +197,14 @@ export async function confirmTrainingHold(params: {
           confirmedPaymentIntentIds: [...confirmedIds, params.paymentIntentId],
         })
         .commit();
-      return { ok: true, alreadyConfirmed: false };
+      return {
+        ok: true,
+        alreadyConfirmed: false,
+        // Stripe can retry a valid successful payment after the short hold has
+        // expired or been cleaned up. The payment metadata is server-created
+        // and signed by Stripe, so reserve the place when capacity remains.
+        recoveredWithoutHold: !matchingHold,
+      };
     } catch (error) {
       if (attempt === MAX_MUTATION_ATTEMPTS - 1) {
         console.error("Unable to confirm training hold", error);

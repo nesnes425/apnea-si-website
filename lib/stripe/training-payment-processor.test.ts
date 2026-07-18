@@ -203,22 +203,21 @@ describe("processTrainingPaymentSucceeded", () => {
     assert.equal(state.updates.at(-1)?.metadata.trainingProcessed, undefined);
   });
 
-  test("sends only an admin alert when the paid hold is missing or expired", async () => {
+  test("recovers a paid application when its short-lived hold has expired", async () => {
     const { deps, state } = makeDeps();
     deps.confirmTrainingHold = async () => {
       state.confirmCalls += 1;
-      return { ok: false, reason: "hold_missing" };
+      return { ok: true, alreadyConfirmed: false, recoveredWithoutHold: true };
     };
 
     await processTrainingPaymentSucceeded(state.intent, deps);
 
     assert.equal(state.confirmCalls, 1);
-    assert.equal(state.minimaxCalls, 0);
-    assert.equal(state.contacts.length, 0);
-    assert.equal(state.emails.length, 1);
-    assert.equal(state.emails[0].to.email, "info@apnea.si");
-    assert.match(state.emails[0].subject, /plačan trening brez prostega mesta/);
-    assert.equal(state.updates.at(-1)?.metadata.trainingCapacityConflict, "true");
-    assert.equal(state.updates.at(-1)?.metadata.trainingProcessed, undefined);
+    assert.equal(state.minimaxCalls, 1);
+    assert.equal(state.contacts.length, 1);
+    assert.equal(state.emails.length, 2);
+    const finalUpdate = state.updates.at(-1)?.metadata;
+    assert.equal(finalUpdate?.trainingHoldRecovered, "true");
+    assert.equal(finalUpdate?.trainingProcessed, "true");
   });
 });

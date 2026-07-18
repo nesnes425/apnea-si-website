@@ -234,7 +234,13 @@ export async function processTrainingPaymentSucceeded(
       return;
     }
 
-    metadata = { ...metadata, trainingHoldConfirmed: "true" };
+    metadata = {
+      ...metadata,
+      trainingHoldConfirmed: "true",
+      ...(confirmation.recoveredWithoutHold
+        ? { trainingHoldRecovered: "true" }
+        : {}),
+    };
     await deps.updatePaymentIntent(currentIntent.id, metadata);
   } else if (currentIntent.metadata.trainingHoldConfirmed !== "true") {
     metadata = { ...metadata, trainingHoldConfirmed: "true" };
