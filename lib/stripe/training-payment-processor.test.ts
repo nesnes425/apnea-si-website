@@ -163,6 +163,31 @@ describe("processTrainingPaymentSucceeded", () => {
     assert.equal(failedUpdate?.trainingProcessed, undefined);
   });
 
+  test("blocks a live payment when Minimax invoicing is disabled", async () => {
+    const liveIntent = {
+      ...paymentIntent(),
+      livemode: true,
+    } as Stripe.PaymentIntent;
+    const { deps, state } = makeDeps(liveIntent);
+    deps.isMinimaxInvoicingEnabled = () => false;
+
+    await assert.rejects(
+      () => processTrainingPaymentSucceeded(state.intent, deps),
+      /MINIMAX_TRAINING_INVOICING_ENABLED must be true/
+    );
+
+    assert.equal(state.confirmCalls, 1);
+    assert.equal(state.minimaxCalls, 0);
+    assert.equal(state.contacts.length, 0);
+    assert.equal(state.emails.length, 1);
+    assert.equal(state.emails[0].to.email, "info@apnea.si");
+    assert.match(state.emails[0].subject, /Minimax račun ni bil ustvarjen/);
+    const failedUpdate = state.updates.at(-1)?.metadata;
+    assert.equal(failedUpdate?.minimaxInvoiceStatus, "failed");
+    assert.equal(failedUpdate?.minimaxFailureAlertSent, "true");
+    assert.equal(failedUpdate?.trainingProcessed, undefined);
+  });
+
   test("treats a missing Minimax PDF as a blocking failure by default", async () => {
     const { deps, state } = makeDeps();
     deps.createTrainingMinimaxInvoice = async () => {

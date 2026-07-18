@@ -50,9 +50,9 @@ Trainings: trainingProcessed=true
 
 ## Training Minimax Invoicing
 
-Training payments can create a Minimax issued invoice before the Brevo customer email
-is sent. This is currently a **test-mode only** integration because FURS tax
-confirmation is not configured yet.
+Live training payments create a Minimax issued invoice before the Brevo customer email
+is sent. The production integration was validated before the July 10, 2026 launch and
+is required for every live training payment.
 
 Environment flag:
 
@@ -64,22 +64,21 @@ When enabled, the training webhook:
 
 1. Confirms the Sanity training hold.
 2. Creates or resumes a Minimax issued invoice from Stripe PaymentIntent metadata.
-3. Runs `generatepdf` by default, not fiscal `issueAndGeneratepdf`.
+3. Generates the official invoice PDF.
 4. Attaches the generated PDF to the customer confirmation email.
 5. Marks the PaymentIntent with Minimax metadata:
 
 ```text
 minimaxInvoiceStatus=completed|failed
-minimaxInvoiceMode=test_non_fiscal
-minimaxFiscalized=false
 minimaxIssuedInvoiceId=<id>
 minimaxInvoiceNumber=<number>
 minimaxPdfGenerated=true|false
 ```
 
-If Minimax invoice/PDF creation fails, the customer confirmation email is not sent.
-The webhook alerts the admin address and returns an error so Stripe retries. Do not
-enable this in live mode until Minimax/FURS davčno potrjevanje is configured and tested.
+If Minimax invoicing is disabled for a live payment, or invoice/PDF creation fails, the
+payment is not marked as processed and the customer confirmation email is not sent. The
+webhook alerts the admin address and returns an error so Stripe retries. Never disable
+`MINIMAX_TRAINING_INVOICING_ENABLED` in production.
 
 Payment posting inside Minimax is disabled by default. Set
 `MINIMAX_TRAINING_RECORD_PAYMENT=true` only after accountant/FURS setup confirms how

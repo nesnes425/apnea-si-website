@@ -157,7 +157,30 @@ async function createMinimaxInvoiceForTraining(params: {
   data: TrainingMetadata;
   membershipFee: number;
 }): Promise<MinimaxTrainingInvoiceResult | undefined> {
-  if (!params.deps.isMinimaxInvoicingEnabled()) return undefined;
+  if (!params.deps.isMinimaxInvoicingEnabled()) {
+    // A live training payment must never be treated as fully processed without
+    // its official invoice. Test/dev flows may still opt out explicitly.
+    if (params.intent.livemode) {
+      const error = new Error(
+        "MINIMAX_TRAINING_INVOICING_ENABLED must be true for live training payments"
+      );
+      if (params.intent.metadata.minimaxFailureAlertSent !== "true") {
+        try {
+          await sendMinimaxFailureAlert({ ...params, error });
+        } catch (alertError) {
+          console.error("Unable to send Minimax configuration alert", alertError);
+        }
+      }
+      await params.deps.updatePaymentIntent(params.intent.id, {
+        ...params.intent.metadata,
+        minimaxInvoiceStatus: "failed",
+        minimaxFailureAlertSent: "true",
+        minimaxLastError: trimMetadataValue(error.message),
+      });
+      throw error;
+    }
+    return undefined;
+  }
 
   try {
     const invoice = await params.deps.createTrainingMinimaxInvoice({
