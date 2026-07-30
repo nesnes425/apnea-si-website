@@ -30,6 +30,7 @@ export default async function TrainingThankYouPage({ searchParams }: Props) {
   }
 
   const succeeded = intent?.status === "succeeded" || redirect_status === "succeeded";
+  const paymentSucceeded = intent?.status === "succeeded";
   const metadata = intent?.metadata;
 
   return (
@@ -45,7 +46,7 @@ export default async function TrainingThankYouPage({ searchParams }: Props) {
               ? "Plačilo letne članarine je uspelo. Potrditev prijave in vse podrobnosti boste prejeli po e-pošti."
               : "Plačilo se še obdeluje. Potrditev boste prejeli po e-pošti takoj, ko bo zaključeno."}
           </p>
-          {succeeded && intent && (
+          {paymentSucceeded && intent && (
             <TrainingPaymentTracker
               transactionId={intent.id}
               value={intent.amount / 100}
