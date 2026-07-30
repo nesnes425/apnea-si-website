@@ -6,6 +6,7 @@ import { giftVoucherFormSchema, type GiftVoucherFormInput } from "@/lib/gift-vou
 import { SubmissionSuccessCard } from "@/components/blocks/SubmissionSuccessCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { trackGiftVoucherRequest } from "@/lib/analytics";
 
 export function GiftVoucherFlow() {
   const [sent, setSent] = useState(false);
@@ -73,6 +74,7 @@ function DetailsStep({ onSent }: DetailsStepProps) {
       setServerError(result.error);
       return;
     }
+    trackGiftVoucherRequest();
     onSent();
   }
 

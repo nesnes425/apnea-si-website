@@ -7,6 +7,7 @@ import { SubmissionSuccessCard } from "@/components/blocks/SubmissionSuccessCard
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CourseDepthOption } from "@/lib/course-depth-options";
+import { trackCourseBooking } from "@/lib/analytics";
 
 type Props = {
   instanceId: string;
@@ -94,6 +95,7 @@ function DetailsStep({ instanceId, depthOptions, onSent }: DetailsStepProps) {
       setServerError(result.error);
       return;
     }
+    trackCourseBooking();
     onSent();
   }
 

@@ -10,6 +10,7 @@ import {
   validateTrainingPaymentHold,
 } from "@/lib/stripe/training-actions";
 import { getTrainingStripe } from "@/lib/stripe/training-client-side";
+import { trackTrainingRegistration } from "@/lib/analytics";
 import {
   trainingReservationSchema,
   type TrainingReservationInput,
@@ -138,6 +139,7 @@ function DetailsStep({
       setServerError(result.error);
       return;
     }
+    trackTrainingRegistration();
     onIntentCreated({
       clientSecret: result.clientSecret,
       email: parsed.data.email,

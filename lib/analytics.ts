@@ -42,18 +42,23 @@ export function trackMetaEvent(name: string, params: AnalyticsParams = {}) {
 }
 
 export function trackCourseBooking(params: AnalyticsParams = {}) {
-  trackEvent("course_booking", params);
+  trackEvent("generate_lead", { lead_type: "course_application", ...params });
   trackMetaEvent("Lead", { content_name: "course_booking", ...params });
 }
 
 export function trackTrainingRegistration(params: AnalyticsParams = {}) {
-  trackEvent("training_registration", params);
+  trackEvent("begin_checkout", { checkout_type: "training_membership", ...params });
   trackMetaEvent("Lead", { content_name: "training_registration", ...params });
 }
 
 export function trackPaymentComplete(params: AnalyticsParams = {}) {
-  trackEvent("payment_complete", params);
+  trackEvent("purchase", params);
   trackMetaEvent("Purchase", params);
+}
+
+export function trackGiftVoucherRequest(params: AnalyticsParams = {}) {
+  trackEvent("generate_lead", { lead_type: "gift_voucher_request", ...params });
+  trackMetaEvent("Lead", { content_name: "gift_voucher_request", ...params });
 }
 
 export function trackEmailSignup(params: AnalyticsParams = {}) {

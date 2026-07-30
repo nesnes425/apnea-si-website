@@ -2,6 +2,7 @@ import Link from "next/link";
 import { trainingStripe } from "@/lib/stripe/training-client";
 import { Button } from "@/components/ui/button";
 import { Overline } from "@/components/blocks/Overline";
+import { TrainingPaymentTracker } from "./TrainingPaymentTracker";
 
 export const metadata = {
   title: "Prijava na trening je potrjena",
@@ -44,6 +45,13 @@ export default async function TrainingThankYouPage({ searchParams }: Props) {
               ? "Plačilo letne članarine je uspelo. Potrditev prijave in vse podrobnosti boste prejeli po e-pošti."
               : "Plačilo se še obdeluje. Potrditev boste prejeli po e-pošti takoj, ko bo zaključeno."}
           </p>
+          {succeeded && intent && (
+            <TrainingPaymentTracker
+              transactionId={intent.id}
+              value={intent.amount / 100}
+              currency={intent.currency.toUpperCase()}
+            />
+          )}
           {metadata?.trainingProgram && (
             <dl className="mb-8 space-y-3 border-y border-border-custom py-6 text-sm">
               <div className="flex justify-between gap-4">
