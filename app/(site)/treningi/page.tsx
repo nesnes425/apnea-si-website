@@ -216,6 +216,11 @@ export default async function TreningiPage() {
             skupini rezervirate s plačilom letne članarine v višini{" "}
             {membershipFee} €.
           </p>
+          <p className="-mt-8 mb-12 max-w-3xl text-[15px] italic leading-[1.7] text-muted-text">
+            Točen urnik, nivo skupin in višina vadnine v sezoni 2026/27 bodo
+            dokončno potrjeni do 21. septembra 2026. Do takrat so možne
+            spremembe.
+          </p>
           <p className="-mt-6 mb-12 max-w-3xl text-[15px] leading-[1.7] text-muted-text">
             Niste prepričani glede ravni, opreme ali prijave? Poglejte{" "}
             <Link
