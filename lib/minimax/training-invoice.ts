@@ -33,6 +33,9 @@ type TrainingInvoiceData = {
   paymentCreated: Date;
 };
 
+const TRAINING_VAT_CLAUSE =
+  "DDV ni obračunan v skladu z 12. točko 1. odstavka 42. člena ZDDV-1.";
+
 export type MinimaxTrainingInvoiceResult = {
   issuedInvoiceId: number;
   invoiceNumber?: string;
@@ -184,8 +187,10 @@ function buildIssuedInvoicePayload(data: TrainingInvoiceData, customerId: number
     InvoiceType: "R",
     PaymentStatus: "Osnutek",
     AssociationWithStock: "N",
-    DescriptionBelow:
+    DescriptionBelow: [
       "Plačano s plačilno kartico prek sistema Stripe na apnea.si.",
+      TRAINING_VAT_CLAUSE,
+    ].join("\n"),
     IssuedInvoiceRows: [
       {
         Item: { ID: itemId },
