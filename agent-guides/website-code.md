@@ -201,6 +201,11 @@ Never push directly to `main`. The active GitHub ruleset requires a pull request
 PR for final review. Merge only after the check passes and the user explicitly approves
 the production merge.
 
+The Vercel Preview environment must include the public Sanity variables
+`NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and
+`NEXT_PUBLIC_SANITY_API_VERSION`; otherwise the preview build fails while generating
+Sanity-backed routes such as `sitemap.xml`.
+
 Workflow:
 
 ```bash
