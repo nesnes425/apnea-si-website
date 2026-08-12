@@ -1,6 +1,6 @@
 # Website Code Guide
 
-Last updated: June 25, 2026
+Last updated: August 12, 2026
 
 Use this when Samo or Katarina asks Claude Code / Codex to change Apnea.si website code.
 
@@ -178,23 +178,50 @@ If changing frontend UI, preview in browser at `http://localhost:3000`.
 
 If changing payment/webhook code, test with Stripe test mode before considering done.
 
-## Commit Model
+## Commit And Production Push Model
 
 This website is a git submodule inside the Apnea.si hub. Commit inside the website repo
-first, then update the hub pointer.
+first, then update the hub pointer. A local commit does not deploy the site, but pushing
+`main` to GitHub deploys directly to production.
+
+Before pushing a working branch:
+
+1. Show the user a concise summary of the changed files and behavior.
+2. Run the relevant checks above and verify the affected flow on localhost.
+3. Report what passed, what failed, and what was not checked.
+4. Push the branch and open a PR only after the user directly requests or explicitly
+   approves that step.
+
+If localhost verification cannot be completed, do not push unless the user explicitly
+confirms that the changes may be pushed without it. A request to edit, fix, or implement
+is not implicit push approval.
+
+Never push directly to `main`. The active GitHub ruleset requires a pull request and the
+`Vercel` status check. After the branch is pushed, use the Vercel preview linked from the
+PR for final review. Merge only after the check passes and the user explicitly approves
+the production merge.
+
+The Vercel Preview environment must include the public Sanity variables
+`NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and
+`NEXT_PUBLIC_SANITY_API_VERSION`; otherwise the preview build fails while generating
+Sanity-backed routes such as `sitemap.xml`.
 
 Workflow:
 
 ```bash
 cd website/apnea-si-website
 git status
+git switch -c codex/<short-change-name>
 git add ...
 git commit -m "..."
-git push origin main
+# Stop here for the verification and approval gate.
+git push -u origin codex/<short-change-name>
+# Open a PR against main and wait for the Vercel check and user merge approval.
 
 cd ../..
 git add website/apnea-si-website
 git commit -m "Apnea.si: update submodule pointer"
+# The hub push does not deploy the website, but still requires direct approval.
 git push origin main
 ```
 
