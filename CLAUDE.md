@@ -1,5 +1,7 @@
 # Apnea.si — Website
 
+Last updated: August 12, 2026
+
 ## Agent Instruction Parity
 
 - Keep every same-scope `AGENTS.md` and `CLAUDE.md` pair equivalent.
@@ -115,3 +117,25 @@ When Samo or Katarina use Claude Code / Codex to operate this website, read the 
 Important: Samo/Katarina may have Admin access in Sanity because the current plan lacks
 granular editor roles. Treat that as content-editor-only access unless Neža explicitly
 says otherwise.
+
+## Production Push Safety
+
+The `main` branch deploys this website directly to production.
+
+- Never push commits directly to `main`. GitHub requires a pull request and a successful
+  `Vercel` status check for every production change.
+- Work on a separate branch. A local commit is allowed, but pushing the branch and
+  opening the PR requires the release gate below.
+- Before pushing the branch, verify the affected behavior on localhost and run the
+  relevant checks from `agent-guides/website-code.md`. If localhost verification is
+  unavailable, incomplete, or intentionally skipped, obtain the user's explicit
+  confirmation that the branch may be pushed without that check.
+- Show the user what changed and report the verification result before asking for or
+  acting on push approval.
+- A general request to edit, fix, or implement something is not permission to push it.
+  A direct request such as `git push`, `push this`, or an explicit approval after the
+  change summary is permission, subject to the verification rule above.
+- Use the PR's Vercel preview for the final visual/flow review. Merge the PR only after
+  the `Vercel` check passes and the user explicitly approves the production merge.
+- After the PR is merged, update the submodule pointer in the parent Apnea.si hub. The
+  hub push does not deploy the website, but still requires a direct request or approval.
