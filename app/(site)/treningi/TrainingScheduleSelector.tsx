@@ -43,6 +43,13 @@ function formatEuro(amount: number) {
   }).format(amount);
 }
 
+function formatAvailableSpots(availableSpots: number) {
+  if (availableSpots === 1) return "1 prosto mesto";
+  if (availableSpots === 2) return "2 prosti mesti";
+  if (availableSpots === 3) return "3 prosta mesta";
+  return "Prosta skupina";
+}
+
 export function TrainingScheduleSelector({
   groups,
   applicationsOpen,
@@ -245,7 +252,7 @@ export function TrainingScheduleSelector({
                       <div>
                         <p className="font-medium text-navy">{group.program.name}</p>
                         <p className={`mt-1 text-sm font-medium ${group.isFull ? "text-muted-text" : "text-gold"}`}>
-                          {group.isFull ? "Polno" : `${group.availableSpots} prostih mest`}
+                          {group.isFull ? "Polno" : formatAvailableSpots(group.availableSpots)}
                         </p>
                       </div>
                       {applicationsOpen && !group.isFull ? (
