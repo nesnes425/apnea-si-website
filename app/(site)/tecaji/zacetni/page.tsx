@@ -442,6 +442,11 @@ async function DatesAndBooking() {
                         <p className="text-sm text-muted-text font-body">
                           {course.location} · Teorija in bazen
                         </p>
+                        {course.notes && (
+                          <p className="mt-1 text-sm text-body font-body">
+                            {course.notes}
+                          </p>
+                        )}
                       </div>
                       {course.isFull ? (
                         <span className="text-sm text-muted-text font-body">
