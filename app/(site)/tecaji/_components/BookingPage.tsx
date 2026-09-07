@@ -53,6 +53,11 @@ export async function BookingPage({ courseType, instanceId }: Props) {
               <p className="text-sm text-muted-text font-body mb-6">
                 {instance.location} · Bazenski del
               </p>
+              {instance.notes && (
+                <p className="text-sm text-body font-body mb-6">
+                  {instance.notes}
+                </p>
+              )}
 
               <p className="text-[40px] font-bold text-navy font-heading leading-none mb-1">
                 €{course.price}
