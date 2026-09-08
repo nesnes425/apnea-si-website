@@ -33,6 +33,11 @@ export const blogPost = defineType({
               title: "Alt besedilo",
               type: "string",
             }),
+            defineField({
+              name: "caption",
+              title: "Podnapis",
+              type: "string",
+            }),
           ],
         },
         {
@@ -120,6 +125,13 @@ export const blogPost = defineType({
           },
         },
       ],
+    }),
+    defineField({
+      name: "intro",
+      title: "Uvodni povzetek",
+      type: "text",
+      rows: 3,
+      description: "Kratek poudarjen uvod, prikazan pred naslovno fotografijo.",
     }),
     defineField({
       name: "featuredImage",

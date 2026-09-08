@@ -136,6 +136,13 @@ export default async function BlogPostPage({ params }: Props) {
           )}
         </header>
 
+        {/* Intro summary */}
+        {post.intro && (
+          <p className="mb-10 border-l-4 border-gold py-3 pl-6 text-xl font-semibold leading-relaxed text-navy">
+            {post.intro}
+          </p>
+        )}
+
         {/* Featured image */}
         {featuredImageUrl && (
           <div className="mb-10 -mx-6 md:mx-0">

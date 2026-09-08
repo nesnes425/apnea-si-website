@@ -18,6 +18,7 @@ export interface BlogPost {
   _type: "blogPost";
   title: string;
   slug: { current: string };
+  intro?: string;
   body: PortableTextBlock[];
   featuredImage?: {
     asset: {
