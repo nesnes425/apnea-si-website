@@ -61,6 +61,11 @@ const components: PortableTextComponents = {
             className="w-full h-auto"
             sizes="(max-width: 768px) 100vw, 800px"
           />
+          {value.caption && (
+            <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+              {value.caption}
+            </figcaption>
+          )}
         </figure>
       );
     },

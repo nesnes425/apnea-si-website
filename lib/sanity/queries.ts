@@ -58,6 +58,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
       _id,
       title,
       slug,
+      intro,
       body[] {
         ...,
         _type == "image" => { ..., asset-> }
