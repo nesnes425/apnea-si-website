@@ -1,7 +1,9 @@
 "use server";
 
 import { createHash } from "node:crypto";
+import { cookies, headers } from "next/headers";
 import { trainingStripe } from "./training-client";
+import { COOKIE_NAME, parseConsent } from "@/lib/cookie-consent";
 import {
   attachPaymentIntentToTrainingHold,
   createTrainingHold,
@@ -40,6 +42,20 @@ export async function createTrainingPaymentIntent(
     }
 
     const amount = Math.round(settings.membershipFee * 100);
+    const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+    const marketingConsent =
+      parseConsent(cookieStore.get(COOKIE_NAME)?.value)?.marketing === true;
+    const fbp = cookieStore.get("_fbp")?.value;
+    const fbc = cookieStore.get("_fbc")?.value;
+    const clientUserAgent = requestHeaders.get("user-agent")?.slice(0, 450);
+    const metaAttribution = marketingConsent
+      ? {
+          metaMarketingConsent: "true",
+          ...(fbp ? { metaFbp: fbp } : {}),
+          ...(fbc ? { metaFbc: fbc } : {}),
+          ...(clientUserAgent ? { metaClientUserAgent: clientUserAgent } : {}),
+        }
+      : { metaMarketingConsent: "false" };
     const intent = await trainingStripe.paymentIntents.create({
       amount,
       currency: "eur",
@@ -60,6 +76,7 @@ export async function createTrainingPaymentIntent(
         customerAddress: parsed.data.address,
         customerPostalCode: parsed.data.postalCode,
         customerCity: parsed.data.city,
+        ...metaAttribution,
       },
     });
 

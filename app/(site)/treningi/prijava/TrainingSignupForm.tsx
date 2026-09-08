@@ -92,14 +92,22 @@ export function TrainingSignupForm({
     );
   }
 
-  return <DetailsStep groupId={groupId} onIntentCreated={setIntent} />;
+  return (
+    <DetailsStep
+      groupId={groupId}
+      membershipFee={membershipFee}
+      onIntentCreated={setIntent}
+    />
+  );
 }
 
 function DetailsStep({
   groupId,
+  membershipFee,
   onIntentCreated,
 }: {
   groupId: string;
+  membershipFee: number;
   onIntentCreated: (intent: IntentState) => void;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -139,7 +147,10 @@ function DetailsStep({
       setServerError(result.error);
       return;
     }
-    trackTrainingRegistration();
+    trackTrainingRegistration(result.paymentIntentId, {
+      value: membershipFee,
+      currency: "EUR",
+    });
     onIntentCreated({
       clientSecret: result.clientSecret,
       email: parsed.data.email,

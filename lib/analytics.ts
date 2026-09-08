@@ -41,19 +41,39 @@ export function trackMetaEvent(name: string, params: AnalyticsParams = {}) {
   window.fbq("track", name, cleanParams(params));
 }
 
+export function trackMetaEventWithId(
+  name: string,
+  eventId: string,
+  params: AnalyticsParams = {}
+) {
+  if (typeof window === "undefined" || !window.fbq) return;
+  window.fbq("track", name, cleanParams(params), { eventID: eventId });
+}
+
 export function trackCourseBooking(params: AnalyticsParams = {}) {
   trackEvent("generate_lead", { lead_type: "course_application", ...params });
   trackMetaEvent("Lead", { content_name: "course_booking", ...params });
 }
 
-export function trackTrainingRegistration(params: AnalyticsParams = {}) {
+export function trackTrainingRegistration(
+  eventId: string,
+  params: AnalyticsParams = {}
+) {
   trackEvent("begin_checkout", { checkout_type: "training_membership", ...params });
-  trackMetaEvent("Lead", { content_name: "training_registration", ...params });
+  trackMetaEventWithId("InitiateCheckout", eventId, {
+    content_name: "training_membership",
+    ...params,
+  });
 }
 
 export function trackPaymentComplete(params: AnalyticsParams = {}) {
   trackEvent("purchase", params);
-  trackMetaEvent("Purchase", params);
+  const eventId = params.transaction_id;
+  if (typeof eventId === "string") {
+    trackMetaEventWithId("Purchase", eventId, params);
+  } else {
+    trackMetaEvent("Purchase", params);
+  }
 }
 
 export function trackGiftVoucherRequest(params: AnalyticsParams = {}) {

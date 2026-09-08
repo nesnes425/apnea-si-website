@@ -156,6 +156,20 @@ Important local/Vercel variables include:
 - Analytics:
   - `NEXT_PUBLIC_GA_MEASUREMENT_ID`
   - `NEXT_PUBLIC_FB_PIXEL_ID`
+  - `META_CONVERSIONS_API_ACCESS_TOKEN`
+  - `META_GRAPH_API_VERSION`
+  - `META_TEST_EVENT_CODE` (temporary, for Meta Events Manager validation only)
+
+Training Purchase events are sent to Meta twice, with the Stripe PaymentIntent ID as
+the shared event ID: the consent-gated browser Pixel sends from `/treningi/hvala`, and
+the Stripe webhook sends through the Conversions API. Meta uses the shared ID to
+deduplicate them. The webhook sends nothing unless the visitor had granted marketing
+consent when the PaymentIntent was created. A Meta API failure is logged but must never
+block capacity confirmation, Minimax invoicing, or transactional email.
+The PaymentIntent captures the browser user agent at checkout and sends it as
+`client_user_agent`, as required for website events in Meta's manual CAPI setup.
+Stripe test-mode payments are excluded unless `META_TEST_EVENT_CODE` is intentionally
+set, so development payments cannot pollute production campaign reporting.
 
 If a variable is missing, guide the user to set it locally or in Vercel. Do not ask them
 to paste secrets into chat.

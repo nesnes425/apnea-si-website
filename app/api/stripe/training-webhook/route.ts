@@ -12,6 +12,7 @@ import {
   isTrainingMinimaxInvoicingEnabled,
 } from "@/lib/minimax/training-invoice";
 import { processTrainingPaymentSucceeded } from "@/lib/stripe/training-payment-processor";
+import { sendMetaTrainingPurchase } from "@/lib/meta/conversions-api";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -66,6 +67,13 @@ export async function POST(request: Request) {
 
   try {
     if (event.type === "payment_intent.succeeded") {
+      try {
+        await sendMetaTrainingPurchase(event.data.object);
+      } catch (error) {
+        // Advertising attribution must never block payment confirmation,
+        // invoicing, capacity handling, or customer email.
+        console.error("Unable to send Meta Purchase event", error);
+      }
       await handleTrainingSucceeded(event.data.object);
     }
   } catch (error) {
