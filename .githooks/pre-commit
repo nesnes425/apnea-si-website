@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Runs automatically before every commit in the Apnea.si website repo.
+#
+# It guards the shortcut that keeps Claude Code and Codex reading the same rules:
+#
+#     CLAUDE.md -> AGENTS.md
+#
+# If a tool or editor has flattened it into a duplicate file, this hook stops the commit
+# and explains what to do, so a one-sided instruction change never reaches GitHub.
+
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+if [ -L CLAUDE.md ] && [ "$(readlink CLAUDE.md)" = "AGENTS.md" ]; then
+  exit 0
+fi
+
+printf '\n'
+printf 'Commit stopped: the Claude/Codex shortcut is broken\n'
+printf '==================================================\n\n'
+printf 'CLAUDE.md is no longer a shortcut to AGENTS.md.\n'
+printf 'That is how Codex and Claude Code used to end up with different project rules.\n\n'
+printf 'To repair it, run this and then commit again:\n\n'
+printf '    bash scripts/setup-repo.sh\n\n'
+printf 'Nothing will be deleted. Anything that differs is saved to a backup file first.\n\n'
+exit 1
