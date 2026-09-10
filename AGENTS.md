@@ -1,22 +1,34 @@
-# Apnea.si Agent Instructions
+# Apnea.si — Website
 
-Last updated: August 12, 2026
+Last updated: September 10, 2026
 
-This file is the Codex-facing entry point for the Apnea.si website repo.
+`AGENTS.md` and `CLAUDE.md` are the same file. `CLAUDE.md` is a symlink pointing at
+`AGENTS.md`, so Codex and Claude Code always read identical project rules and there is
+nothing to keep in sync by hand. Edit whichever name you like; both change together.
 
-Read `CLAUDE.md` too. `AGENTS.md` and `CLAUDE.md` are equal-authority companion entry
-points for Codex and Claude Code.
+See `Agent Instruction Parity` below for the rules that keep it that way.
 
 ## Agent Instruction Parity
 
-- Keep every same-scope `AGENTS.md` and `CLAUDE.md` pair equivalent.
-- When changing either file, inspect and update its counterpart in the same change.
-- Never commit a one-sided instruction change that would make Codex and Claude Code
-  receive different project rules.
-- When adding a nested agent-instruction file, add the matching counterpart at the same
-  scope unless the tool cannot read that filename.
+Samo works in Codex, Katarina works in Claude Code, and both tools read this repo. Codex
+looks for `AGENTS.md`, Claude Code looks for `CLAUDE.md`. Rather than maintaining two
+copies, this repo keeps one real file and gives it a second name with a symlink — a
+shortcut: two names, one thing.
+
+```text
+AGENTS.md    real file    <- edit this, or edit CLAUDE.md; same thing
+CLAUDE.md    symlink -> AGENTS.md
+```
+
+- Never replace `CLAUDE.md` with a real file. That is what used to let Codex and Claude
+  Code receive different project rules. A pre-commit check blocks it, and
+  `bash scripts/setup-repo.sh` repairs it without deleting anything.
+- Run `bash scripts/setup-repo.sh` once on each computer, and after a fresh clone. Git
+  hooks are not copied by `git clone`, so the check has to be switched on locally.
+- When adding a nested agent-instruction file in a subfolder, create `AGENTS.md` there
+  and symlink `CLAUDE.md` to it the same way.
 - Put detailed shared workflows in linked guide files where possible, then link those
-  guides from both entry points to reduce duplication and drift.
+  guides from this entry point to reduce duplication and drift.
 - Treat `agent-guides/` as part of the implementation. Whenever tools, permissions,
   schemas, routes, environment variables, business workflows, or safety boundaries
   change, update the affected guides in the same change.
@@ -45,18 +57,83 @@ Samo is the business owner, not a developer or systems specialist. When helping 
   corrections, inspect the existing copy, propose a coherent revised version, and apply
   the approved batch together.
 
-If helping Samo or Katarina operate the site via Claude Code / Codex, also read:
+## Tech Stack
+- Framework: Next.js 16 (App Router)
+- Styling: Tailwind CSS v4 + shadcn/ui
+- CMS: Sanity (course schedule, blog posts)
+- Payments: Stripe Elements for training memberships. Course and gift-voucher payment
+  code exists but is deferred for launch; public course/voucher flows are manual.
+- Email: Brevo (transactional + marketing)
+- Analytics: GA4 + Facebook Pixel (consent-gated)
+- Deployment: Vercel
+- Language: Slovenian (sl)
 
-- `agent-guides/README.md`
-- `agent-guides/sanity-content-editing.md` for Sanity content updates
-- `agent-guides/stripe-operations.md` for payments
-- `agent-guides/brevo-operations.md` for contacts, lists, and email
-- `agent-guides/website-code.md` for code changes
-- `agent-guides/mcp-setup.md` for MCP connections
+## Coding Standards
+Follow the Produktnica website coding standards:
+`business/knowledge-base/website-coding-standards.md` in the monorepo.
+
+## Key Rules
+- **All user-facing text is Slovenian.** HTML lang="sl".
+- **Server components first.** Only `"use client"` when truly needed (forms, interactivity).
+- **Config before components.** All business data imports from `lib/config.ts`.
+- **Sanity is the source of truth** for course schedule and blog posts. Never hardcode course dates.
+- **Course details (curriculum, pricing, FAQs, testimonials) are hardcoded** on landing pages — they rarely change.
+- **Stripe logic lives in `lib/stripe/`** — training payments use ŠD Apnea
+  Slovenija; dormant/deferred course and voucher payment code uses Samo Jeranko s.p.
+- **Brevo for all email** — transactional (booking confirmations) + marketing (newsletter). One provider, one contact database.
+- **No fake urgency.** "Še prosta mesta" and "Razprodano" come from real Sanity data.
+- **Never leave a page with stock photos or grey placeholders.** Always use real freediving imagery.
+
+## Architecture
+```
+app/                  — Next.js App Router pages
+components/
+  ui/                 — Primitives: Button, Card, Input, Badge (shadcn/ui)
+  layout/             — Header, Footer, Container, Section
+  blocks/             — Reusable page sections: Hero, FAQ, CTA, CourseCard, etc.
+lib/
+  config.ts           — All site constants (contact, pricing, nav, stats)
+  utils.ts            — Shared utilities (cn, formatPrice, etc.)
+  sanity/
+    client.ts         — Sanity client setup
+    types.ts          — TypeScript types from Sanity schemas
+    queries.ts        — All GROQ queries
+  stripe/
+    client.ts         — Stripe client setup
+    actions.ts        — Server actions for payment flows
+  brevo/
+    client.ts         — Brevo API client
+```
+
+## Design Tokens
+- **Navy:** #33404f (headings, buttons, dark backgrounds)
+- **Navy dark:** #181E25 (navbar, mobile nav)
+- **Gold:** #d3a356 (primary accent, CTAs, links)
+- **Gold hover:** #c18f3e
+- **Body text:** #585a5a
+- **Heading font:** Lora (serif)
+- **Body font:** Roboto (sans-serif)
+
+## Before Every Session
+- Check `lib/config.ts` exists and is up to date
+- New components follow existing patterns in `components/blocks/`
+- Run `npm run build` before committing — fix all errors and warnings
+
+## Samo/Katarina Agent Guides
+
+When Samo or Katarina use Claude Code / Codex to operate this website, read the guides in
+`agent-guides/` before acting:
+
+- `agent-guides/README.md` — guide index and global guardrails
+- `agent-guides/sanity-content-editing.md` — course dates and blog posts via Sanity MCP
+- `agent-guides/stripe-operations.md` — payment inspection, refunds, webhooks, voucher lookup
+- `agent-guides/brevo-operations.md` — contacts, lists, transactional email, and campaigns
+- `agent-guides/website-code.md` — safe code-editing rules for this site
+- `agent-guides/mcp-setup.md` — how to connect Sanity, Stripe, and optional MCPs safely
 
 Important: Samo/Katarina may have Admin access in Sanity because the current plan lacks
-granular roles. Treat that as content-editor-only access unless Neža explicitly says
-otherwise.
+granular editor roles. Treat that as content-editor-only access unless Neža explicitly
+says otherwise.
 
 Launch payment scope: public course and gift-voucher flows are manual signup /
 povpraševanje plus manual invoicing. Stripe is public only for training memberships.
