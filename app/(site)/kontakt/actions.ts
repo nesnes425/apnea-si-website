@@ -3,6 +3,7 @@
 import { readEnv } from "@/lib/env";
 import { sendTransactionalEmail } from "@/lib/brevo/client";
 import { contactMessageEmail } from "@/lib/brevo/emails/contact-message";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export type ContactFormState = {
   status: "idle" | "success" | "error";
@@ -18,6 +19,22 @@ export async function submitContactForm(
   const honeypot = String(formData.get("website") ?? "");
   if (honeypot) {
     return { status: "success" };
+  }
+
+  const turnstileToken = String(formData.get("cf-turnstile-response") ?? "");
+  try {
+    if (!(await verifyTurnstileToken(turnstileToken))) {
+      return {
+        status: "error",
+        message: "Preverjanje proti neželeni pošti ni uspelo. Poskusite znova.",
+      };
+    }
+  } catch (err) {
+    console.error("Turnstile verification failed:", err);
+    return {
+      status: "error",
+      message: "Preverjanje proti neželeni pošti trenutno ni na voljo. Poskusite znova.",
+    };
   }
 
   const name = String(formData.get("name") ?? "").trim();

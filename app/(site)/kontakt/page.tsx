@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
-import { ContactForm } from "./ContactForm";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -146,13 +145,24 @@ export default function KontaktPage() {
               </div>
             </div>
 
-            {/* Right: form */}
+            {/* Right: direct contact while the form is temporarily disabled */}
             <div>
               <h2 className="text-[24px] md:text-[28px] font-semibold mb-8">
-                Pošljite sporočilo
+                Pišite nam
               </h2>
-
-              <ContactForm />
+              <div className="border border-gold/40 bg-gold/5 p-6 md:p-8">
+                <p className="text-[17px] text-body font-body leading-relaxed">
+                  Kontaktni obrazec je začasno izklopljen. Pišite nam neposredno
+                  na{" "}
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="font-semibold text-navy underline decoration-gold underline-offset-4 hover:text-gold transition-colors"
+                  >
+                    {siteConfig.email}
+                  </a>
+                  .
+                </p>
+              </div>
             </div>
           </div>
         </div>
