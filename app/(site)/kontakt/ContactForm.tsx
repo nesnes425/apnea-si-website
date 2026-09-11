@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import Script from "next/script";
+import { useActionState, useCallback, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { submitContactForm, type ContactFormState } from "./actions";
@@ -43,20 +44,45 @@ function SubmitButton() {
 }
 
 type ContactFormProps = {
+  turnstileSiteKey: string;
   subjectPlaceholder?: string;
   messagePlaceholder?: string;
 };
 
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: HTMLElement, options: Record<string, unknown>) => string;
+      reset: (widgetId?: string) => void;
+    };
+  }
+}
+
 export function ContactForm({
+  turnstileSiteKey,
   subjectPlaceholder = "Npr. Vprašanje o začetnem tečaju",
   messagePlaceholder = "Vaše sporočilo...",
 }: ContactFormProps) {
   const [state, formAction] = useActionState(submitContactForm, INITIAL);
   const formRef = useRef<HTMLFormElement>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  const renderTurnstile = useCallback(() => {
+    if (!window.turnstile || !turnstileRef.current || widgetIdRef.current) return;
+    widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: turnstileSiteKey,
+      action: "contact-form",
+      theme: "light",
+      appearance: "interaction-only",
+    });
+  }, [turnstileSiteKey]);
 
   useEffect(() => {
     if (state.status === "success") {
       formRef.current?.reset();
+    } else if (state.status === "error" && widgetIdRef.current) {
+      window.turnstile?.reset(widgetIdRef.current);
     }
   }, [state]);
 
@@ -75,6 +101,11 @@ export function ContactForm({
 
   return (
     <form ref={formRef} action={formAction} className="space-y-5">
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        strategy="afterInteractive"
+        onReady={renderTurnstile}
+      />
       {/* Honeypot — hidden from real users, bots fill it */}
       <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -157,6 +188,8 @@ export function ContactForm({
           {state.message}
         </p>
       )}
+
+      <div ref={turnstileRef} />
 
       <SubmitButton />
     </form>
