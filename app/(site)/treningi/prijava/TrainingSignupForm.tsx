@@ -51,6 +51,7 @@ export function TrainingSignupForm({
   stripeConfigured,
 }: Props) {
   const [intent, setIntent] = useState<IntentState | null>(null);
+  const [additionalConfirmed, setAdditionalConfirmed] = useState(false);
 
   if (!applicationsOpen) {
     return (
@@ -76,6 +77,18 @@ export function TrainingSignupForm({
     );
   }
 
+  if (additionalConfirmed) {
+    return (
+      <div className="border border-gold/30 bg-gold-pale p-5 text-sm leading-relaxed text-navy" role="status">
+        <p className="mb-2 font-semibold">Vaša prijava v dodatno skupino je potrjena.</p>
+        <p>
+          Letno članarino ste v tej sezoni že plačali, zato je ni treba plačati ponovno.
+          Potrditev smo vam poslali po e-pošti.
+        </p>
+      </div>
+    );
+  }
+
   if (intent) {
     return (
       <Elements
@@ -97,6 +110,7 @@ export function TrainingSignupForm({
       groupId={groupId}
       membershipFee={membershipFee}
       onIntentCreated={setIntent}
+      onAdditionalGroupConfirmed={() => setAdditionalConfirmed(true)}
     />
   );
 }
@@ -105,10 +119,12 @@ function DetailsStep({
   groupId,
   membershipFee,
   onIntentCreated,
+  onAdditionalGroupConfirmed,
 }: {
   groupId: string;
   membershipFee: number;
   onIntentCreated: (intent: IntentState) => void;
+  onAdditionalGroupConfirmed: () => void;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -145,6 +161,10 @@ function DetailsStep({
     setSubmitting(false);
     if (!result.ok) {
       setServerError(result.error);
+      return;
+    }
+    if (result.kind === "additional_group") {
+      onAdditionalGroupConfirmed();
       return;
     }
     trackTrainingRegistration(result.paymentIntentId, {

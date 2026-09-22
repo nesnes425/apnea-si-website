@@ -85,6 +85,27 @@ Payment posting inside Minimax is disabled by default. Set
 Stripe card payments should map to Minimax payment method, cash register, and revenue
 fields.
 
+## Duplicate Membership Protection
+
+Before creating a training hold, the checkout searches Stripe PaymentIntents for the
+participant email (`metadata.customerEmail`) since the season start (1 July of the
+`trainingSettings.seasonLabel` year). A match counts only when the normalized name is
+also the same, because parents register children with their own email and families share
+addresses.
+
+- Same person, same group, succeeded or processing payment: no new payment; the form says
+  they are already registered.
+- Same person, different group, succeeded non-refunded payment: the spot is reserved
+  without payment. `confirmedSpots` increases and `additional:<membershipPaymentIntentId>`
+  is added to `confirmedPaymentIntentIds` (idempotency marker, not a Stripe ID). The
+  customer gets "Potrjena prijava na dodatni trening"; the admin gets "Nova prijava na
+  dodatni trening". No Minimax invoice is created.
+- Search failure or timeout (4 s): the normal paid flow continues.
+
+Known limits: Stripe search indexing can lag about a minute; transfers leave Stripe
+metadata on the original group, so a moved member re-registering may be treated by the
+original group ID; a membership awaiting refund still counts until it is refunded.
+
 ## MCP Setup
 
 Use Stripe MCP for inspection and operator help. Confirm whether it is connected to
