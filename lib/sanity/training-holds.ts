@@ -213,3 +213,48 @@ export async function confirmTrainingHold(params: {
   }
   return { ok: false, reason: "capacity_conflict" };
 }
+
+export type ConfirmAdditionalSpotResult =
+  | { ok: true; alreadyConfirmed: boolean }
+  | { ok: false; reason: "group_missing" | "full" | "conflict" };
+
+// Reserves a spot without payment for a member who already paid this season's
+// membership in another group. The marker makes a repeated submit idempotent.
+export async function confirmAdditionalTrainingSpot(params: {
+  groupId: string;
+  marker: string;
+}): Promise<ConfirmAdditionalSpotResult> {
+  for (let attempt = 0; attempt < MAX_MUTATION_ATTEMPTS; attempt += 1) {
+    const group = await getTrainingGroup(params.groupId);
+    if (!group?.active) return { ok: false, reason: "group_missing" };
+
+    const confirmedIds = group.confirmedPaymentIntentIds ?? [];
+    if (confirmedIds.includes(params.marker)) {
+      return { ok: true, alreadyConfirmed: true };
+    }
+    const now = Date.now();
+    const activeHolds = (group.holds ?? []).filter(
+      (hold) => new Date(hold.expiresAt).getTime() > now
+    );
+    if (group.confirmedSpots + activeHolds.length >= group.capacity) {
+      return { ok: false, reason: "full" };
+    }
+
+    try {
+      await sanityWriteClient
+        .patch(group._id)
+        .ifRevisionId(group._rev)
+        .set({
+          confirmedSpots: group.confirmedSpots + 1,
+          confirmedPaymentIntentIds: [...confirmedIds, params.marker],
+        })
+        .commit();
+      return { ok: true, alreadyConfirmed: false };
+    } catch (error) {
+      if (attempt === MAX_MUTATION_ATTEMPTS - 1) {
+        console.error("Unable to confirm additional training spot", error);
+      }
+    }
+  }
+  return { ok: false, reason: "conflict" };
+}

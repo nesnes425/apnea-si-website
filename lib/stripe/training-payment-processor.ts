@@ -8,7 +8,7 @@ import {
 import type { ConfirmTrainingHoldResult } from "@/lib/sanity/training-holds";
 import type { MinimaxTrainingInvoiceResult } from "@/lib/minimax/training-invoice";
 
-const weekdayLabels: Record<string, string> = {
+export const weekdayLabels: Record<string, string> = {
   ponedeljek: "Ponedeljek",
   torek: "Torek",
   sreda: "Sreda",

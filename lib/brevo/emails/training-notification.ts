@@ -1,5 +1,5 @@
 import { escapeHtml } from "@/lib/utils";
-import type { TrainingConfirmationData } from "./training-confirmation";
+import type { TrainingAdditionalGroupData, TrainingConfirmationData } from "./training-confirmation";
 
 type TrainingNotificationData = TrainingConfirmationData & {
   customerEmail: string;
@@ -57,5 +57,45 @@ ${stripeUrl}`;
 <p>${escapeHtml(d.program)} · ${escapeHtml(d.venue)} · ${escapeHtml(d.weekday)} ${escapeHtml(d.time)}</p>
 <p>${escapeHtml(d.customerName)} · ${escapeHtml(d.customerEmail)} · ${escapeHtml(d.customerPhone)}</p>
 <p><a href="${stripeUrl}">Nemudoma preverite plačilo in uredite vključitev ali vračilo.</a></p>`;
+  return { subject, text, html };
+}
+
+type TrainingAdditionalGroupNotificationData = TrainingAdditionalGroupData & {
+  customerEmail: string;
+  customerPhone: string;
+  membershipPaymentIntentId: string;
+};
+
+export function trainingAdditionalGroupNotificationEmail(d: TrainingAdditionalGroupNotificationData) {
+  const subject = `Nova prijava na dodatni trening: ${d.customerName} — ${d.venue}, ${d.weekday} ${d.time}`;
+  const stripeUrl = `https://dashboard.stripe.com/payments/${d.membershipPaymentIntentId}`;
+  const text = `Nova potrjena prijava na dodatni trening (brez plačila, članarina že plačana).
+
+Skupina: ${d.program}
+Lokacija: ${d.venue}, ${d.city}
+Termin: ${d.weekday}, ${d.time}
+
+Udeleženec:
+${d.customerName}
+${d.customerEmail}
+${d.customerPhone}
+
+Članarina že plačana: ${stripeUrl}`;
+
+  const html = `<!doctype html>
+<html lang="sl">
+<body style="margin:0;padding:24px;background:#f7f5f2;color:#33404f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;">
+  <div style="max-width:520px;margin:0 auto;background:#ffffff;padding:24px;">
+    <p style="margin:0 0 16px;font-weight:600;">Nova potrjena prijava na dodatni trening (brez plačila, članarina že plačana).</p>
+    <p><strong>Skupina:</strong> ${escapeHtml(d.program)}<br>
+    <strong>Lokacija:</strong> ${escapeHtml(d.venue)}, ${escapeHtml(d.city)}<br>
+    <strong>Termin:</strong> ${escapeHtml(d.weekday)}, ${escapeHtml(d.time)}</p>
+    <p><strong>Udeleženec:</strong><br>${escapeHtml(d.customerName)}<br>
+    <a href="mailto:${escapeHtml(d.customerEmail)}" style="color:#d3a356;">${escapeHtml(d.customerEmail)}</a><br>
+    ${escapeHtml(d.customerPhone)}</p>
+    <p><a href="${stripeUrl}" style="color:#d3a356;font-weight:500;">Plačilo članarine v Stripe Dashboard →</a></p>
+  </div>
+</body>
+</html>`;
   return { subject, text, html };
 }

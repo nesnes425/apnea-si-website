@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { trainingStripe } from "@/lib/stripe/training-client";
 import { confirmTrainingHold } from "@/lib/sanity/training-holds";
-import { getTrainingGroup, getTrainingSettings } from "@/lib/sanity/queries";
-import { sanityWriteClient } from "@/lib/sanity/client";
-import { readEnv, readEnvNumber } from "@/lib/env";
-import { createList, sendTransactionalEmail, upsertContact } from "@/lib/brevo/client";
+import { getTrainingSettings } from "@/lib/sanity/queries";
+import { readEnv } from "@/lib/env";
+import { sendTransactionalEmail, upsertContact } from "@/lib/brevo/client";
+import { findOrCreateTrainingGroupList } from "@/lib/brevo/training-group-list";
 import { siteConfig } from "@/lib/config";
 import {
   createTrainingMinimaxInvoice,
@@ -17,17 +17,6 @@ import { sendMetaTrainingPurchase } from "@/lib/meta/conversions-api";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-async function findOrCreateTrainingGroupList(groupId: string, name: string): Promise<number> {
-  const group = await getTrainingGroup(groupId);
-  if (group?.brevoListId) return group.brevoListId;
-  const listId = await createList({
-    name,
-    folderId: readEnvNumber("BREVO_FOLDER_TRAININGS"),
-  });
-  await sanityWriteClient.patch(groupId).set({ brevoListId: listId }).commit();
-  return listId;
-}
 
 async function handleTrainingSucceeded(intent: Stripe.PaymentIntent) {
   await processTrainingPaymentSucceeded(intent, {
