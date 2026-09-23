@@ -80,6 +80,15 @@ The website automatically manages:
 Do not rename, delete, or manually replace these lists without checking the associated
 Sanity document and webhook configuration. Never manually edit `brevoListId` in Sanity.
 
+### Phone numbers
+
+Brevo rejects a whole contact (400 `invalid_parameter`, "Invalid phone number") when the
+`SMS` attribute is not in international format, which used to keep people off their group
+list. `normalizePhoneForBrevo` (`lib/brevo/phone.ts`) converts Slovenian input such as
+`040 727 825`, `00386…` or `+386 040…` into `+38640727825`, and `upsertContact` omits the
+number entirely — and logs a warning — when it is unusable or Brevo still rejects it. List
+membership always takes priority over storing the number.
+
 ## API Credentials
 
 The website needs `BREVO_API_KEY` in local/Vercel environment variables. It also uses:
