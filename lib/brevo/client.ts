@@ -1,4 +1,5 @@
 import { readEnv } from "@/lib/env";
+import { normalizePhoneForBrevo } from "./phone";
 
 const BREVO_API = "https://api.brevo.com/v3";
 const REQUEST_TIMEOUT_MS = 10000;
@@ -48,13 +49,14 @@ export async function upsertContact(params: {
   phone: string;
   listIds: number[];
 }): Promise<void> {
+  const attributesWithoutPhone = {
+    FIRSTNAME: params.firstName,
+    LASTNAME: params.lastName,
+  };
+  const phone = normalizePhoneForBrevo(params.phone);
   const body = {
       email: params.email,
-      attributes: {
-        FIRSTNAME: params.firstName,
-        LASTNAME: params.lastName,
-        SMS: params.phone,
-      },
+      attributes: phone ? { ...attributesWithoutPhone, SMS: phone } : attributesWithoutPhone,
       listIds: params.listIds,
       updateEnabled: true,
   };
@@ -66,17 +68,23 @@ export async function upsertContact(params: {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (!message.includes("duplicate_parameter") || !message.includes("SMS")) throw error;
+    // Brevo rejects the whole contact over a phone number it does not like
+    // (already used by someone else, or still not valid for its country).
+    // Being on the group list matters more than storing the number.
+    const phoneRejected =
+      Boolean(phone) &&
+      (message.includes("Invalid phone number") ||
+        (message.includes("invalid_parameter") && message.includes("SMS")) ||
+        (message.includes("duplicate_parameter") && message.includes("SMS")));
+    if (!phoneRejected) throw error;
 
+    console.warn(
+      `Brevo rejected the phone number for ${params.email}; adding the contact without it`,
+      message
+    );
     await brevoFetch("/contacts", {
       method: "POST",
-      body: JSON.stringify({
-        ...body,
-        attributes: {
-          FIRSTNAME: params.firstName,
-          LASTNAME: params.lastName,
-        },
-      }),
+      body: JSON.stringify({ ...body, attributes: attributesWithoutPhone }),
     });
   }
 }
