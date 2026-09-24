@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
-import { getCourseDepthOptions } from "@/lib/course-depth-options";
+import { toCourseDepthOptions } from "@/lib/course-depth-options";
 import { pageMetadata } from "@/lib/seo";
-import { formatCourseDateRange } from "@/lib/utils";
-import { getUpcomingCourses } from "@/lib/sanity/queries";
+import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
+import { getOpenCourseDepthSessions, getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
 import { CourseJsonLd } from "@/components/seo/StructuredData";
 import { Section } from "@/components/blocks/Section";
@@ -401,8 +401,11 @@ function CourseStructure() {
 }
 
 async function DatesAndBooking() {
-  const courses = await getUpcomingCourses("zacetni");
-  const depthOptions = getCourseDepthOptions("zacetni");
+  const [courses, depthSessions] = await Promise.all([
+    getUpcomingCourses("zacetni"),
+    getOpenCourseDepthSessions(),
+  ]);
+  const depthOptions = toCourseDepthOptions(depthSessions);
 
   return (
     <section id="termini" className="bg-surface py-24">
@@ -440,7 +443,10 @@ async function DatesAndBooking() {
                           {formatCourseDateRange(course.startDate, course.endDate)}
                         </p>
                         <p className="text-sm text-muted-text font-body">
-                          {course.location} · Teorija in bazen
+                          {course.venueName ?? formatCourseLocation(course.location)}
+                          {course.startTime && course.endTime
+                            ? ` · ${course.startTime}–${course.endTime}`
+                            : ""}
                         </p>
                         {course.notes && (
                           <p className="mt-1 text-sm text-body font-body">
@@ -477,6 +483,11 @@ async function DatesAndBooking() {
                           <p className="text-sm text-muted-text font-body">
                             {option.location} · Globinski del
                           </p>
+                          {option.availableSpots <= 5 && (
+                            <p className="mt-1 text-sm font-medium text-gold font-body">
+                              Še {option.availableSpots} {option.availableSpots === 1 ? "prosto mesto" : "prostih mest"}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { siteConfig, type CourseType } from "@/lib/config";
-import { formatCourseDateRange } from "@/lib/utils";
+import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 import { getCourseInstance } from "@/lib/sanity/queries";
-import { getCourseDepthOptions } from "@/lib/course-depth-options";
+import { toCourseDepthOptions } from "@/lib/course-depth-options";
+import { getOpenCourseDepthSessions } from "@/lib/sanity/queries";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
 import { CheckList } from "@/components/blocks/CheckList";
@@ -26,7 +27,7 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
   const course = siteConfig.courses[courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
-  const depthOptions = getCourseDepthOptions(courseType);
+  const depthOptions = toCourseDepthOptions(await getOpenCourseDepthSessions());
 
   return (
     <section className="bg-surface min-h-screen py-16 md:py-24">
@@ -51,7 +52,10 @@ export async function BookingPage({ courseType, instanceId }: Props) {
                 {dateRange}
               </p>
               <p className="text-sm text-muted-text font-body mb-6">
-                {instance.location} · Bazenski del
+                {instance.venueName ?? formatCourseLocation(instance.location)}
+                {instance.startTime && instance.endTime
+                  ? ` · ${instance.startTime}–${instance.endTime}`
+                  : ""}
               </p>
               {instance.notes && (
                 <p className="text-sm text-body font-body mb-6">

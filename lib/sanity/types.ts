@@ -7,10 +7,26 @@ export interface CourseInstance {
   startDate: string;
   endDate: string;
   location: string;
+  venueName?: string;
+  startTime?: string;
+  endTime?: string;
   maxSpots: number;
   isFull: boolean;
   notes?: string;
   brevoListId?: number;
+}
+
+export interface CourseDepthSession {
+  _id: string;
+  _type: "courseDepthSession";
+  startDate: string;
+  endDate: string;
+  location: string;
+  capacity: number;
+  confirmedSpots: number;
+  availableSpots: number;
+  isOpen: boolean;
+  notes?: string;
 }
 
 export interface BlogPost {

@@ -7,10 +7,15 @@ import {
 } from "@/lib/brevo/emails/course-application";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { siteConfig } from "@/lib/config";
-import { getCourseDepthOption, getCourseDepthOptions } from "@/lib/course-depth-options";
+import { toCourseDepthOptions } from "@/lib/course-depth-options";
 import { readEnv } from "@/lib/env";
-import { getCourseInstance } from "@/lib/sanity/queries";
-import { formatCourseDateRange } from "@/lib/utils";
+import { sanityWriteClient } from "@/lib/sanity/client";
+import {
+  getActiveCourseApplicationCount,
+  getCourseInstance,
+  getOpenCourseDepthSessions,
+} from "@/lib/sanity/queries";
+import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 
 export type CourseApplicationResult =
   | { ok: true }
@@ -32,10 +37,14 @@ export async function submitCourseApplication(
   if (instance.isFull) {
     return { ok: false, error: "Termin je razprodan. Izberite drug termin." };
   }
+  const applicationCount = await getActiveCourseApplicationCount(instance._id);
+  if (applicationCount >= instance.maxSpots) {
+    return { ok: false, error: "Termin je zapolnjen. Izberite drug termin." };
+  }
 
   const course = siteConfig.courses[instance.courseType];
-  const depthOptions = getCourseDepthOptions(instance.courseType);
-  const depthOption = getCourseDepthOption(instance.courseType, data.depthOptionId);
+  const depthOptions = toCourseDepthOptions(await getOpenCourseDepthSessions());
+  const depthOption = depthOptions.find((option) => option.value === data.depthOptionId);
   if (depthOptions.length > 0 && !depthOption) {
     return { ok: false, error: "Izberite termin globinskega dela." };
   }
@@ -47,7 +56,7 @@ export async function submitCourseApplication(
     note: data.note,
     courseName: course.fullName,
     dateRange,
-    location: instance.location,
+    location: formatCourseLocation(instance.location),
     depthDateRange: depthOption?.dateRange,
     depthLocation: depthOption?.location,
     priceInEuros: course.price,
@@ -59,6 +68,20 @@ export async function submitCourseApplication(
     const confirmation = courseApplicationConfirmationEmail(emailData);
 
     await Promise.all([
+      sanityWriteClient.create({
+        _type: "courseApplication",
+        submittedAt: new Date().toISOString(),
+        courseInstance: { _type: "reference", _ref: instance._id },
+        ...(depthOption
+          ? { depthSession: { _type: "reference", _ref: depthOption.value } }
+          : {}),
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        note: data.note,
+        depositStatus: "pending",
+        fullPaymentStatus: "pending",
+      }),
       sendTransactionalEmail({
         to: { email: notify },
         subject: notification.subject,

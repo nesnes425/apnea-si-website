@@ -49,7 +49,7 @@ export default function ZasebnostPage() {
               Politika zasebnosti
             </h1>
             <p className="text-sm text-muted-text font-body mb-12">
-              Zadnja posodobitev: april 2026
+              Zadnja posodobitev: september 2026
             </p>
 
             <div className="prose-apnea">
@@ -108,6 +108,11 @@ export default function ZasebnostPage() {
                 <li>Zdravstvene podatke in podatke o zavarovanju</li>
               </ul>
               <p>Podatki se hranijo do vašega preklica.</p>
+              <p>
+                Podatki o prijavi, izbranem terminu ter statusu akontacije in
+                prijavnine se lahko hranijo v sistemu Sanity, da lahko
+                upravljalec vodi izvedbo tečaja in razpoložljivost terminov.
+              </p>
 
               <h3>Plačila (Stripe)</h3>
               <p>
