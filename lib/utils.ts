@@ -25,6 +25,10 @@ export function splitName(fullName: string): { first: string; last: string } {
   return { first, last };
 }
 
+export function formatCourseLocation(location: string): string {
+  return location === "Novo Mesto" ? "Novo mesto" : location;
+}
+
 export function formatCourseDateRange(startISO: string, endISO: string): string {
   const start = new Date(startISO);
   const end = new Date(endISO);

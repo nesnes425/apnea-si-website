@@ -11,6 +11,8 @@ Use this when Samo or Katarina asks Claude Code / Codex to edit Apnea.si content
 - Studio route in the website: `/studio`
 - Main editable document types:
   - `courseInstance` — course dates
+  - `courseDepthSession` — open-water/depth dates and capacities
+  - `courseApplication` — course applications and payment status
   - `blogPost` — blog/news posts
   - `trainingSettings` — season, applications, membership fee, reservation time
   - `trainingVenue` — pool/location, season dates, default pricing
@@ -62,14 +64,42 @@ Fields:
 - `courseType`: `zacetni`, `nadaljevalni`, `master`
 - `startDate`: ISO date, e.g. `2027-05-12`
 - `endDate`: ISO date, e.g. `2027-05-13`
-- `location`: one of `Ljubljana`, `Nova Gorica`, `Velenje`, `Novo Mesto`, `Koper`
-- `maxSpots`: usually `15`
+- `location`: one of `Ljubljana`, `Nova Gorica`, `Velenje`, `Novo Mesto`, `Koper` (the stored legacy value `Novo Mesto` is displayed publicly as `Novo mesto`)
+- `maxSpots`: operational application limit; `24` for the 2027 schedule
 - `isFull`: `false` by default, `true` when sold out
 - `notes`: short internal/display note
 - `brevoListId`: automatic, read-only in Studio
 
 Never edit `brevoListId` manually. It is written by the Stripe/Brevo webhook after the
 first booking for that slot.
+
+`maxSpots` is an internal operational limit. The number is not shown publicly. For the
+2027 schedule, theory/pool dates accept at most 24 active applications.
+
+## Course Depth Sessions And Applications
+
+`courseDepthSession` stores the published depth dates, location, total capacity,
+reserved allocations for a specific theory/pool date, and whether applications are
+open. The website counts only `courseApplication` documents whose `fullPaymentStatus`
+is `paid` as confirmed depth places.
+
+`courseApplication` stores the selected theory/pool date, selected depth date, contact
+details, deposit status, full-payment status, and read-only Zoho Books identifiers.
+Website submissions create these documents automatically. In Studio, use **Tečaji —
+pregled prijav**, select a theory/pool date, then open **Prijavljeni udeleženci**. This
+is the canonical visual overview that replaces one Google Sheet tab per course.
+
+Payment rules:
+
+- `depositStatus: paid` confirms the theory/pool place;
+- `fullPaymentStatus: paid` confirms and consumes a place on the depth date;
+- `fullPaymentStatus: cancelled` removes the application from the active application
+  count;
+- Zoho payment automation may update payment fields, but must never identify a course
+  from customer name alone. Match the stored invoice ID or another unique reference.
+
+For a depth date with a reserved allocation, do not release the protected seats to
+other course dates until Samo explicitly decides to do so.
 
 ### Add A Course Date
 

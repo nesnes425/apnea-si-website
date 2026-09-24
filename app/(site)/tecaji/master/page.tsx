@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { pageMetadata } from "@/lib/seo";
-import { formatCourseDateRange } from "@/lib/utils";
+import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 import { getUpcomingCourses } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
 import { CourseJsonLd } from "@/components/seo/StructuredData";
@@ -311,7 +311,7 @@ async function DatesAndBooking() {
                         {formatCourseDateRange(course.startDate, course.endDate)}
                       </p>
                       <p className="text-sm text-muted-text font-body">
-                        {course.location} · Bazenski del
+                        {formatCourseLocation(course.location)} · Bazenski del
                       </p>
                     </div>
                     {course.isFull ? (

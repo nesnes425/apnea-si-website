@@ -1,31 +1,27 @@
-import type { CourseType } from "@/lib/config";
+import type { CourseDepthSession } from "@/lib/sanity/types";
+import { formatCourseDateRange } from "@/lib/utils";
 
 export type CourseDepthOption = {
   value: string;
   dateRange: string;
   location: string;
   label: string;
+  availableSpots: number;
 };
 
-const courseDepthOptions: Partial<Record<CourseType, CourseDepthOption[]>> = {
-  zacetni: [
-    {
-      value: "zacetni-2026-09-26-krk",
-      dateRange: "26.–27. september 2026",
-      location: "Krk",
-      label: "26.–27. september 2026 (Krk – globinski del)",
-    },
-  ],
-};
-
-export function getCourseDepthOptions(courseType: CourseType): CourseDepthOption[] {
-  return courseDepthOptions[courseType] ?? [];
-}
-
-export function getCourseDepthOption(
-  courseType: CourseType,
-  value: string | undefined
-): CourseDepthOption | undefined {
-  if (!value) return undefined;
-  return getCourseDepthOptions(courseType).find((option) => option.value === value);
+export function toCourseDepthOptions(
+  sessions: CourseDepthSession[]
+): CourseDepthOption[] {
+  return sessions
+    .filter((session) => session.availableSpots > 0)
+    .map((session) => {
+      const dateRange = formatCourseDateRange(session.startDate, session.endDate);
+      return {
+        value: session._id,
+        dateRange,
+        location: session.location,
+        label: `${dateRange} (${session.location} – globinski del)`,
+        availableSpots: session.availableSpots,
+      };
+    });
 }

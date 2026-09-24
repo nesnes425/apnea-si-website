@@ -1,6 +1,7 @@
 import { sanityClient, sanityFreshClient } from "./client";
 import type {
   BlogPost,
+  CourseDepthSession,
   CourseInstance,
   TrainingGroup,
   TrainingProgram,
@@ -10,6 +11,27 @@ import type {
 
 // === Course Instances ===
 
+const previewShorterCourseDates = new Set([
+  "2027-01-30",
+  "2027-03-20",
+  "2027-04-17",
+]);
+
+function applyCourseSchedulePreview(course: CourseInstance): CourseInstance {
+  if (
+    process.env.COURSE_SCHEDULE_PREVIEW !== "true" ||
+    !previewShorterCourseDates.has(course.startDate)
+  ) {
+    return course;
+  }
+
+  return {
+    ...course,
+    endTime: course.endTime === "16:00" ? "15:00" : course.endTime,
+    notes: course.notes?.replace("10.00–16.00", "10.00–15.00"),
+  };
+}
+
 export async function getUpcomingCourses(
   courseType?: CourseInstance["courseType"]
 ): Promise<CourseInstance[]> {
@@ -17,18 +39,107 @@ export async function getUpcomingCourses(
     ? `_type == "courseInstance" && courseType == $courseType && startDate >= now()`
     : `_type == "courseInstance" && startDate >= now()`;
 
-  return sanityClient.fetch(
+  const courses = await sanityClient.fetch<CourseInstance[]>(
     `*[${filter}] | order(startDate asc)`,
     courseType ? { courseType } : {}
   );
+  return courses.map(applyCourseSchedulePreview);
 }
 
 export async function getCourseInstance(
   id: string
 ): Promise<CourseInstance | null> {
-  return sanityClient.fetch(
+  const course = await sanityClient.fetch<CourseInstance | null>(
     `*[_type == "courseInstance" && _id == $id][0]`,
     { id }
+  );
+  return course ? applyCourseSchedulePreview(course) : null;
+}
+
+export async function getActiveCourseApplicationCount(
+  courseInstanceId: string
+): Promise<number> {
+  return sanityFreshClient.fetch(
+    `count(*[
+      _type == "courseApplication" &&
+      courseInstance._ref == $courseInstanceId &&
+      fullPaymentStatus != "cancelled"
+    ])`,
+    { courseInstanceId }
+  );
+}
+
+export async function getOpenCourseDepthSessions(): Promise<CourseDepthSession[]> {
+  if (process.env.COURSE_SCHEDULE_PREVIEW === "true") {
+    return [
+      {
+        _id: "preview-depth-2027-05-22",
+        _type: "courseDepthSession",
+        startDate: "2027-05-22",
+        endDate: "2027-05-23",
+        location: "Krk, Omišalj",
+        capacity: 32,
+        confirmedSpots: 0,
+        availableSpots: 32,
+        isOpen: true,
+      },
+      {
+        _id: "preview-depth-2027-05-29",
+        _type: "courseDepthSession",
+        startDate: "2027-05-29",
+        endDate: "2027-05-30",
+        location: "Krk, Omišalj",
+        capacity: 8,
+        confirmedSpots: 0,
+        availableSpots: 8,
+        isOpen: true,
+      },
+      {
+        _id: "preview-depth-2027-06-19",
+        _type: "courseDepthSession",
+        startDate: "2027-06-19",
+        endDate: "2027-06-20",
+        location: "Krk, Omišalj",
+        capacity: 32,
+        confirmedSpots: 0,
+        availableSpots: 32,
+        isOpen: true,
+        notes: "14 mest je rezerviranih za termin teorije in bazena 15.–16. junija.",
+      },
+      {
+        _id: "preview-depth-2027-07-10",
+        _type: "courseDepthSession",
+        startDate: "2027-07-10",
+        endDate: "2027-07-11",
+        location: "Bled",
+        capacity: 24,
+        confirmedSpots: 0,
+        availableSpots: 24,
+        isOpen: true,
+      },
+    ];
+  }
+  return sanityFreshClient.fetch(
+    `*[_type == "courseDepthSession" && isOpen == true && startDate >= now()] | order(startDate asc) {
+      _id,
+      _type,
+      startDate,
+      endDate,
+      location,
+      capacity,
+      isOpen,
+      notes,
+      "confirmedSpots": count(*[
+        _type == "courseApplication" &&
+        depthSession._ref == ^._id &&
+        fullPaymentStatus == "paid"
+      ]),
+      "availableSpots": capacity - count(*[
+        _type == "courseApplication" &&
+        depthSession._ref == ^._id &&
+        fullPaymentStatus == "paid"
+      ])
+    }`
   );
 }
 

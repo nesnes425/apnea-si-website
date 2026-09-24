@@ -4,7 +4,7 @@ import { stripe } from "./client";
 import { getCourseInstance } from "@/lib/sanity/queries";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { siteConfig } from "@/lib/config";
-import { formatCourseDateRange } from "@/lib/utils";
+import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 
 export type CreateBookingResult =
   | { ok: true; clientSecret: string; paymentIntentId: string }
@@ -29,7 +29,8 @@ export async function createBookingPaymentIntent(
 
   const course = siteConfig.courses[instance.courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
-  const description = `${course.fullName} — ${instance.location}, ${dateRange}`;
+  const courseLocation = formatCourseLocation(instance.location);
+  const description = `${course.fullName} — ${courseLocation}, ${dateRange}`;
 
   const intent = await stripe.paymentIntents.create({
     amount: course.priceInCents,
@@ -42,7 +43,7 @@ export async function createBookingPaymentIntent(
       courseType: instance.courseType,
       courseStartDate: instance.startDate,
       courseEndDate: instance.endDate,
-      courseLocation: instance.location,
+      courseLocation,
       customerName: data.fullName,
       customerEmail: data.email,
       customerPhone: data.phone,
