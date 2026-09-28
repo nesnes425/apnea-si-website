@@ -7,7 +7,11 @@ import {
 } from "@/lib/brevo/emails/course-application";
 import { bookingFormSchema, type BookingFormInput } from "@/lib/booking-schema";
 import { siteConfig } from "@/lib/config";
-import { toCourseDepthOptions } from "@/lib/course-depth-options";
+import {
+  toCourseDepthOptions,
+  PENDING_DEPTH_OPTION,
+  PENDING_DEPTH_OPTION_VALUE,
+} from "@/lib/course-depth-options";
 import { readEnv } from "@/lib/env";
 import { sanityWriteClient } from "@/lib/sanity/client";
 import {
@@ -43,11 +47,17 @@ export async function submitCourseApplication(
   }
 
   const course = siteConfig.courses[instance.courseType];
-  const depthOptions = toCourseDepthOptions(await getOpenCourseDepthSessions());
+  // Mora ostati usklajeno z BookingPage.tsx: na nadaljevalnem/master obrazcu se
+  // ponudijo samo, uporabnik pa lahko odda samo, "termin bo usklajen naknadno".
+  const depthOptions =
+    instance.courseType === "zacetni"
+      ? toCourseDepthOptions(await getOpenCourseDepthSessions())
+      : [PENDING_DEPTH_OPTION];
   const depthOption = depthOptions.find((option) => option.value === data.depthOptionId);
   if (depthOptions.length > 0 && !depthOption) {
     return { ok: false, error: "Izberite termin globinskega dela." };
   }
+  const isPendingDepth = depthOption?.value === PENDING_DEPTH_OPTION_VALUE;
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
   const emailData = {
     customerName: data.fullName,
@@ -57,8 +67,8 @@ export async function submitCourseApplication(
     courseName: course.fullName,
     dateRange,
     location: formatCourseLocation(instance.location),
-    depthDateRange: depthOption?.dateRange,
-    depthLocation: depthOption?.location,
+    depthDateRange: isPendingDepth ? undefined : depthOption?.dateRange,
+    depthLocation: isPendingDepth ? undefined : depthOption?.location,
     priceInEuros: course.price,
   };
 
@@ -72,7 +82,7 @@ export async function submitCourseApplication(
         _type: "courseApplication",
         submittedAt: new Date().toISOString(),
         courseInstance: { _type: "reference", _ref: instance._id },
-        ...(depthOption
+        ...(depthOption && !isPendingDepth
           ? { depthSession: { _type: "reference", _ref: depthOption.value } }
           : {}),
         fullName: data.fullName,
