@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { siteConfig, type CourseType } from "@/lib/config";
 import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 import { getCourseInstance } from "@/lib/sanity/queries";
-import { toCourseDepthOptions } from "@/lib/course-depth-options";
+import { toCourseDepthOptions, PENDING_DEPTH_OPTION } from "@/lib/course-depth-options";
 import { getOpenCourseDepthSessions } from "@/lib/sanity/queries";
 import { Overline } from "@/components/blocks/Overline";
 import { SectionHeading } from "@/components/blocks/SectionHeading";
@@ -27,7 +27,14 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
   const course = siteConfig.courses[courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
-  const depthOptions = toCourseDepthOptions(await getOpenCourseDepthSessions());
+  // Danes so vsi razpisani globinski termini samo za začetni tečaj (glej opombo v
+  // course-depth-options.ts). Na nadaljevalnem/master obrazcu zato NE ponudimo teh
+  // datumov (izbrali bi napačen, začetniški termin) — namesto njih samo jasna
+  // "termin bo usklajen naknadno" opcija.
+  const depthOptions =
+    courseType === "zacetni"
+      ? toCourseDepthOptions(await getOpenCourseDepthSessions())
+      : [PENDING_DEPTH_OPTION];
 
   return (
     <section className="bg-surface min-h-screen py-16 md:py-24">
