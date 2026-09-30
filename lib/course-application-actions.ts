@@ -13,12 +13,7 @@ import {
   PENDING_DEPTH_OPTION_VALUE,
 } from "@/lib/course-depth-options";
 import { readEnv } from "@/lib/env";
-import { sanityWriteClient } from "@/lib/sanity/client";
-import {
-  getActiveCourseApplicationCount,
-  getCourseInstance,
-  getOpenCourseDepthSessions,
-} from "@/lib/sanity/queries";
+import { getCourseInstance, getOpenCourseDepthSessions } from "@/lib/sanity/queries";
 import { formatCourseDateRange, formatCourseLocation } from "@/lib/utils";
 
 export type CourseApplicationResult =
@@ -41,18 +36,15 @@ export async function submitCourseApplication(
   if (instance.isFull) {
     return { ok: false, error: "Termin je razprodan. Izberite drug termin." };
   }
-  const applicationCount = await getActiveCourseApplicationCount(instance._id);
-  if (applicationCount >= instance.maxSpots) {
-    return { ok: false, error: "Termin je zapolnjen. Izberite drug termin." };
-  }
 
   const course = siteConfig.courses[instance.courseType];
-  // Mora ostati usklajeno z BookingPage.tsx: na nadaljevalnem/master obrazcu se
-  // ponudijo samo, uporabnik pa lahko odda samo, "termin bo usklajen naknadno".
+  // Mora ostati usklajeno z BookingPage.tsx: če za ta nivo ni odprtega globinskega
+  // termina, ponudimo "termin bo usklajen naknadno" namesto praznega izbirnika.
+  const realDepthOptions = toCourseDepthOptions(
+    await getOpenCourseDepthSessions(instance.courseType)
+  );
   const depthOptions =
-    instance.courseType === "zacetni"
-      ? toCourseDepthOptions(await getOpenCourseDepthSessions())
-      : [PENDING_DEPTH_OPTION];
+    realDepthOptions.length > 0 ? realDepthOptions : [PENDING_DEPTH_OPTION];
   const depthOption = depthOptions.find((option) => option.value === data.depthOptionId);
   if (depthOptions.length > 0 && !depthOption) {
     return { ok: false, error: "Izberite termin globinskega dela." };
@@ -77,21 +69,10 @@ export async function submitCourseApplication(
     const notification = courseApplicationNotificationEmail(emailData);
     const confirmation = courseApplicationConfirmationEmail(emailData);
 
+    // Sanity ne hrani več prijav (glej posel/gdpr-incidenti.md v hubu) - ta notifikacijski
+    // mail je zdaj edina kopija prijave, zato mora klic vreči napako naprej, če spodleti,
+    // namesto da bi jo tiho pogoltnili.
     await Promise.all([
-      sanityWriteClient.create({
-        _type: "courseApplication",
-        submittedAt: new Date().toISOString(),
-        courseInstance: { _type: "reference", _ref: instance._id },
-        ...(depthOption && !isPendingDepth
-          ? { depthSession: { _type: "reference", _ref: depthOption.value } }
-          : {}),
-        fullName: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        note: data.note,
-        depositStatus: "pending",
-        fullPaymentStatus: "pending",
-      }),
       sendTransactionalEmail({
         to: { email: notify },
         subject: notification.subject,

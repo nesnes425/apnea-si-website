@@ -483,11 +483,6 @@ async function DatesAndBooking() {
                           <p className="text-sm text-muted-text font-body">
                             {option.location} · Globinski del
                           </p>
-                          {option.availableSpots <= 5 && (
-                            <p className="mt-1 text-sm font-medium text-gold font-body">
-                              Še {option.availableSpots} {option.availableSpots === 1 ? "prosto mesto" : "prostih mest"}
-                            </p>
-                          )}
                         </div>
                       ))}
                     </div>
