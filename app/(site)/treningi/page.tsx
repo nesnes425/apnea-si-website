@@ -207,6 +207,37 @@ export default async function TreningiPage() {
 
       <Testimonials reviews={reviews} overline="Naši člani" heading="Zakaj ostanejo" />
 
+      <section id="podpora-programom" aria-labelledby="podpora-programom-heading" className="scroll-mt-20 bg-white">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid items-center gap-8 border-t border-border-custom py-12 md:py-16 lg:grid-cols-[1fr_auto] lg:gap-12">
+            <div className="max-w-lg">
+              <Overline>Podpora programom</Overline>
+              <p id="podpora-programom-heading" className="text-[17px] leading-[1.7] text-body">
+                Tekmovalne programe podpira Mestna občina Ljubljana.
+              </p>
+            </div>
+            <div className="flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:gap-10">
+              <Image
+                src="/images/partners/ljubljana-je-sport.webp"
+                alt="Ljubljana je šport"
+                width={1646}
+                height={742}
+                sizes="220px"
+                className="h-auto w-[220px] max-w-full"
+              />
+              <Image
+                src="/images/partners/mestna-obcina-ljubljana.webp"
+                alt="Mestna občina Ljubljana"
+                width={1641}
+                height={588}
+                sizes="240px"
+                className="h-auto w-[240px] max-w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-surface py-20 md:py-28" id="prijava">
         <div className="mx-auto max-w-6xl px-6">
           <Overline>Lokacije in urnik</Overline>
