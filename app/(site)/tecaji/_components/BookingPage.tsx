@@ -27,14 +27,14 @@ export async function BookingPage({ courseType, instanceId }: Props) {
 
   const course = siteConfig.courses[courseType];
   const dateRange = formatCourseDateRange(instance.startDate, instance.endDate);
-  // Danes so vsi razpisani globinski termini samo za začetni tečaj (glej opombo v
-  // course-depth-options.ts). Na nadaljevalnem/master obrazcu zato NE ponudimo teh
-  // datumov (izbrali bi napačen, začetniški termin) — namesto njih samo jasna
-  // "termin bo usklajen naknadno" opcija.
+  // `courseDepthSession` ima courseType polje, zato vsak nivo dobi samo svoje odprte
+  // globinske termine. Če jih za ta nivo (še) ni, ponudimo jasno "termin bo usklajen
+  // naknadno" namesto praznega izbirnika.
+  const realDepthOptions = toCourseDepthOptions(
+    await getOpenCourseDepthSessions(courseType)
+  );
   const depthOptions =
-    courseType === "zacetni"
-      ? toCourseDepthOptions(await getOpenCourseDepthSessions())
-      : [PENDING_DEPTH_OPTION];
+    realDepthOptions.length > 0 ? realDepthOptions : [PENDING_DEPTH_OPTION];
 
   return (
     <section className="bg-surface min-h-screen py-16 md:py-24">

@@ -19,12 +19,11 @@ export interface CourseInstance {
 export interface CourseDepthSession {
   _id: string;
   _type: "courseDepthSession";
+  courseType: "zacetni" | "nadaljevalni" | "master";
   startDate: string;
   endDate: string;
   location: string;
   capacity: number;
-  confirmedSpots: number;
-  availableSpots: number;
   isOpen: boolean;
   notes?: string;
 }

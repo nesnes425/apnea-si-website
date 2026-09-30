@@ -5,6 +5,20 @@ export const courseDepthSession = defineType({
   title: "Tečaj — globinski termin",
   type: "document",
   fields: [
+    defineField({
+      name: "courseType",
+      title: "Vrsta tečaja",
+      type: "string",
+      options: {
+        list: [
+          { title: "Začetni tečaj (Level 1)", value: "zacetni" },
+          { title: "Nadaljevalni tečaj (Level 2)", value: "nadaljevalni" },
+          { title: "Master tečaj (Level 3)", value: "master" },
+        ],
+      },
+      initialValue: "zacetni",
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({ name: "startDate", title: "Začetek", type: "date", validation: (Rule) => Rule.required() }),
     defineField({ name: "endDate", title: "Konec", type: "date", validation: (Rule) => Rule.required() }),
     defineField({ name: "location", title: "Lokacija", type: "string", validation: (Rule) => Rule.required() }),
@@ -55,11 +69,18 @@ export const courseDepthSession = defineType({
     defineField({ name: "notes", title: "Interne opombe", type: "text", rows: 3 }),
   ],
   preview: {
-    select: { startDate: "startDate", endDate: "endDate", location: "location", capacity: "capacity", isOpen: "isOpen" },
-    prepare({ startDate, endDate, location, capacity, isOpen }) {
+    select: {
+      startDate: "startDate",
+      endDate: "endDate",
+      location: "location",
+      capacity: "capacity",
+      isOpen: "isOpen",
+      courseType: "courseType",
+    },
+    prepare({ startDate, endDate, location, capacity, isOpen, courseType }) {
       return {
         title: `${startDate ?? "Datum"}${endDate && endDate !== startDate ? `–${endDate}` : ""} — ${location ?? "Lokacija"}`,
-        subtitle: `${capacity ?? 0} mest${isOpen === false ? " · zaprto" : ""}`,
+        subtitle: `${courseType ?? "?"} · ${capacity ?? 0} mest${isOpen === false ? " · zaprto" : ""}`,
       };
     },
   },
