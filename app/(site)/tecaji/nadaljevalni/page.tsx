@@ -483,7 +483,7 @@ export default function NadaljevalniTecajPage() {
       </ContextLinks>
       <FinalCTA
         heading="Odkrijte, kaj se skriva pod 30 metri"
-        description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m.\nCena je ${siteConfig.courses.nadaljevalni.price} €.`}
+        description={`Nadaljevalni tečaj prostega potapljanja: Frenzel, prosti pad, globine do 35 m.\nCena je ${siteConfig.courses.nadaljevalni.price} €.`}
         backgroundImage="/images/tecaji-nadaljevalni-CTA.webp"
       />
     </>
