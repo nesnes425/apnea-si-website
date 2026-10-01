@@ -32,7 +32,7 @@ export function FinalCTA({
         <h2 className="text-[32px] md:text-[44px] font-bold leading-[1.1] tracking-[-0.02em] text-white mb-6 font-heading">
           {heading}
         </h2>
-        <p className="text-[18px] md:text-[20px] text-white/70 font-body mb-10 max-w-2xl mx-auto">
+        <p className="text-[18px] md:text-[20px] text-white/70 font-body mb-10 max-w-2xl mx-auto whitespace-pre-line">
           {description}
         </p>
         <Button asChild size="xl">
