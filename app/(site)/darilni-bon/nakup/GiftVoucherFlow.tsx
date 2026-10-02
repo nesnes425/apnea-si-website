@@ -40,6 +40,7 @@ function DetailsStep({ onSent }: DetailsStepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
+  const [wantsPrint, setWantsPrint] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,7 +52,9 @@ function DetailsStep({ onSent }: DetailsStepProps) {
       buyerName: String(formData.get("buyerName") ?? ""),
       buyerEmail: String(formData.get("buyerEmail") ?? ""),
       recipientName: String(formData.get("recipientName") ?? ""),
-      message: String(formData.get("message") ?? ""),
+      wantsPrint: formData.get("wantsPrint") === "on",
+      shippingAddress: String(formData.get("shippingAddress") ?? ""),
+      comment: String(formData.get("comment") ?? ""),
       acceptTerms: formData.get("acceptTerms") === "on",
     };
 
@@ -106,25 +109,57 @@ function DetailsStep({ onSent }: DetailsStepProps) {
           <div className="space-y-6">
             <Input label="Ime in priimek obdarjenca *" id="recipientName" name="recipientName"
               type="text" required error={errors.recipientName} />
+          </div>
+        </div>
 
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-navy font-body mb-2">
-                Osebno sporočilo
+        <div>
+          <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Tiskana verzija</h3>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="wantsPrint" checked={wantsPrint}
+              onChange={(e) => setWantsPrint(e.target.checked)}
+              className="mt-1 h-4 w-4 accent-gold shrink-0" />
+            <span className="text-sm text-body font-body leading-relaxed">
+              Poleg PDF-ja želim bon tudi v tiskani obliki po pošti.
+            </span>
+          </label>
+          <p className="text-xs text-muted-text font-body mt-2">
+            PDF bona prejmete v vsakem primeru, pošiljanje tiskane verzije pa
+            ni vedno mogoče. Če je slučajno ne bomo uspeli poslati, vam to
+            sporočimo.
+          </p>
+          {wantsPrint && (
+            <div className="mt-4">
+              <label htmlFor="shippingAddress" className="block text-sm font-medium text-navy font-body mb-2">
+                Naslov za pošiljanje *
               </label>
               <textarea
-                id="message"
-                name="message"
-                rows={4}
-                maxLength={500}
-                placeholder="Npr. 'Vse najboljše za rojstni dan! Užival/a boš.'"
+                id="shippingAddress"
+                name="shippingAddress"
+                rows={3}
+                maxLength={300}
+                required
+                autoComplete="street-address"
+                placeholder="Ime in priimek, ulica in hišna številka, poštna številka in kraj"
                 className="w-full px-4 py-3 border border-border-custom bg-white text-navy font-body focus:outline-none focus:border-gold transition-colors resize-y"
               />
-              {errors.message && <p className="text-sm text-red-700 mt-1 font-body" role="alert">{errors.message}</p>}
-              <p className="text-xs text-muted-text font-body mt-2">
-                Sporočilo se izpiše na bonu.
-              </p>
             </div>
-          </div>
+          )}
+          {errors.shippingAddress && <p className="text-sm text-red-700 mt-1 font-body" role="alert">{errors.shippingAddress}</p>}
+        </div>
+
+        <div>
+          <h3 className="text-[20px] font-semibold text-navy font-heading mb-4">Komentar</h3>
+          <label htmlFor="comment" className="block text-sm font-medium text-navy font-body mb-2">
+            Karkoli nam še želite sporočiti
+          </label>
+          <textarea
+            id="comment"
+            name="comment"
+            rows={4}
+            maxLength={1000}
+            className="w-full px-4 py-3 border border-border-custom bg-white text-navy font-body focus:outline-none focus:border-gold transition-colors resize-y"
+          />
+          {errors.comment && <p className="text-sm text-red-700 mt-1 font-body" role="alert">{errors.comment}</p>}
         </div>
 
         <div className="pt-2">

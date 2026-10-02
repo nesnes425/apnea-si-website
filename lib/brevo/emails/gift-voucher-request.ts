@@ -5,7 +5,9 @@ export type GiftVoucherRequestEmailData = {
   buyerName: string;
   buyerEmail: string;
   recipientName: string;
-  message?: string;
+  wantsPrint: boolean;
+  shippingAddress?: string;
+  comment?: string;
   voucherName: string;
   priceInEuros: number;
 };
@@ -65,7 +67,7 @@ Apnea Slovenija`;
 
 export function giftVoucherRequestNotificationEmail(d: GiftVoucherRequestEmailData) {
   const subject = `Novo povpraševanje za darilni bon: ${d.buyerName} za ${d.recipientName}`;
-  const message = d.message?.trim();
+  const comment = d.comment?.trim();
 
   const text = `Novo povpraševanje za darilni bon.
 
@@ -79,8 +81,11 @@ ${d.buyerEmail}
 Obdarjenec:
 ${d.recipientName}
 
-Osebno sporočilo:
-${message || "Brez sporočila."}
+Tiskana verzija po pošti:
+${d.wantsPrint ? `DA, naslov:\n${d.shippingAddress}` : "Ne, samo PDF."}
+
+Komentar:
+${comment || "Brez komentarja."}
 
 Pomembno:
 - Bon še ni izdan.
@@ -104,8 +109,11 @@ Pomembno:
     <p style="margin:16px 0 0;"><strong>Obdarjenec:</strong><br>
     ${escapeHtml(d.recipientName)}</p>
 
-    <p style="margin:16px 0 0;"><strong>Osebno sporočilo:</strong><br>
-    ${message ? escapeHtml(message).replace(/\n/g, "<br>") : "Brez sporočila."}</p>
+    <p style="margin:16px 0 0;"><strong>Tiskana verzija po pošti:</strong><br>
+    ${d.wantsPrint ? `Da, naslov:<br>${escapeHtml(d.shippingAddress ?? "").replace(/\n/g, "<br>")}` : "Ne, samo PDF."}</p>
+
+    <p style="margin:16px 0 0;"><strong>Komentar:</strong><br>
+    ${comment ? escapeHtml(comment).replace(/\n/g, "<br>") : "Brez komentarja."}</p>
 
     <div style="margin:20px 0 0;padding:14px 16px;background:#fff7e8;border:1px solid #efd7aa;">
       <p style="margin:0 0 8px;font-weight:600;">Pomembno</p>

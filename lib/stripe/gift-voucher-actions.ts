@@ -34,8 +34,8 @@ export async function createGiftVoucherPaymentIntent(
       buyerName: data.buyerName,
       buyerEmail: data.buyerEmail,
       recipientName: data.recipientName,
-      // Stripe metadata caps each value at 500 chars; schema already enforces 500.
-      message: data.message ?? "",
+      wantsPrint: String(data.wantsPrint),
+      shippingAddress: data.shippingAddress,
     },
   });
 

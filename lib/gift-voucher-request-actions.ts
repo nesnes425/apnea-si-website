@@ -29,7 +29,9 @@ export async function submitGiftVoucherRequest(
     buyerName: data.buyerName,
     buyerEmail: data.buyerEmail,
     recipientName: data.recipientName,
-    message: data.message,
+    wantsPrint: data.wantsPrint,
+    shippingAddress: data.shippingAddress,
+    comment: data.comment,
     voucherName: voucher.fullName,
     priceInEuros: voucher.price,
   };
