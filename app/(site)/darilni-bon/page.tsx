@@ -208,7 +208,7 @@ export default function DarilniBonPage() {
                   {
                     step: "1",
                     title: "Pošljete povpraševanje",
-                    text: "Vpišete svoje podatke, ime obdarjenca in morebitno osebno sporočilo.",
+                    text: "Vpišete svoje podatke, ime obdarjenca in po želji naslov za tiskano verzijo.",
                   },
                   {
                     step: "2",
