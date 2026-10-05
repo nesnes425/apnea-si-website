@@ -403,7 +403,7 @@ function CourseStructure() {
 async function DatesAndBooking() {
   const [courses, depthSessions] = await Promise.all([
     getUpcomingCourses("zacetni"),
-    getOpenCourseDepthSessions(),
+    getOpenCourseDepthSessions("zacetni"),
   ]);
   const depthOptions = toCourseDepthOptions(depthSessions);
 
