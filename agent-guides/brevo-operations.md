@@ -117,3 +117,11 @@ Codex MCP access must use a separate `BREVO_MCP_TOKEN`, not `BREVO_API_KEY`.
 - Do not change senders, domain authentication, webhooks, or API keys without Neža.
 - Do not export the full contact database unless there is a clear approved purpose.
 - Do not promise delivery based only on a successful API request; verify the Brevo log.
+
+## Trainer portal pilot (not deployed)
+
+The new isolated `lib/brevo/portal-comment.ts` adapter sends saved trainer comments
+only with `PORTAL_EMAIL_ENABLED=true`. Recipient is fixed to `info@apnea.si`.
+Attendance commits before the send attempt; failures remain visible and recoverable
+in the private outbox. Local demo never sends. See [trainer-portal.md](trainer-portal.md)
+for invitation, SMTP, delivery verification and uncertain-delivery recovery rules.
