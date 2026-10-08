@@ -43,3 +43,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local trainer pilot (synthetic data only)
+/.portal-local/
+
+# Supabase CLI cache
+/supabase/.temp/

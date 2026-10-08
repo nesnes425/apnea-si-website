@@ -155,3 +155,8 @@ manual invoicing. Only training memberships use Stripe publicly.
 
 Always identify and state the active Stripe account before inspecting or changing
 payments. Never assume that finding no payment in one account means it does not exist.
+
+## Private trainer pilot
+
+See [trainer-portal.md](trainer-portal.md) for the `/trenerji` pilot, private database,
+local-only synthetic test mode, access boundaries and remaining deployment checks.

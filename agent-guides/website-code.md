@@ -240,3 +240,10 @@ git push origin main
 ```
 
 Do not commit unrelated changes unless the user explicitly asks.
+
+## Private trainer routes
+
+`app/(portal)` has a separate layout without public analytics or navigation.
+`/trenerji` and `/trenerji/pregled` are dynamic and noindex; access is enforced by
+server identity checks and private database RPCs, not by noindex or hidden links.
+See [trainer-portal.md](trainer-portal.md) for setup and verification.

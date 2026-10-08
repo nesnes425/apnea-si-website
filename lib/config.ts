@@ -157,3 +157,9 @@ export const siteConfig = {
 
 export type CourseType = keyof typeof siteConfig.courses;
 export type Location = (typeof siteConfig.locations)[number];
+
+// Private trainer portal; identity and member data live in its private database.
+export const trainerPortalConfig = {
+  commentRecipient: 'info@apnea.si',
+  levels: { beginner: 'Začetni', advanced: 'Nadaljevalni', performance: 'Performance' },
+};
