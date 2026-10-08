@@ -438,3 +438,43 @@ Vercel Preview requires PORTAL_SUPABASE_URL and PORTAL_SUPABASE_ANON_KEY (server
 environment variables); missing values produce the setup notice and prevent login.
 Keep PORTAL_EMAIL_ENABLED=false until comment delivery is tested. Do not configure
 PORTAL_LOCAL_DEMO in Vercel. Deployment alone does not activate Google sync.
+
+
+## Independent release review — October 8, 2026
+
+Two fresh subagents independently checked the portal and reviewed its code. The
+review identified and fixed inactive-coach history/corrections, stale comment
+outbox revisions, selection after self-replacement, and prefetch inactivity touches.
+Completed hours remain visible to admins after coach access is disabled; disabled
+staff still cannot log in or be assigned as replacements. Admin corrections to
+closed sessions retain the original coaches and roster. Comment acknowledgments
+now track mail_version independently of attendance edits. Superseded pending text
+is retained but never claimed; in-flight old acknowledgments cannot overwrite a
+new comment. Read-only identity/snapshot checks do not touch activity; normal
+navigation and mutation RPCs do.
+
+Verified after fixes: 13 model/proxy tests, full migration-chain regression suite,
+TypeScript, focused lint (zero errors, one existing unused levels warning),
+production webpack build (28 static pages), and logged-out production localhost
+smoke. The reviewer rechecked the fixes with no remaining code blockers. Synthetic
+fixtures also cover pre-migration sent/failed/uncertain acknowledgment repair.
+Run the full-chain suite with the same PGlite setup as the original database suite:
+
+```bash
+PORTAL_PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-portal-regressions.mjs
+```
+
+Migration 20261008122202_portal_review_fixes.sql was applied once to the dedicated
+project and its local filename matches the recorded remote version. Readback
+confirmed mail_version, non-touching snapshot validation and service-only mail
+claim permissions. All 1,043 sessions remain; no sessions were closed and the outbox
+is empty. Do not reapply this migration.
+
+The current public Supabase publishable key is compatible with the existing
+PORTAL_SUPABASE_ANON_KEY variable name. It is not a privileged secret. Neža was
+provided that key and the project URL for Vercel Preview and Production, with
+PORTAL_EMAIL_ENABLED=false. Hosted preview remains protected by Vercel login and
+needs owner verification after configuration/redeployment. Production merge is
+explicitly authorized by Samo, subject to passing checks and hosted preview review.
+Trainer invitation emails still require a separate explicit approval. Daily Google
+sync and comment email delivery remain inactive.

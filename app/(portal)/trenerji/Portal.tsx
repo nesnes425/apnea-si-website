@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { trainerPortalConfig } from "@/lib/config";
 import {
   coachHours,
+  orderedSessions,
+  selectedSession,
   sessionCoaches,
   regularCoaches,
   coachNames,
@@ -35,24 +37,6 @@ function groupLevel(value?: string): Level {
   if (normalized === "performance") return "performance";
   return "advanced";
 }
-function orderedSessions(sessions: Session[], now = new Date()) {
-  // Compare scheduled local times in Slovenia, regardless of the device timezone.
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit",
-    day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(now);
-  const part = (name: string) => parts.find(p => p.type === name)!.value;
-  const localNow = Date.parse(`${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}Z`);
-  const start = (s: Session) => Date.parse(`${s.date}T${s.starts.slice(0, 5)}:00Z`);
-  const distance = (s: Session) => {
-    const end = Date.parse(`${s.date}T${s.ends.slice(0, 5)}:00Z`);
-    return Math.max(start(s) - localNow, localNow - end, 0);
-  };
-  return [...sessions].sort((a, b) =>
-    Number(a.status === "cancelled") - Number(b.status === "cancelled") ||
-    distance(a) - distance(b) || start(b) - start(a) || a.id.localeCompare(b.id));
-}
 const formatDate = (d: string) => d.split("-").reverse().join(". ");
 const mailLabels: Record<string, string> = {
   none: "Brez komentarja",
@@ -77,7 +61,13 @@ export default function Portal({
       useState<Level>(() => groupLevel(data.groups.find(g => g.id === sessions[0]?.group_id)?.level));
   const s = data.sessions.find((s) => s.id === sessionId);
   async function reload() {
-    setState(await loadPortal());
+    const next = await loadPortal();
+    const selected = selectedSession(next.data.sessions, sessionId);
+    if (selected?.id !== sessionId) {
+      setSessionId(selected?.id || "");
+      setLevel(groupLevel(next.data.groups.find(g => g.id === selected?.group_id)?.level));
+    }
+    setState(next);
   }
   return (
     <>

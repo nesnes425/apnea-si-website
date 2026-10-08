@@ -36,6 +36,28 @@ export type Session = {
   mail_status: "none" | "pending" | "sent" | "failed" | "uncertain";
   mail_subject: string | null;
 };
+export function orderedSessions(sessions: Session[], now = new Date()) {
+  // Compare scheduled local times in Slovenia, regardless of the device timezone.
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit",
+    day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(now);
+  const part = (name: string) => parts.find(p => p.type === name)!.value;
+  const localNow = Date.parse(`${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}Z`);
+  const start = (s: Session) => Date.parse(`${s.date}T${s.starts.slice(0, 5)}:00Z`);
+  const distance = (s: Session) => {
+    const end = Date.parse(`${s.date}T${s.ends.slice(0, 5)}:00Z`);
+    return Math.max(start(s) - localNow, localNow - end, 0);
+  };
+  return [...sessions].sort((a, b) =>
+    Number(a.status === "cancelled") - Number(b.status === "cancelled") ||
+    distance(a) - distance(b) || start(b) - start(a) || a.id.localeCompare(b.id));
+}
+// Retain the trainer's choice until reassignment removes it from their scope.
+export function selectedSession(sessions: Session[], currentId: string, now = new Date()) {
+  return sessions.find(s => s.id === currentId) || orderedSessions(sessions, now)[0];
+}
 export const sessionCoaches = (s: Session) => [...new Set(s.coach_ids || [s.coach_id])];
 export const regularCoaches = (s: Session) => [...new Set(s.regular_coach_ids || [s.regular_coach_id])];
 export const coachNames = (s: Session, staff: Staff[]) => sessionCoaches(s).map(id => staff.find(c => c.id === id)?.name || "—").join(" in ");
@@ -107,7 +129,7 @@ export function visibleSnapshot(
       : data.sessions.filter((s) => sessionCoaches(s).includes(user.id));
   const groupIds = new Set(sessions.map((s) => s.group_id));
   return {
-    staff: data.staff.filter((s) => s.active),
+    staff: data.staff.filter((s) => s.active || user.role === "admin"),
     groups:
       user.role === "admin"
         ? data.groups
@@ -161,7 +183,7 @@ export function closeSession(
   });
   const coach = data.staff.find((c) => c.id === s.coach_id);
   const group = data.groups.find((g) => g.id === s.group_id);
-  if (!coach?.active || !group || sessionCoaches(s).some(id => !data.staff.some(c => c.id === id && c.active)))
+  if (!coach || !group || sessionCoaches(s).some(id => !data.staff.some(c => c.id === id && (c.active || (s.status === "closed" && user.role === "admin")))))
     throw new Error("Manjka izvajalec ali skupina.");
   const commentChanged = input.comment !== s.comment;
   return {

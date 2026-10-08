@@ -4,6 +4,7 @@ import {
   closeSession,
   visibleSnapshot,
   coachHours,
+  selectedSession,
   type Snapshot,
   type Staff,
 } from "./model";
@@ -82,6 +83,25 @@ const input = {
   comment: "Komentar",
   entries: [{ member_id: ids[2], status: "present", kind: "regular" }],
 };
+test("reassignment selects the nearest remaining session and preserves a valid choice", () => {
+  const first = data().sessions[0];
+  const next = { ...first, id: "next", date: "2026-10-08" };
+  const later = { ...first, id: "later", date: "2026-10-15" };
+  const now = new Date("2026-10-08T18:00:00Z");
+  assert.equal(selectedSession([later, next], first.id, now)?.id, next.id);
+  assert.equal(selectedSession([later, next], later.id, now)?.id, later.id);
+  assert.equal(selectedSession([], first.id, now), undefined);
+});
+test("deactivation revokes access while retaining completed hours and admin corrections", () => {
+  const d = data();
+  d.sessions[0] = closeSession(d, trainer, input, "2026-10-06");
+  d.staff[0] = { ...trainer, active: false };
+  const snapshot = visibleSnapshot(d, admin, "2026-10-06");
+  assert.equal(snapshot.staff.find(c => c.id === trainer.id)?.active, false);
+  assert.deepEqual(coachHours(snapshot.sessions, trainer.id), { regular: 1, makeup: 0 });
+  assert.equal(closeSession(d, admin, { ...input, version: 1 }, "2026-10-06").version, 2);
+  assert.throws(() => visibleSnapshot(d, d.staff[0], "2026-10-06"));
+});
 test("trainer never receives old or draft programs or another coach sessions", () => {
   const d = data();
   d.sessions[0].coach_id = admin.id;

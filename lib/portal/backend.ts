@@ -28,7 +28,7 @@ export async function identity(): Promise<{
   }
   if (!configured()) return null;
   try {
-    await supabase("/rest/v1/rpc/portal_check_device_session", token, { touch: true });
+    await supabase("/rest/v1/rpc/portal_check_device_session", token, { touch: false });
     const auth = await supabase<{ id: string }>("/auth/v1/user", token);
     const users = await supabase<Staff[]>(
       `/rest/v1/portal_staff?id=eq.${encodeURIComponent(auth.id)}&select=id,name,role,active,welcome`,

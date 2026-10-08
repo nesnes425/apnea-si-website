@@ -88,3 +88,23 @@ test("unremembered login uses session cookies and persistent expiry is bounded",
     86400,
   );
 });
+test("only actual navigation records activity; prefetch still validates expiry", async () => {
+  const original = globalThis.fetch;
+  const touches: boolean[] = [];
+  globalThis.fetch = async (input, init) => {
+    if (String(input).endsWith("/user")) return Response.json({ id: "id" });
+    touches.push(JSON.parse(String(init?.body)).touch);
+    return Response.json({ remembered: true, expires_at: "2030-01-01T00:00:00Z" });
+  };
+  try {
+    const extras: Record<string, string>[] = [{ "next-router-prefetch": "1" }, { purpose: "prefetch" }, {}];
+    for (const extra of extras) {
+      await proxy(new NextRequest("http://localhost/trenerji", {
+        headers: { cookie: "apnea-portal-session=access", ...extra },
+      }));
+    }
+    assert.deepEqual(touches, [false, false, true]);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
