@@ -104,6 +104,34 @@ export const blogPost = defineType({
         },
         {
           type: "object",
+          name: "guideSignup",
+          title: "Prijava za priročnik",
+          description:
+            "Okence za ime in e-naslov. Stran bralcu samodejno pošlje izbrani priročnik.",
+          fields: [
+            defineField({
+              name: "guide",
+              title: "Priročnik",
+              type: "string",
+              options: {
+                list: [{ title: "Trening statike v 8 tednih", value: "statika" }],
+              },
+              initialValue: "statika",
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: { guide: "guide" },
+            prepare({ guide }) {
+              return {
+                title: guide === "statika" ? "Priročnik: trening statike" : "Priročnik",
+                subtitle: "Prijava za priročnik",
+              };
+            },
+          },
+        },
+        {
+          type: "object",
           name: "youtube",
           title: "YouTube Video",
           fields: [

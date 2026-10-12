@@ -73,6 +73,12 @@ The website automatically manages:
   `20230330_Izenačevanje Prijave` (list ID `20`, env
   `BREVO_LIST_IZENACEVANJE_PRIJAVE`). Brevo automation owns sending template
   `20230615_Izenačevanje tlaka` after the contact joins the izenačevanje list.
+- Static-apnea guide signups (the `guideSignup` block in a Sanity blog post, guide
+  `statika`) into `Apnea.si Newsletter` (list `9`) and `Priročnik Statika` (list ID
+  `53`, env `BREVO_LIST_PRIROCNIK_STATIKA`). Unlike izenačevanje, the website itself
+  sends the guide as a transactional email (`lib/brevo/emails/statika-guide.ts`)
+  with a link to `public/prirocniki/trening-statike.pdf`; no Brevo automation is
+  involved. Replace the PDF at the same path to update the guide.
 - A list for each course date
 - Alumni lists for beginner, advanced, and master courses
 - A list for each training group

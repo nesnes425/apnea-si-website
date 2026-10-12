@@ -12,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
           "/tecaji/*/prijava",
           "/tecaji/hvala",
           "/darilni-bon/hvala",
+          "/prirocniki/",
         ],
       },
     ],
