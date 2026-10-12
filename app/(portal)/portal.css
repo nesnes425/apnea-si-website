@@ -197,7 +197,6 @@
   .portal-makeup summary { line-height: 1.5; }
 }
 
-.portal-body .portal-finalize { margin-top: 24px; }
 .portal-body .portal-finalize,
 .portal-body .portal-login-submit {
   padding: 10px 14px;
@@ -209,6 +208,12 @@
   font-weight: 400;
   letter-spacing: normal;
 }
+.portal-body .portal-finalize {
+  margin-top: 24px;
+  color: #000;
+  font-weight: 700;
+}
+.portal-body .portal-resend { display: block; margin-top: 12px; min-height: 48px; }
 @media (max-width: 600px) {
   .portal-body .portal-finalize,
   .portal-body .portal-login-submit { min-height: 48px; }

@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/portal/comments",
+      "schedule": "0 4 * * *"
+    },
+    {
       "path": "/api/trainings/cleanup-holds",
       "schedule": "0 3 * * *"
     }

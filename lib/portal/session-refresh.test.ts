@@ -44,6 +44,13 @@ test("refresh rotates both cookies and forwards renewed identity to the current 
       /new-access/,
     );
     assert.equal(paths.length, 3);
+    for (const name of ["apnea-portal-session", "apnea-portal-refresh"]) {
+      const cookie = result.cookies.get(name)!;
+      assert.equal(cookie.sameSite, "lax");
+      assert.equal(cookie.httpOnly, true);
+      assert.equal(cookie.path, "/trenerji");
+      assert.ok(cookie.maxAge! > 0);
+    }
     assert.equal(result.headers.get("Cache-Control"), "private, no-store");
   } finally {
     globalThis.fetch = original;

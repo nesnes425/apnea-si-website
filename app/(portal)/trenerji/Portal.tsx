@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { trainerPortalConfig } from "@/lib/config";
+import { useAttendanceDraft } from "./useAttendanceDraft";
 import {
   coachHours,
   orderedSessions,
@@ -210,26 +211,33 @@ function SessionForm({
   reload: () => Promise<void>;
 }) {
   const roster = sessionRoster(data, s);
-  const [guests, setGuests] = useState<Member[]>(
-    s.entries
-      .filter((e) => e.kind === "makeup")
-      .map((e) => ({ id: e.member_id, name: e.name, group_id: "" })),
-  );
-  const [statuses, setStatuses] = useState<Record<string, string>>(
-    Object.fromEntries(s.entries.map((e) => [e.member_id, e.status])),
-  );
-  const [coachQuery, setCoachQuery] = useState("");
-  const [replacementIndex, setReplacementIndex] = useState(0);
-  const [comment, setComment] = useState(s.comment),
-    [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false),
-    [query, setQuery] = useState(""),
-    [results, setResults] = useState<Member[]>([]);
-  const people = [...roster, ...guests].sort((a, b) => a.name.localeCompare(b.name, "sl", { sensitivity: "base", numeric: true }));
   const locked =
     s.status === "cancelled" ||
     s.date > ljubljanaDate() ||
     (s.status === "closed" && user.role !== "admin");
+  const draft = useAttendanceDraft({
+    userId: user.id, sessionId: s.id, version: s.version, demo, locked,
+    rosterIds: roster.map(member => member.id),
+    initial: {
+      guests: s.entries
+      .filter((e) => e.kind === "makeup")
+      .map((e) => ({ id: e.member_id, name: e.name, group_id: "" })),
+      statuses: Object.fromEntries(s.entries.map((e) => [e.member_id, e.status])),
+      comment: s.comment,
+    },
+  });
+  const { guests, statuses, comment } = draft.values;
+  const setGuests = (guests: Member[]) => draft.update({ guests });
+  const setComment = (comment: string) => draft.update({ comment });
+  const [coachQuery, setCoachQuery] = useState("");
+  const [replacementIndex, setReplacementIndex] = useState(0);
+  const [message, setMessage] = useState(""),
+    [busy, setBusy] = useState(false),
+    [query, setQuery] = useState(""),
+    [results, setResults] = useState<Member[]>([]);
+  const people = [...roster, ...guests].sort((a, b) => a.name.localeCompare(b.name, "sl", { sensitivity: "base", numeric: true }));
+  const editingDisabled = locked || busy || draft.status === "loading";
+  const saveLabel = s.status === "closed" ? "Shrani popravek" : "Shrani prisotnost";
   return (
     <section className="portal-card">
       <h2>{data.groups.find((g) => g.id === s.group_id)?.label}</h2>
@@ -254,6 +262,21 @@ function SessionForm({
         {people.filter((p) => statuses[p.id] === "present").length} prisotnih ·{" "}
         {people.filter((p) => !statuses[p.id]).length} neoznačenih
       </p>
+      {!locked && <p role="status" className={draft.status === "error" || draft.status === "stale" ? "portal-notice" : "portal-muted"}>
+        {draft.status === "loading" ? "Preverjam osnutek …" :
+          draft.status === "saved" ? `Osnutek shranjen na tej napravi. Za potrditev kliknite ${saveLabel}.` :
+          draft.status === "error" ? `Osnutka ni mogoče shraniti na napravo. Ne zaprite strani; prisotnost potrdite z gumbom ${saveLabel}.` :
+          draft.status === "stale" ? "Termin se je medtem spremenil. Starejši osnutek ni bil uporabljen; preverite prikazano evidenco." :
+          `Vnos se sproti shrani kot osnutek na tej napravi. Za potrditev kliknite ${saveLabel}.`}
+      </p>}
+      {!locked && draft.status === "stale" && draft.previousDraft && <details className="portal-makeup">
+        <summary>Preglej prejšnji osnutek</summary>
+        {Object.entries(draft.previousDraft.statuses).map(([id, value]) => <p key={id}>
+          {[...roster, ...draft.previousDraft!.guests].find(member => member.id === id)?.name || "Član"}: {value === "present" ? "Da" : "Ne"}
+        </p>)}
+        <p className="portal-program">{draft.previousDraft.comment}</p>
+        {s.status === "planned" && <button className="portal-secondary" disabled={busy} onClick={() => draft.update(draft.previousDraft!)}>Obnovi osnutek za pregled</button>}
+      </details>}
       {people.map((p) => (
         <div className="portal-row" key={p.id}>
           <div>
@@ -269,12 +292,12 @@ function SessionForm({
             ].map(([value, label]) => (
               <button
                 key={value}
-                disabled={locked || busy}
+                disabled={editingDisabled}
                 type="button"
                 className={`portal-secondary portal-attendance-${value}`}
                 aria-label={`${p.name}: ${value === "present" ? "prisoten" : "odsoten"} (${label})`}
                 aria-pressed={(statuses[p.id] || "") === value}
-                onClick={() => setStatuses({ ...statuses, [p.id]: value })}
+                onClick={() => draft.update({ statuses: { ...statuses, [p.id]: value as "present" | "absent" } })}
               >
                 {label}
               </button>
@@ -282,7 +305,7 @@ function SessionForm({
             {guests.some((g) => g.id === p.id) && (
               <button
                 className="portal-secondary"
-                disabled={locked || busy}
+                disabled={editingDisabled}
                 onClick={() => setGuests(guests.filter((g) => g.id !== p.id))}
               >
                 Odstrani
@@ -291,6 +314,44 @@ function SessionForm({
           </div>
         </div>
       ))}
+      <Button
+        className="portal-finalize"
+        disabled={editingDisabled}
+        onClick={async () => {
+          if (people.some((p) => !statuses[p.id])) {
+            setMessage("Označite vse člane skupine.");
+            return;
+          }
+          setBusy(true);
+          try {
+            const result = await finalizeSession({
+              session_id: s.id,
+              version: s.version,
+              comment,
+              entries: people.map((p) => ({
+                member_id: p.id,
+                status: statuses[p.id],
+                kind: guests.some((g) => g.id === p.id) ? "makeup" : "regular",
+              })),
+            });
+            if (!result.ok) setMessage(result.error);
+            else { draft.clear(); await reload(); }
+          } catch {
+            setMessage(
+              "Povezava ni uspela. Osvežite stran in preverite, ali je evidenca shranjena.",
+            );
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        {busy
+          ? "Shranjujem …"
+          : saveLabel}
+      </Button>
+      <p role="status" className="portal-error">
+        {message}
+      </p>
       {!locked && (
         <details className="portal-makeup">
           <summary>Dodaj člana na nadomeščanje</summary>
@@ -375,12 +436,12 @@ function SessionForm({
           rows={4}
           maxLength={4000}
           value={comment}
-          disabled={locked || busy}
+          disabled={editingDisabled}
           onChange={(e) => setComment(e.target.value)}
         />
       </label>
       <p className="portal-muted">
-        Ob zaključku se komentar pošlje na info@apnea.si. Zadeva vsebuje ime
+        Ob shranitvi se komentar pošlje na info@apnea.si. Zadeva vsebuje ime
         izvajalca, skupino in datum.
       </p>
       {demo && s.comment && (
@@ -390,46 +451,6 @@ function SessionForm({
           <p>{s.comment}</p>
         </div>
       )}
-      <Button
-        className="portal-finalize"
-        disabled={locked || busy}
-        onClick={async () => {
-          if (people.some((p) => !statuses[p.id])) {
-            setMessage("Označite vse člane skupine.");
-            return;
-          }
-          setBusy(true);
-          try {
-            const result = await finalizeSession({
-              session_id: s.id,
-              version: s.version,
-              comment,
-              entries: people.map((p) => ({
-                member_id: p.id,
-                status: statuses[p.id],
-                kind: guests.some((g) => g.id === p.id) ? "makeup" : "regular",
-              })),
-            });
-            if (!result.ok) setMessage(result.error);
-            else await reload();
-          } catch {
-            setMessage(
-              "Povezava ni uspela. Osvežite stran in preverite, ali je evidenca shranjena.",
-            );
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {busy
-          ? "Shranjujem …"
-          : s.status === "closed"
-            ? "Shrani popravek"
-            : "Zaključi evidenco"}
-      </Button>
-      <p role="status" className="portal-error">
-        {message}
-      </p>
     </section>
   );
 }

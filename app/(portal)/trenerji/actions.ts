@@ -3,8 +3,6 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
-  configured,
-  PortalApiError,
   identity,
   requireIdentity,
   SESSION_COOKIE,
@@ -25,6 +23,7 @@ import {
   type DeviceSession,
 } from "@/lib/portal/session-cookies";
 import { dispatchPortalComment } from "@/lib/brevo/portal-comment";
+import { sendLoginCode } from "@/lib/portal/login-code";
 async function sameOrigin() {
   const h = await headers();
   const origin = h.get("origin"),
@@ -32,35 +31,20 @@ async function sameOrigin() {
   if (!origin || new URL(origin).host !== host)
     throw new Error("Neveljaven izvor zahteve.");
 }
+export async function resumeLogin() {
+  await sameOrigin();
+  return Boolean(await identity());
+}
 export async function requestCode(email: string) {
   await sameOrigin();
-  const parsed = z
-    .string()
-    .email()
-    .max(254)
-    .safeParse(email.trim().toLowerCase());
-  if (!parsed.success) return { error: "Vnesite veljaven e-poštni naslov." };
-  if (!configured()) return { error: "Prijava še ni nastavljena." };
-  try {
-    await supabase("/auth/v1/otp", undefined, {
-      email: parsed.data,
-      create_user: false,
-    });
-  } catch (error) {
-    // Unverified, pre-created accounts need their confirmation OTP first.
-    // Registration stays disabled and responses never reveal account existence.
-    if (error instanceof PortalApiError && error.status === 422) {
-      try {
-        await supabase("/auth/v1/resend", undefined, {
-          email: parsed.data,
-          type: "signup",
-        });
-      } catch {
-        /* Keep the same response for unknown or rate-limited users. */
-      }
-    }
-  }
-  return { message: "Prijavno kodo ste prejeli na vaš email naslov. Preverite vse mape." };
+  // A restored mobile tab can show an old login form despite a valid session.
+  // Validate access on the server before requesting another email.
+  if (await identity()) return { authenticated: true as const };
+  if (demoEnabled()) return {
+    message: "Lokalni preizkus: e-pošta ni bila poslana. Za vstop uporabite testni profil spodaj.",
+    retryAfter: 60,
+  };
+  return sendLoginCode(email);
 }
 export async function verifyCode(
   email: string,
@@ -68,6 +52,7 @@ export async function verifyCode(
   remember = false,
 ) {
   await sameOrigin();
+  if (demoEnabled()) return { error: "Za lokalni preizkus uporabite testni profil spodaj." };
   if (!z.string().email().safeParse(email).success || !/^\d{6,8}$/.test(token))
     return { error: "Preverite naslov in prijavno kodo." };
   try {
@@ -92,9 +77,7 @@ export async function verifyCode(
     if (!(await identity())) {
       for (const name of [SESSION_COOKIE, REFRESH_COOKIE])
         (await cookies()).set(name, "", {
-          httpOnly: true,
-          sameSite: "strict",
-          path: "/trenerji",
+          ...cookieOptions,
           maxAge: 0,
         });
       return { error: "Za ta račun dostop ni omogočen." };

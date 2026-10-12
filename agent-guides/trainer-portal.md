@@ -478,3 +478,141 @@ needs owner verification after configuration/redeployment. Production merge is
 explicitly authorized by Samo, subject to passing checks and hosted preview review.
 Trainer invitation emails still require a separate explicit approval. Daily Google
 sync and comment email delivery remain inactive.
+
+## Attendance button placement — October 12, 2026
+
+The finalize button and its status message now sit immediately after the attendance
+roster, before the makeup-member and substitute-coach controls. The gold background
+is unchanged; the label is black and bold (700), following Samo's latest
+correction. The save handler and comment submission
+remain unchanged. Verified locally with synthetic members at a 390px mobile
+viewport. This change is pending release approval; it does not address the audit's
+separate OTP error-reporting and resend-code recommendations.
+
+## Remembered-login recovery — October 12, 2026
+
+Samo reported seeing the login screen repeatedly on his phone, sometimes entering
+the portal immediately after requesting a code. A read-only production check found
+his recorded device sessions remembered, unrevoked and unexpired; it could not
+identify which session belonged to the phone. Do not treat this as proof of a
+device-specific root cause.
+
+Session cookies now use SameSite=Lax so top-level incoming links include the saved
+login. HttpOnly, production Secure, the /trenerji path and same-origin checks on
+server actions remain in place. The existing opt-in and expiry/inactivity policy
+are unchanged. The login form checks the current server-validated identity on mount
+and on a restored browser page, including recovery of older Strict cookies. Before
+sending an OTP, the server action checks again and returns to the portal if already
+authenticated. It never creates or extends a device session without OTP verification.
+
+Local synthetic-browser checks covered an old login form after signing in in a
+second tab and recovery after following a cross-site link with a legacy Strict
+cookie. Both reached the portal without entering a code. Real-phone verification
+is still required after release. No production configuration or data was changed.
+
+## OTP email copy correction — October 12, 2026
+
+Samo supplied a received message containing the default English magic-link block
+followed by the Slovenian OTP copy, and requested removal of the English block and
+sign-in link. `supabase/templates/portal-otp.html` contains the prepared replacement
+body with only the Slovenian instructions and `{{ .Token }}`. Replace the entire
+Magic link/OTP body rather than appending it. This file is a manual source template;
+deploying the website does not apply it to hosted Supabase Auth. After Samo signed
+in, the Magic link/OTP body was replaced in the production project's dashboard and
+saved. Reloaded preview confirmed only Slovenian copy and the token placeholder,
+with no English block or sign-in link. Subject remains "Vaša prijavna koda za portal
+Apnea.si". This template change is live independently of the pending website branch.
+No test email was sent; delivered-email rendering was not verified. The connected
+MCP has no Auth-template setter, so this change used the authenticated dashboard.
+No login link or real code from the received email is retained in this repository.
+
+## Follow-up fixes and operational checks — October 12, 2026
+
+The finalization label is now **Shrani prisotnost**, retaining bold black text and
+the placement directly below the roster. The button still finalizes attendance.
+After Samo approved draft saving, browser-local drafts were added: every attendance,
+makeup-member and comment change writes synchronously to localStorage, isolated by
+account, session and demo/live mode. Returning from the program tab, another date or
+a page reload restores the draft on the same browser/device for up to 30 days.
+Clearing browser data or changing devices does not restore it. Finalization alone
+records hours and enqueues the comment; a successful save clears the draft. A newer
+server session version is never overwritten automatically; the UI offers the old
+draft for review. Invalid/expired data is ignored and roster membership is rechecked.
+If browser storage fails, in-memory navigation recovery and a page-exit warning stay
+active; the UI explicitly tells the coach to save before leaving. This is not a cloud
+backup or cross-device draft sync.
+
+OTP requests now report network/provider failures and rate limits without advancing
+to a false code-entry success state. Existing-account disclosure protection remains
+for unknown/disabled-signup responses. The resend button has a 60-second delay based
+on wall time; backend Supabase rate limits remain authoritative. Local demo requests
+simulate this UI without sending real OTPs; actual verification uses test-profile
+buttons. Browser checks verified cooldown, expiry and another request. Seven new
+OTP/comment tests plus the existing thirteen portal tests pass; lint, TypeScript and
+production webpack build passed during this work.
+
+Comment recovery now has a CRON_SECRET-protected `/api/portal/comments` route and a
+daily 04:00 UTC schedule in vercel.json, pending website release. Normal delivery is
+still attempted immediately after attendance is saved. The worker only claims
+pending messages via the existing atomic RPC; it does not reset sending, uncertain
+or rejected messages. Inspect Brevo delivery logs before any manual requeue to avoid
+duplicates. Missing configuration produces a 503 for the worker rather than a false
+successful run. SMTP acceptance is not proof of inbox delivery.
+
+Live read-only checks found five closed sessions, an empty outbox and only one roster
+sync (source observed October 7 at 10:42 UTC). No pg_cron/pg_net extension is installed.
+Local config still has PORTAL_EMAIL_ENABLED=false and lacks both
+PORTAL_SUPABASE_SERVICE_KEY and PORTAL_GOOGLE_SERVICE_ACCOUNT_JSON. A single synthetic
+comment delivery test to info@apnea.si using the existing local website integration
+was rejected by Brevo with HTTP 401 / unauthorized; no message was accepted. This
+does not verify or invalidate Vercel's separately configured key. Vercel dashboard
+requires login; the user has been asked to provide that access. Production activation
+and an end-to-end delivered-comment test remain incomplete.
+
+Supabase's Backups dashboard explicitly reports that the current Free plan has no
+project backups. No backup restoration has been performed, no production data was
+restored/changed, and no paid upgrade was enabled. Establish an off-site encrypted
+export and test restoration to an isolated database before claiming recoverability.
+The Google source is not a backup of attendance, comments or coach-hour history.
+
+
+## Daily roster runner — prepared October 12, 2026
+
+`.github/workflows/portal-roster-sync.yml` runs the existing guarded importer at
+15:00 Europe/Ljubljana, including summer/winter time. GitHub may delay scheduled
+jobs; this is a daily operational sync, not a real-time 15:00 guarantee. The workflow
+only runs on main, serializes executions and has a five-minute timeout. Manual
+execution defaults to dry-run. Scheduled writes remain disabled until the repository
+variable `PORTAL_ROSTER_SYNC_ENABLED` is explicitly set to `true` after validation.
+No participant data is exported into Actions artifacts. Never set
+`PORTAL_INITIAL_MEMBERSHIP_DATE` for recurring runs; that was only for the first import.
+
+Activation (requires a repository administrator and access to the Google project):
+
+1. Create or reuse a dedicated Google service account with the Sheets API enabled.
+   Share only the authoritative training spreadsheet with its `client_email` as
+   Viewer. Do not give it Drive-wide or editor access. Store its JSON key securely.
+2. In the website repository, Settings → Secrets and variables → Actions → Secrets,
+   add `PORTAL_GOOGLE_SERVICE_ACCOUNT_JSON` (the JSON), `PORTAL_SUPABASE_URL` (the
+   apnea-trenerji URL) and `PORTAL_SUPABASE_SERVICE_KEY` (that project's server key,
+   never the anon key). These are runner secrets, separate from Vercel settings;
+   never paste key values in chat, code, logs or PRs.
+3. After this PR is approved and merged, Actions → Portal roster sync → Run workflow
+   on main, leave apply off. Review the group/enrolment counts. Run once with apply
+   on, then verify the new sync record and historical memberships in Supabase.
+4. Add repository variable `PORTAL_ROSTER_SYNC_ENABLED=true`. Check the first
+   scheduled run and enable failure notifications for the responsible GitHub owner.
+   Setting the variable to false pauses future scheduled writes.
+
+At preparation time credentials and the first hosted run are still unverified;
+pushing this workflow alone does not make the daily import active. It needs no new
+paid scheduling service; existing GitHub Actions quotas/billing apply. Schedule syntax:
+https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onschedule
+
+Local release verification: all 23 focused unit tests passed, including draft parsing,
+account isolation and changed-roster recovery; lint and TypeScript passed. Browser
+checks with synthetic members restored attendance, a makeup member and a comment
+after tab/date changes and reload, then finalized the complete roster successfully.
+At 390 px the portal had no horizontal overflow; save text computed as black, 700.
+Production webpack build passed. Hosted cron execution and real-phone session
+retention remain post-release checks, not claimed complete by these local tests.
