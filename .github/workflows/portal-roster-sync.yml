@@ -1,0 +1,41 @@
+name: Portal roster sync
+on:
+  schedule:
+    - cron: '0 15 * * *'
+      timezone: Europe/Ljubljana
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Write the validated roster to the portal database'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: portal-roster-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    # Enable only after the first manual dry-run and apply have been checked.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.PORTAL_ROSTER_SYNC_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read, validate and synchronize the roster
+        env:
+          PORTAL_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.PORTAL_GOOGLE_SERVICE_ACCOUNT_JSON }}
+          PORTAL_SUPABASE_URL: ${{ secrets.PORTAL_SUPABASE_URL }}
+          PORTAL_SUPABASE_SERVICE_KEY: ${{ secrets.PORTAL_SUPABASE_SERVICE_KEY }}
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+        run: |
+          if [ "$APPLY" = 'true' ]; then
+            node scripts/sync-portal-roster.mjs --apply
+          else
+            node scripts/sync-portal-roster.mjs
+          fi
