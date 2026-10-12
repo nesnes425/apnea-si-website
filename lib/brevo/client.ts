@@ -92,11 +92,13 @@ export async function upsertContact(params: {
 export async function upsertEmailContact(params: {
   email: string;
   listIds: number[];
+  firstName?: string;
 }): Promise<void> {
   await brevoFetch("/contacts", {
     method: "POST",
     body: JSON.stringify({
       email: params.email,
+      ...(params.firstName ? { attributes: { FIRSTNAME: params.firstName } } : {}),
       listIds: params.listIds,
       updateEnabled: true,
     }),

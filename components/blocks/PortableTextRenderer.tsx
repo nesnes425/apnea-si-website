@@ -4,6 +4,7 @@ import { createImageUrlBuilder } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
 import Image from "next/image";
 import Link from "next/link";
+import { StatikaGuideSignup } from "@/components/blocks/StatikaGuideSignup";
 
 const builder = createImageUrlBuilder(sanityClient);
 
@@ -103,6 +104,10 @@ const components: PortableTextComponents = {
           )}
         </div>
       );
+    },
+    guideSignup: ({ value }) => {
+      if (value?.guide === "statika") return <StatikaGuideSignup />;
+      return null;
     },
     youtube: ({ value }) => {
       if (!value?.videoId) return null;
