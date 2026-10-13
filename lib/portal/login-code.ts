@@ -28,7 +28,9 @@ export async function sendLoginCode(email: string): Promise<CodeResult> {
   try {
     await supabase("/auth/v1/otp", undefined, { email: parsed.data, create_user: false });
   } catch (error) {
-    if (error instanceof PortalApiError &&
+    // A 422 signup_disabled also occurs for existing, unconfirmed accounts.
+    // Let those reach confirmation resend before masking unknown addresses.
+    if (error instanceof PortalApiError && error.status !== 422 &&
         ["signup_disabled", "user_not_found"].includes(error.code || ""))
       return codeSentResponse();
     if (!(error instanceof PortalApiError) || error.status !== 422)
