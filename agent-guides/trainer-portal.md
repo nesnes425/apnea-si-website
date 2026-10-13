@@ -616,3 +616,24 @@ after tab/date changes and reload, then finalized the complete roster successful
 At 390 px the portal had no horizontal overflow; save text computed as black, 700.
 Production webpack build passed. Hosted cron execution and real-phone session
 retention remain post-release checks, not claimed complete by these local tests.
+
+## First-login email regression — October 13, 2026
+
+Production Auth logs showed `/otp` returning HTTP 422 `signup_disabled` for
+pre-created, unconfirmed accounts without the subsequent confirmation resend.
+The error-reporting change in PR #22 masked that error as a successful code request
+before reaching the existing fallback. `sendLoginCode` now routes HTTP 422 through
+`/auth/v1/resend` with `type: signup` before returning the non-enumerating response.
+Public signup remains disabled and OTP requests still use `create_user: false`.
+Do not mark accounts confirmed as a workaround; first login must verify ownership.
+
+Two regression tests first failed against the previous code and pass with the fix:
+the actual `signup_disabled` response must trigger confirmation resend, and a
+failed/rate-limited resend must not claim delivery. Production deployment and real
+mailbox receipt must be verified separately; local tests do not prove delivery.
+
+Verification: 22 portal unit tests, focused ESLint, `tsc --noEmit` and the production
+webpack build passed. The built app at localhost:3101, using a local-only Auth stub
+and synthetic addresses, made both OTP and confirmation-resend requests for the
+422 case. The browser showed code entry on success and stayed on the email step
+with an error when resend returned 503. No real email was sent or account changed.

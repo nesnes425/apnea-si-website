@@ -31,6 +31,42 @@ test("network and provider outages do not claim that an OTP was delivered", asyn
   } finally { globalThis.fetch = original; }
 });
 
+test("unconfirmed pre-created accounts receive confirmation after signup_disabled 422", async () => {
+  const original = globalThis.fetch;
+  const requests: { path: string; body: unknown }[] = [];
+  globalThis.fetch = async (url, init) => {
+    const path = new URL(String(url)).pathname;
+    requests.push({ path, body: JSON.parse(String(init?.body)) });
+    return path.endsWith("/otp")
+      ? Response.json({ error_code: "signup_disabled", msg: "Signups not allowed for this instance" }, { status: 422 })
+      : Response.json({});
+  };
+  try {
+    const result = await sendLoginCode(" COACH@example.invalid ");
+    assert.deepEqual(requests, [
+      { path: "/auth/v1/otp", body: { email: "coach@example.invalid", create_user: false } },
+      { path: "/auth/v1/resend", body: { email: "coach@example.invalid", type: "signup" } },
+    ]);
+    assert.ok(result.message);
+    assert.equal(result.error, undefined);
+  } finally { globalThis.fetch = original; }
+});
+
+test("confirmation delivery failures after signup_disabled 422 do not claim success", async () => {
+  const original = globalThis.fetch;
+  try {
+    for (const status of [429, 500, 503]) {
+      globalThis.fetch = async (url) => String(url).endsWith("/otp")
+        ? Response.json({ error_code: "signup_disabled" }, { status: 422 })
+        : Response.json({}, { status });
+      const result = await sendLoginCode("coach@example.invalid");
+      assert.ok(result.error);
+      assert.equal(result.message, undefined);
+      assert.equal(result.retryAfter, status === 429 ? 60 : undefined);
+    }
+  } finally { globalThis.fetch = original; }
+});
+
 test("rate limits have a retry delay, including during account confirmation", async () => {
   const original = globalThis.fetch;
   try {
