@@ -389,7 +389,8 @@ function CourseStructure() {
         <p className="mt-10 max-w-3xl text-[14px] text-muted-text font-body leading-[1.6]">
           Cena vključuje SSI Freediving Level 1 certifikat in individualni
           pristop inštruktorja. Oprema je na voljo za izposojo z doplačilom
-          (40 €, brezplačno ob nakupu kosa opreme).
+          (50 €, ob izposoji prejmete bon za 30 % popusta v trgovini
+          Aquamania).
         </p>
       </div>
 

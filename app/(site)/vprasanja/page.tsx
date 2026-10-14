@@ -104,7 +104,7 @@ const sections = [
       { q: "Kakšno opremo potrebujem v času tečaja?", a: "Uporabljamo osnovno ABC potapljaško opremo, kar vključuje masko, dihalko, uteži, plavuti in potapljaško obleko. Priporočamo potapljaško obleko debeline 5 mm in 8 kg uteži. Zaželena je uporaba neoprenskih nogavic in rokavic. Opremo potrebujemo tako na bazenskem kot morskem delu tečaja." },
       {
         q: "Ali si lahko opremo izposodim?",
-        a: "Na voljo vam je izposoja vrhunske opreme za prosto potapljanje znamke Mares. Izposoja poteka v sodelovanju s trgovino Aquamania. V kolikor kupite kak kos opreme, na primer masko ali dihalko, je izposoja brezplačna, v nasprotnem primeru pa je izposoja celotne opreme za čas tečaja, bazen in globina, 40 €.",
+        a: "Na voljo vam je izposoja vrhunske opreme za prosto potapljanje znamke Mares. Izposoja poteka v sodelovanju s trgovino Aquamania. Izposoja celotne opreme za čas tečaja, bazen in globina, stane 50 €, ob izposoji pa prejmete bon za 30 % popusta pri nakupu v trgovini Aquamania, ki nima časovne omejitve.",
         content: (
           <>
             Na voljo vam je izposoja vrhunske opreme za prosto potapljanje
@@ -117,9 +117,9 @@ const sections = [
             >
               Aquamania
             </a>
-            . V kolikor kupite kak kos opreme, na primer masko ali dihalko, je
-            izposoja brezplačna, v nasprotnem primeru pa je izposoja celotne
-            opreme za čas tečaja, bazen in globina, 40 €.
+            . Izposoja celotne opreme za čas tečaja, bazen in globina, stane
+            50 €, ob izposoji pa prejmete bon za 30 % popusta pri nakupu v
+            trgovini Aquamania, ki nima časovne omejitve.
           </>
         ),
       },
