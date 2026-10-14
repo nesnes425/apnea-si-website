@@ -33,9 +33,22 @@ export type Session = {
   entries: Entry[];
   comment: string;
   version: number;
+  first_saved_at?: string | null;
   mail_status: "none" | "pending" | "sent" | "failed" | "uncertain";
   mail_subject: string | null;
 };
+// A correction never restarts the 48-hour window. Missing legacy timestamps fail closed.
+export function attendanceEditDeadline(s: Session): number | null {
+  const first = s.first_saved_at ? Date.parse(s.first_saved_at) : NaN;
+  return Number.isFinite(first) ? first + 48 * 60 * 60 * 1000 : null;
+}
+export function canEditAttendance(s: Session, user: Staff, today = ljubljanaDate(), now = new Date()) {
+  if (!user.active || (user.role !== "admin" && !sessionCoaches(s).includes(user.id)) ||
+      s.status === "cancelled" || s.date > today) return false;
+  if (s.status !== "closed" || user.role === "admin") return true;
+  const deadline = attendanceEditDeadline(s);
+  return deadline !== null && now.getTime() < deadline;
+}
 export function orderedSessions(sessions: Session[], now = new Date()) {
   // Compare scheduled local times in Slovenia, regardless of the device timezone.
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -148,6 +161,7 @@ export function closeSession(
   user: Staff,
   raw: unknown,
   today: string,
+  now = new Date(),
 ): Session {
   requireActive(user);
   const input = closeSchema.parse(raw);
@@ -160,8 +174,8 @@ export function closeSession(
     throw new Error(
       "Prihodnjega ali odpovedanega treninga ni mogoče zaključiti.",
     );
-  if (s.status === "closed" && user.role !== "admin")
-    throw new Error("Popravek zaključene evidence naj uredi vodstvo.");
+  if (!canEditAttendance(s, user, today, now))
+    throw new Error("Rok 48 ur od prvega shranjevanja je potekel. Popravek naj uredi vodstvo.");
   const ids = input.entries.map((e) => e.member_id);
   if (new Set(ids).size !== ids.length)
     throw new Error("Član je dodan večkrat.");
@@ -192,6 +206,7 @@ export function closeSession(
     comment: input.comment,
     status: "closed",
     version: s.version + 1,
+    first_saved_at: s.status === "closed" ? s.first_saved_at : now.toISOString(),
     mail_status: input.comment
       ? s.status !== "closed" || commentChanged
         ? "pending"
