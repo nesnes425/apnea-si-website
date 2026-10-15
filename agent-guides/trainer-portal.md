@@ -2,6 +2,26 @@
 
 Last updated: October 7, 2026
 
+## Unnamed roster rows — October 15, 2026
+
+Samo requested that rows with an empty or whitespace-only name field be ignored,
+even when an email address or note is present. The importer still processes the
+row's group/time/level header before skipping the member, so an empty group remains
+in the sync payload. Named members still require a valid email and a unique identity;
+source structure checks remain in place. The source Sheet is not modified.
+This does not attempt to infer missing names from email addresses or require a
+particular number of words in an entered name. Existing dated membership-history
+rules apply to the resulting roster; saved attendance history is retained.
+
+Run `node --test lib/portal/roster-source.test.mjs` for regression coverage.
+This change must reach the main-branch workflow before scheduled imports use it.
+
+Verification on October 15: four regression tests passed; the complete dry-run
+script passed against a localhost HTTP fixture. A read-only run against the current
+Sheet prepared 33 groups / 323 enrolments, skipping two unnamed nonempty rows.
+No source cells or database records were changed. Production webpack build passed;
+focused lint had no errors and the pre-existing unused `levels` warning.
+
 ## Status and scope
 
 Preview candidate on `codex/trenerji-pilot`; production merge is not approved.
