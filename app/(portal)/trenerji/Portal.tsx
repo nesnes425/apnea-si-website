@@ -39,6 +39,16 @@ function groupLevel(value?: string): Level {
   return "advanced";
 }
 const formatDate = (d: string) => d.split("-").reverse().join(". ");
+const weekdays = ["ponedeljek", "torek", "sreda", "četrtek", "petek", "sobota", "nedelja"];
+function weeklyGroupTime(label: string) {
+  // Group labels carry the recurring slot, including legacy hours such as 21–22.
+  const slot = label.toLocaleLowerCase("sl").match(
+    /(?:^|·)\s*(ponedeljek|torek|sreda|četrtek|petek|sobota|nedelja)\s+(\d{1,2})(?::(\d{2}))?/,
+  );
+  return slot
+    ? weekdays.indexOf(slot[1]) * 24 * 60 + Number(slot[2]) * 60 + Number(slot[3] || 0)
+    : Number.MAX_SAFE_INTEGER;
+}
 const mailLabels: Record<string, string> = {
   none: "Brez komentarja",
   pending: "Komentar čaka na pošiljanje",
@@ -461,8 +471,12 @@ function Dashboard({
   data: Snapshot;
   reload: () => Promise<void>;
 }) {
+  const groups = [...data.groups].sort((a, b) =>
+    weeklyGroupTime(a.label) - weeklyGroupTime(b.label) ||
+    a.label.localeCompare(b.label, "sl") || a.id.localeCompare(b.id),
+  );
   const [tab, setTab] = useState("attendance"),
-    [group, setGroup] = useState(data.groups[0]?.id || ""),
+    [group, setGroup] = useState(groups[0]?.id || ""),
     [month, setMonth] = useState("all"),
     [coach, setCoach] = useState("all"),
     [message, setMessage] = useState(""),
@@ -505,7 +519,7 @@ function Dashboard({
           aria-pressed={tab === "attendance"}
           onClick={() => {
             setTab("attendance");
-            if (group === "all") setGroup(data.groups[0]?.id || "");
+            if (group === "all") setGroup(groups[0]?.id || "");
           }}
         >
           Prisotnost članov
@@ -523,7 +537,7 @@ function Dashboard({
           Termin
           <select value={group} onChange={(e) => setGroup(e.target.value)}>
             {tab === "coaches" && <option value="all">Vsi termini</option>}
-            {data.groups.map((g) => (
+            {groups.map((g) => (
               <option value={g.id} key={g.id}>
                 {g.label} · {g.season}
               </option>
