@@ -24,6 +24,16 @@ focused lint had no errors and the pre-existing unused `levels` warning.
 
 ## Status and scope
 
+October 15, 2026: the management season dropdown sorts recurring slots from Monday
+to Sunday, then by start time, then Slovenian location/label order for ties. It uses
+the weekday/time in group labels, including legacy hour-only labels. Unrecognized
+labels sort last. The first chronological group is the initial selection in both
+attendance and coach-hour views; manual selections remain unchanged on rerender.
+Verified locally with synthetic groups covering all seven days, same-time locations,
+minute-level times and legacy labels. Browser checks confirmed the sorted menu and
+selection persistence between attendance and coach hours. Focused lint and the
+production webpack build (including TypeScript) passed. Publication is pending.
+
 Preview candidate on `codex/trenerji-pilot`; production merge is not approved.
 
 The verified import status at the end of this guide supersedes the dated setup
