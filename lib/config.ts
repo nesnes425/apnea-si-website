@@ -6,6 +6,14 @@ export const siteConfig = {
   description:
     "Največja šola prostega potapljanja v Sloveniji. SSI tečaji, treningi in klubsko potapljanje.",
 
+  // Keep published agreement versions stable: invoice consent hashes include this URL/text.
+  tuitionAgreement2026: {
+    version: "2026-27-v1",
+    title: "Dogovor o udeležbi na treningih 2026/27",
+    acceptanceText: "S prijavo na treninge in plačilom vadnine soglašate z Dogovorom o udeležbi na treningih 2026/27",
+    url: "https://drive.google.com/file/d/1Y3KLiXuqqajFmSBPNRKaAtj79Gk7rp2E/view",
+  },
+
   // Legal entities
   entities: {
     courses: {

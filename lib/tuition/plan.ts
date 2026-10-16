@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { siteConfig } from "../config";
 
 export const CLUB_STRIPE_ACCOUNT = "acct_1TfaIdEJ7wtq3TXq";
 export const TUITION_TYPE = "training_tuition";
@@ -47,11 +48,13 @@ export const planSchema = z
       .optional(),
     firstPaymentDeadline: z.iso.datetime({ offset: true }),
     cancellationDeadline: date,
+    // Absent on legacy plans: never change their stored fingerprint or notice.
+    agreementNoticeVersion: z.literal("2026-27-v1").optional(),
     approval: z
       .object({
         approvedBy: z.string().min(2).max(100),
         approvedAt: z.iso.datetime({ offset: true }),
-        agreementSigned: z.literal(true),
+        agreementSigned: z.boolean(),
         exceptionsResolved: z.literal(true),
         noPreviousPaymentOrInvoice: z.literal(true),
         personalPayerOnly: z.literal(true),
@@ -61,6 +64,23 @@ export const planSchema = z
   })
   .strict()
   .superRefine((p, ctx) => {
+    if (!p.approval.agreementSigned && !p.agreementNoticeVersion)
+      ctx.addIssue({
+        code: "custom",
+        path: ["approval", "agreementSigned"],
+        message: "An unsigned agreement requires the versioned notice accepted with payment",
+      });
+    if (
+      p.agreementNoticeVersion &&
+      [p.first, ...(p.second ? [p.second] : [])].some(
+        (i) => i.serviceFrom < "2026-09-30" || i.serviceTo > "2027-09-30",
+      )
+    )
+      ctx.addIssue({
+        code: "custom",
+        path: ["agreementNoticeVersion"],
+        message: "This agreement notice applies only to the 2026/27 season",
+      });
     if (
       p.second &&
       Date.parse(p.firstPaymentDeadline) + 86_400_000 >=
@@ -111,6 +131,10 @@ export function displayDate(value: string) {
   }).format(new Date(value.length === 10 ? `${value}T12:00:00Z` : value));
 }
 export function consentText(plan: TuitionPlan) {
+  const agreement = agreementNotice(plan);
+  return `${agreement ? `${agreement} ` : ""}${paymentConsentText(plan)}`;
+}
+export function paymentConsentText(plan: TuitionPlan) {
   if (!plan.second)
     return `Soglašam s plačilom vadnine ${euro(plan.first.amountCents)} (udeleženec: ${plan.participant}).`;
   const day = new Intl.DateTimeFormat("sl-SI", {
@@ -119,12 +143,19 @@ export function consentText(plan: TuitionPlan) {
   return `Soglašam s plačilom prvega obroka vadnine ${euro(plan.first.amountCents)} (udeleženec: ${plan.participant}), s shranitvijo kartice in z enim samodejnim plačilom drugega obroka ${euro(plan.second.amountCents)} dne ${day}. Po drugem obroku se plačila končajo. Odpoved drugega obroka sporočite društvu do ${displayDate(plan.cancellationDeadline)}.`;
 }
 
+export function agreementNotice(plan: TuitionPlan) {
+  if (!plan.agreementNoticeVersion) return "";
+  const agreement = siteConfig.tuitionAgreement2026;
+  return `${agreement.acceptanceText}: ${agreement.url}.`;
+}
+
 // This exact statement is shown in Stripe's email, hosted payment page and PDF.
 // Paying the displayed request authorizes the described finite card arrangement.
 export function invoicePaymentNotice(plan: TuitionPlan) {
   const second = plan.second;
   const notice = [
     `Plačilni poziv za ${second ? "1. obrok vadnine" : "vadnino"}: ${euro(plan.first.amountCents)}.`,
+    ...(plan.agreementNoticeVersion ? [agreementNotice(plan)] : []),
     ...(second
       ? [
           `S plačilom soglašate s shranitvijo kartice in enim samodejnim plačilom ${euro(second.amountCents)} dne ${displayDate(second.chargeAt)}.`,

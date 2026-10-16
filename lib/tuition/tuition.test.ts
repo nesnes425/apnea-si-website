@@ -132,9 +132,8 @@ test("a crashed sending operation requires provider reconciliation", async () =>
     "uncertain",
   );
 });
-test("unapproved/company/unsigned/ambiguous obligations are rejected", () => {
+test("unapproved/company/ambiguous obligations are rejected", () => {
   for (const key of [
-    "agreementSigned",
     "exceptionsResolved",
     "personalPayerOnly",
     "noPreviousPaymentOrInvoice",

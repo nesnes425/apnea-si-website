@@ -31,6 +31,7 @@
   },
   "firstPaymentDeadline": "2026-10-31T23:59:00+01:00",
   "cancellationDeadline": "2026-11-30",
+  "agreementNoticeVersion": "2026-27-v1",
   "approval": {
     "approvedBy": "Synthetic example only",
     "approvedAt": "2026-10-16T09:00:00+02:00",
