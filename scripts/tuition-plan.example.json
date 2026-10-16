@@ -1,0 +1,43 @@
+{
+  "id": "b41d5dd2-ff7a-45a6-935a-d08b03f9d525",
+  "payerId": "17fef203-c2ca-4ef4-99a5-9eeae1250a17",
+  "mode": "test",
+  "source": {
+    "spreadsheetId": "1WiIeVtQgJR0gKKOEt2-4ZLrJfdJ-AuozVWY0kMpWqHM",
+    "row": 2,
+    "obligationId": "SYNTHETIC-2026-27-EXAMPLE"
+  },
+  "payer": {
+    "name": "Preizkusni plačnik",
+    "email": "tuition-test@example.invalid",
+    "address": "Preizkusna ulica 1",
+    "postalCode": "1000",
+    "city": "Ljubljana",
+    "country": "SI"
+  },
+  "participant": "Preizkusni udeleženec",
+  "locationCode": "TEST-POOL",
+  "description": "Vadnina 2026/27",
+  "first": {
+    "amountCents": 32500,
+    "serviceFrom": "2026-10-05",
+    "serviceTo": "2027-06-14"
+  },
+  "second": {
+    "amountCents": 26000,
+    "chargeAt": "2026-12-11T09:00:00+01:00",
+    "serviceFrom": "2026-10-05",
+    "serviceTo": "2027-06-14"
+  },
+  "firstPaymentDeadline": "2026-10-31T23:59:00+01:00",
+  "cancellationDeadline": "2026-11-30",
+  "approval": {
+    "approvedBy": "Synthetic example only",
+    "approvedAt": "2026-10-16T09:00:00+02:00",
+    "agreementSigned": true,
+    "exceptionsResolved": true,
+    "noPreviousPaymentOrInvoice": true,
+    "personalPayerOnly": true,
+    "accountingPolicy": "service_per_instalment"
+  }
+}

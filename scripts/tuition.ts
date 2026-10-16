@@ -1,0 +1,129 @@
+// Operator client: only a scoped tuition API key is needed on Samo's computer.
+// Run: npm run tuition -- preview temp/tuition-plan.json
+import { readFile } from "node:fs/promises";
+import {
+  planSchema,
+  consentText,
+  euro,
+  fingerprint,
+} from "../lib/tuition/plan";
+import { z } from "zod";
+
+async function main() {
+  const [command, input, ...flags] = process.argv.slice(2);
+  const applied = flags.includes("--apply");
+  const usage =
+    "Use preview/create <plan.json>, status/sync <plan-uuid>, or cancel <plan-uuid> --reason <reason>. Mutations require --apply.";
+  if (
+    !command ||
+    !input ||
+    !["preview", "create", "status", "sync", "cancel"].includes(command)
+  )
+    throw new Error(usage);
+  const plan = ["preview", "create"].includes(command)
+    ? planSchema.parse(JSON.parse(await readFile(input, "utf8")))
+    : null;
+  if (plan) {
+    console.log(
+      JSON.stringify(
+        {
+          id: plan.id,
+          mode: plan.mode,
+          participant: plan.participant,
+          payer: `${plan.payer.name} <${plan.payer.email}>`,
+          first: euro(plan.first.amountCents),
+          second: plan.second
+            ? {
+                amount: euro(plan.second.amountCents),
+                at: plan.second.chargeAt,
+              }
+            : null,
+          servicePeriods: [
+            plan.first,
+            ...(plan.second ? [plan.second] : []),
+          ].map((p) => `${p.serviceFrom}–${p.serviceTo}`),
+          firstPaymentDeadline: plan.firstPaymentDeadline,
+          accounting: plan.approval.accountingPolicy,
+          source: plan.source,
+          approvedBy: plan.approval.approvedBy,
+          fingerprint: fingerprint(plan),
+          consent: consentText(plan),
+        },
+        null,
+        2,
+      ),
+    );
+  }
+  if (command === "preview" || (command !== "status" && !applied)) {
+    console.log(
+      "Preview only. No API request, payment link, invoice or email was created.",
+    );
+    process.exit(0);
+  }
+  const base = process.env.TUITION_API_URL;
+  const key = process.env.TUITION_ADMIN_KEY;
+  if (!base || !key)
+    throw new Error(
+      "Set TUITION_API_URL and TUITION_ADMIN_KEY locally; never paste keys into chat or Git.",
+    );
+  const url = new URL("/api/tuition/plans", base);
+  if (
+    url.protocol !== "https:" &&
+    !["localhost", "127.0.0.1"].includes(url.hostname)
+  )
+    throw new Error("Tuition API requires HTTPS");
+  let body: unknown;
+  if (command === "create") body = { action: "create", plan };
+  else {
+    z.uuid().parse(input);
+    if (command === "status") url.searchParams.set("id", input);
+    else if (command === "cancel") {
+      const index = flags.indexOf("--reason"),
+        reason = index < 0 ? undefined : flags[index + 1];
+      if (!reason || reason.length < 10)
+        throw new Error(
+          "Cancellation requires --reason with at least 10 characters",
+        );
+      body = { action: "cancel", id: input, reason };
+    } else body = { action: "sync", id: input };
+  }
+  const response = await fetch(url, {
+    method: command === "status" ? "GET" : "POST",
+    headers: {
+      authorization: `Bearer ${key}`,
+      "content-type": "application/json",
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(65_000),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(JSON.stringify(result));
+  if (command === "status") {
+    const p = result.plan;
+    console.log(
+      JSON.stringify(
+        {
+          id: p.id,
+          mode: p.manifest.mode,
+          customer: p.customer_id,
+          firstPayment: p.first_payment_id,
+          secondSchedule: p.schedule_id,
+          cancellationRequested: p.cancelled_at,
+          cancellationConfirmed: p.cancellation_confirmed,
+          error: p.error,
+          collectionError: p.collection_error,
+          collectionInvoice: p.collection_invoice_id,
+          payments: result.payments,
+        },
+        null,
+        2,
+      ),
+    );
+  } else console.log(JSON.stringify(result, null, 2));
+}
+main().catch((error) => {
+  console.error(
+    error instanceof Error ? error.message : "Tuition command failed",
+  );
+  process.exitCode = 1;
+});

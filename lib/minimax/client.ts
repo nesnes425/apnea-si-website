@@ -39,6 +39,10 @@ export type MinimaxIssuedInvoice = {
   Status?: string;
   InvoiceAttachment?: MinimaxDocumentAttachment;
   RowVersion?: string;
+  PaymentStatus?: string;
+  InvoiceValue?: number;
+  PaidValue?: number;
+  Customer?: MinimaxFkField;
 };
 
 export type MinimaxIssuedInvoiceSearch = {
@@ -87,6 +91,8 @@ function minimaxAuthUrl() {
 
 function makeUrl(pathOrUrl: string) {
   if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    if (new URL(pathOrUrl).origin !== new URL(minimaxApiBase()).origin)
+      throw new Error("Refusing Minimax resource outside the configured API origin");
     return pathOrUrl;
   }
   const base = minimaxApiBase().replace(/\/$/, "");
@@ -229,16 +235,19 @@ export async function listIssuedInvoices(params: {
   dateIssuedFrom?: string;
   dateIssuedTo?: string;
   pageSize?: number;
+  currentPage?: number;
+  customerId?: number;
 }): Promise<MinimaxIssuedInvoiceSearch[]> {
   const query = new URLSearchParams({
     InvoiceType: params.invoiceType,
-    CurrentPage: "1",
+    CurrentPage: String(params.currentPage ?? 1),
     PageSize: String(params.pageSize ?? 50),
     SortField: "DateIssued",
     Order: "D",
   });
   if (params.dateIssuedFrom) query.set("DateIssuedFrom", params.dateIssuedFrom);
   if (params.dateIssuedTo) query.set("DateIssuedTo", params.dateIssuedTo);
+  if (params.customerId) query.set("CustomerID", String(params.customerId));
 
   const response = await minimaxFetch<MinimaxSearchResult<MinimaxIssuedInvoiceSearch>>(
     `/api/orgs/${params.organisationId}/issuedinvoices?${query.toString()}`

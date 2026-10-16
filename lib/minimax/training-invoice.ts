@@ -262,7 +262,7 @@ async function resolveAttachment(
   }
 
   const documentId = attachment.Document?.ID;
-  const attachmentId = attachment.DocumentAttachmentId ?? attachment.ID;
+  const attachmentId = attachment.DocumentAttachmentId ?? attachment.AttachmentId ?? attachment.ID;
   if (documentId && attachmentId) {
     return getDocumentAttachment({ organisationId, documentId, attachmentId });
   }
@@ -270,10 +270,17 @@ async function resolveAttachment(
   return attachment;
 }
 
-async function getInvoicePdf(params: {
+export async function getInvoicePdf(params: {
   organisationId: number;
   issuedInvoiceId: number;
+  invoiceOnly?: boolean;
 }): Promise<{ fileName: string; contentBase64: string } | undefined> {
+  if (params.invoiceOnly) {
+    const invoice = await getIssuedInvoice(params);
+    const official = await resolveAttachment(params.organisationId, invoice.InvoiceAttachment);
+    if (!official?.AttachmentData) return undefined;
+    return { fileName: official.AttachmentFileName ?? official.FileName ?? `minimax-racun-${params.issuedInvoiceId}.pdf`, contentBase64: official.AttachmentData };
+  }
   const attachments = await listIssuedInvoiceAttachments(params);
   const invoicePdf = attachments.find((attachment) => attachment.AttachmentData);
   if (invoicePdf?.AttachmentData) {

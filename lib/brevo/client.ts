@@ -117,6 +117,7 @@ export async function sendTransactionalEmail(params: {
   html: string;
   replyTo?: { email: string; name?: string };
   attachments?: EmailAttachment[];
+  idempotencyKey?: string;
 }): Promise<void> {
   const attachment = params.attachments?.map((a) => ({
     name: a.name,
@@ -136,6 +137,7 @@ export async function sendTransactionalEmail(params: {
       htmlContent: params.html,
       replyTo: params.replyTo,
       attachment,
+      ...(params.idempotencyKey ? { headers: { idempotencyKey: params.idempotencyKey } } : {}),
     }),
   });
 }

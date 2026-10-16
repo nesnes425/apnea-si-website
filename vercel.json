@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/tuition/reconcile",
+      "schedule": "0 5 * * *"
+    },
+    {
       "path": "/api/portal/comments",
       "schedule": "0 4 * * *"
     },
