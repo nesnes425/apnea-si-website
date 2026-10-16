@@ -21,11 +21,35 @@ await db.exec(
     "utf8",
   ),
 );
+await db.exec(
+  await readFile(
+    new URL(
+      "../supabase/migrations/20261016134033_tuition_stripe_invitation.sql",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
 const id = "b41d5dd2-ff7a-45a6-935a-d08b03f9d525",
   token = "17fef203-c2ca-4ef4-99a5-9eeae1250a17";
 await db.query(
   "insert into public.tuition_plans(id,manifest,fingerprint,source_obligation,mode) values($1,$2,'hash','obligation-1','test')",
   [id, { second: { amountCents: 26000 } }],
+);
+assert.equal(
+  (
+    await db.query(
+      "select first_payment_flow,invitation_state from public.tuition_plans where id=$1",
+      [id],
+    )
+  ).rows[0].first_payment_flow,
+  "checkout",
+);
+await assert.rejects(() =>
+  db.query(
+    "update public.tuition_plans set invitation_state='resend_automatically' where id=$1",
+    [id],
+  ),
 );
 for (const role of ["anon", "authenticated"]) {
   await db.exec(`set role ${role}`);

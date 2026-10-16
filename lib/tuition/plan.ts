@@ -118,3 +118,26 @@ export function consentText(plan: TuitionPlan) {
   }).format(new Date(plan.second.chargeAt));
   return `Soglašam s plačilom prvega obroka vadnine ${euro(plan.first.amountCents)} (udeleženec: ${plan.participant}), s shranitvijo kartice in z enim samodejnim plačilom drugega obroka ${euro(plan.second.amountCents)} dne ${day}. Po drugem obroku se plačila končajo. Odpoved drugega obroka sporočite društvu do ${displayDate(plan.cancellationDeadline)}.`;
 }
+
+// This exact statement is shown in Stripe's email, hosted payment page and PDF.
+// Paying the displayed request authorizes the described finite card arrangement.
+export function invoicePaymentNotice(plan: TuitionPlan) {
+  const second = plan.second;
+  const notice = [
+    `Plačilni poziv za ${second ? "1. obrok vadnine" : "vadnino"}: ${euro(plan.first.amountCents)}.`,
+    ...(second
+      ? [
+          `S plačilom soglašate s shranitvijo kartice in enim samodejnim plačilom ${euro(second.amountCents)} dne ${displayDate(second.chargeAt)}.`,
+          `Po drugem obroku se plačila končajo. Odpoved sporočite društvu do ${displayDate(plan.cancellationDeadline)}.`,
+        ]
+      : []),
+    "Uradni račun prejmete iz Minimaxa po plačilu.",
+    `Pogoji: ${process.env.TUITION_SITE_URL ?? "https://www.apnea.si"}/pogoji.`,
+  ].join(" ");
+  if (notice.length > 500)
+    throw new Error("Stripe payment notice exceeds its limit");
+  return notice;
+}
+export function invoiceConsentHash(plan: TuitionPlan) {
+  return createHash("sha256").update(invoicePaymentNotice(plan)).digest("hex");
+}

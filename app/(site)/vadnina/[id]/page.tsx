@@ -65,6 +65,13 @@ export default async function TuitionPaymentPage({
                   ? `Dogovorjeni datum drugega obroka: ${displayDate(p.second.chargeAt)}.`
                   : "Nadaljnjih samodejnih plačil ni."}
             </p>
+          ) : !closed &&
+            record.first_payment_flow === "stripe_invoice" &&
+            record.invitation_state !== "submitted" ? (
+            <p className="text-body">
+              Plačilni poziv še pripravljamo. Ko bo pripravljen, boste prejeli
+              sporočilo iz Stripa.
+            </p>
           ) : closed ? (
             <p className="text-body">
               Ta povezava za plačilo ni več aktivna. Za dogovor se obrnite na

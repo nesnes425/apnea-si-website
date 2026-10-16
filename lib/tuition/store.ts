@@ -6,6 +6,12 @@ export type PlanRecord = {
   id: string;
   manifest: TuitionPlan;
   fingerprint: string;
+  first_payment_flow?: "checkout" | "stripe_invoice";
+  first_invoice_id?: string | null;
+  consent_invoice_id?: string | null;
+  invitation_state?: "not_sent" | "sending" | "submitted" | "uncertain";
+  invitation_requested_at?: string | null;
+  invitation_submitted_at?: string | null;
   customer_id: string | null;
   checkout_id: string | null;
   schedule_id: string | null;
@@ -77,6 +83,7 @@ export async function insertPlan(manifest: TuitionPlan, hash: string) {
       id: manifest.id,
       manifest,
       fingerprint: hash,
+      first_payment_flow: "stripe_invoice",
       source_obligation: manifest.source.obligationId,
       mode: manifest.mode,
     });

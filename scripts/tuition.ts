@@ -13,11 +13,11 @@ async function main() {
   const [command, input, ...flags] = process.argv.slice(2);
   const applied = flags.includes("--apply");
   const usage =
-    "Use preview/create <plan.json>, status/sync <plan-uuid>, or cancel <plan-uuid> --reason <reason>. Mutations require --apply.";
+    "Use preview/create <plan.json>, status/send/sync <plan-uuid>, or cancel <plan-uuid> --reason <reason>. Mutations require --apply.";
   if (
     !command ||
     !input ||
-    !["preview", "create", "status", "sync", "cancel"].includes(command)
+    !["preview", "create", "status", "send", "sync", "cancel"].includes(command)
   )
     throw new Error(usage);
   const plan = ["preview", "create"].includes(command)
@@ -106,6 +106,10 @@ async function main() {
           id: p.id,
           mode: p.manifest.mode,
           customer: p.customer_id,
+          firstPaymentFlow: p.first_payment_flow,
+          stripePaymentRequest: p.first_invoice_id,
+          invitationState: p.invitation_state,
+          invitationSubmittedAt: p.invitation_submitted_at,
           firstPayment: p.first_payment_id,
           secondSchedule: p.schedule_id,
           cancellationRequested: p.cancelled_at,
