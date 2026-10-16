@@ -1,11 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { trainerPortalConfig } from "@/lib/config";
 import { useAttendanceDraft } from "./useAttendanceDraft";
 import {
   coachHours,
+  canEditAttendance,
+  attendanceEditDeadline,
   orderedSessions,
   selectedSession,
   sessionCoaches,
@@ -125,7 +127,7 @@ export default function Portal({
                     {formatDate(s.date)} ·{" "}
                     {data.groups.find((g) => g.id === s.group_id)?.label}{" "}
                     {s.status === "closed"
-                      ? "· zaključeno"
+                      ? "· shranjeno"
                       : s.status === "cancelled"
                         ? "· odpovedano"
                         : ""}
@@ -221,10 +223,15 @@ function SessionForm({
   reload: () => Promise<void>;
 }) {
   const roster = sessionRoster(data, s);
-  const locked =
-    s.status === "cancelled" ||
-    s.date > ljubljanaDate() ||
-    (s.status === "closed" && user.role !== "admin");
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const refresh = () => setNow(new Date());
+    const timer = window.setInterval(refresh, 1000);
+    window.addEventListener("focus", refresh);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); };
+  }, []);
+  const locked = !canEditAttendance(s, user, ljubljanaDate(now), now);
+  const editDeadline = attendanceEditDeadline(s);
   const draft = useAttendanceDraft({
     userId: user.id, sessionId: s.id, version: s.version, demo, locked,
     rosterIds: roster.map(member => member.id),
@@ -257,11 +264,16 @@ function SessionForm({
       </p>
       {s.status === "closed" && (
         <p className="portal-notice">
-          Evidenca zaključena ·{" "}
+          Prisotnost shranjena ·{" "}
           {demo && s.comment
             ? "Testni komentar shranjen, ni poslan"
             : mailLabels[s.mail_status] || s.mail_status}
         </p>
+      )}
+      {s.status === "closed" && user.role !== "admin" && (
+        <p className="portal-muted">{locked
+          ? "Rok za popravljanje je potekel. Za popravek se obrnite na vodstvo."
+          : `Prisotnost lahko popravljate do ${new Intl.DateTimeFormat("sl-SI", { timeZone: "Europe/Ljubljana", dateStyle: "medium", timeStyle: "short" }).format(new Date(editDeadline!))}. Rok velja 48 ur od prvega shranjevanja.`}</p>
       )}
       {s.date > ljubljanaDate() && (
         <p className="portal-notice">
@@ -285,7 +297,7 @@ function SessionForm({
           {[...roster, ...draft.previousDraft!.guests].find(member => member.id === id)?.name || "Član"}: {value === "present" ? "Da" : "Ne"}
         </p>)}
         <p className="portal-program">{draft.previousDraft.comment}</p>
-        {s.status === "planned" && <button className="portal-secondary" disabled={busy} onClick={() => draft.update(draft.previousDraft!)}>Obnovi osnutek za pregled</button>}
+        {!locked && <button className="portal-secondary" disabled={busy} onClick={() => draft.update(draft.previousDraft!)}>Obnovi osnutek za pregled</button>}
       </details>}
       {people.map((p) => (
         <div className="portal-row" key={p.id}>

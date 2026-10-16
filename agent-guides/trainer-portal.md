@@ -667,3 +667,37 @@ webpack build passed. The built app at localhost:3101, using a local-only Auth s
 and synthetic addresses, made both OTP and confirmation-resend requests for the
 422 case. The browser showed code entry on success and stayed on the email step
 with an error when resend returned 503. No real email was sent or account changed.
+
+## Attendance corrections within 48 hours — October 14, 2026
+
+Samo approved trainer corrections for **48 elapsed hours after the first successful
+save**, not after the training time. `first_saved_at` is assigned by the database
+on the first save, remains unchanged on every correction (including admin edits),
+and is returned in snapshots. Existing closed sessions recover their original
+first save from the earliest audit transition to closed. Missing historical evidence
+leaves a closed session admin-only; migration time never starts a new window.
+
+The assigned primary/additional coach may change attendance and add makeup members
+before the deadline. At or after the deadline, only active admins may correct it.
+Cancelled/future sessions and other coaches remain inaccessible. Substitution
+assignment still requires a planned session; saved hours retain their actual coaches.
+The server enforces the deadline under the session lock; the UI shows the deadline
+in Europe/Ljubljana and refreshes its editing state while open. Repeated saves keep
+one session for hours, audit each correction, and do not resend an unchanged comment.
+Existing local draft restoration also works for corrections during the window.
+
+Verification uses `scripts/test-portal-edit-window.mjs` with test-only PGlite and
+`lib/portal/model.test.ts`. Deploy the new database migration before the frontend:
+older closed records missing `first_saved_at` fail closed. This entry describes the
+prepared change; production activation still requires the normal release gate.
+
+Local checks passed: 23 portal unit tests; isolated PostgreSQL tests for the original
+save backfill, repeated corrections and late guests, both assigned coaches, exact
+48-hour cutoff, admin correction after expiry, stale versions, unauthorized users,
+server-owned timestamps, unchanged-comment deduplication and one saved session.
+Browser checks on localhost verified first save, two subsequent corrections with
+an unchanged deadline, persistence on reload, and disabled controls after simulated
+expiry. Only synthetic local records were used. Read-only production inspection
+found all 21 currently saved sessions have a recoverable first-save audit event.
+Focused lint, TypeScript and the production webpack build passed as well. The first
+sandboxed build could not reach Sanity; the permitted network build passed.
