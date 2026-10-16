@@ -112,6 +112,54 @@ export function tuitionInvoicePayload(
   };
 }
 
+// GET returns provider-calculated fields as well as the submitted invoice rows.
+// Missing evidence is a reconciliation error, never permission to issue a draft.
+export function assertTuitionInvoiceMatches(
+  invoice: MinimaxIssuedInvoice,
+  expected: ReturnType<typeof tuitionInvoicePayload>,
+  amountCents: number,
+) {
+  const row = invoice.IssuedInvoiceRows?.[0];
+  const wanted = expected.IssuedInvoiceRows[0];
+  const method = invoice.IssuedInvoicePaymentMethods?.[0];
+  const cents = (n: unknown) =>
+    typeof n === "number" && Number.isFinite(n) ? Math.round(n * 100) : NaN;
+  if (
+    !["O", "I"].includes(invoice.Status ?? "") ||
+    invoice.DocumentReference !== expected.DocumentReference ||
+    invoice.Customer?.ID !== expected.Customer.ID ||
+    invoice.Currency?.ID !== expected.Currency.ID ||
+    invoice.DocumentNumbering?.ID !== expected.DocumentNumbering.ID ||
+    cents(invoice.InvoiceValue) !== amountCents ||
+    invoice.DateTransactionFrom?.slice(0, 10) !==
+      expected.DateTransactionFrom ||
+    invoice.DateTransaction?.slice(0, 10) !== expected.DateTransaction ||
+    invoice.DescriptionBelow?.replace(/\r\n/g, "\n") !==
+      expected.DescriptionBelow ||
+    invoice.InvoiceType !== expected.InvoiceType ||
+    invoice.PricesOnInvoice !== expected.PricesOnInvoice ||
+    invoice.InvoiceForPeriod !== expected.InvoiceForPeriod ||
+    invoice.IssuedInvoiceRows?.length !== 1 ||
+    row?.Item?.ID !== wanted.Item.ID ||
+    row.ItemName !== wanted.ItemName ||
+    row.Description !== wanted.Description ||
+    row.Quantity !== 1 ||
+    cents(row.Price) !== amountCents ||
+    row.VATPercent !== 0 ||
+    row.VatRate?.ID !== wanted.VatRate.ID ||
+    (row.DiscountPercent ?? 0) !== 0 ||
+    (row.Discount ?? 0) !== 0 ||
+    invoice.IssuedInvoicePaymentMethods?.length !== 1 ||
+    method?.PaymentMethod?.ID !==
+      expected.IssuedInvoicePaymentMethods[0].PaymentMethod.ID ||
+    cents(method.Amount) !== amountCents ||
+    method.AlreadyPaid !== "D"
+  )
+    throw new Error(
+      "Minimax document differs from approved tuition; reconcile before issuing or sending",
+    );
+}
+
 export function assertIssuedAndPaid(
   invoice: MinimaxIssuedInvoice,
   amountCents: number,
@@ -211,7 +259,7 @@ export async function issueTuitionInvoice(
     : await findByReference(organisationId, customer.CustomerId, payment.id);
   if (invoice && invoice.DocumentReference !== payment.id)
     throw new Error("Stored Minimax document reference mismatch");
-  if (invoice?.Customer?.ID && invoice.Customer.ID !== customer.CustomerId)
+  if (invoice && invoice.Customer?.ID !== customer.CustomerId)
     throw new Error("Minimax payer mismatch");
   if (!invoice) {
     if (payment.invoice_state !== "pending")
@@ -237,6 +285,8 @@ export async function issueTuitionInvoice(
       minimax_id: invoice.IssuedInvoiceId,
       invoice_state: "created",
     });
+  const expected = tuitionInvoicePayload(p, payment, customer.CustomerId);
+  assertTuitionInvoiceMatches(invoice, expected, payment.amount_cents);
   if (invoice.Status !== "I") {
     if (!invoice.RowVersion) throw new Error("Missing Minimax row version");
     await runIssuedInvoiceAction({
@@ -250,6 +300,7 @@ export async function issueTuitionInvoice(
       issuedInvoiceId: invoice.IssuedInvoiceId,
     });
   }
+  assertTuitionInvoiceMatches(invoice, expected, payment.amount_cents);
   assertIssuedAndPaid(invoice, payment.amount_cents, payment.id);
   await save({ invoice_state: "issued", minimax_id: invoice.IssuedInvoiceId });
   let pdf = await getInvoicePdf({

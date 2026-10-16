@@ -32,6 +32,30 @@ export type MinimaxDocumentAttachment = {
 };
 
 export type MinimaxIssuedInvoice = {
+  Currency?: MinimaxFkField;
+  DocumentNumbering?: MinimaxFkField;
+  DateTransactionFrom?: string;
+  DateTransaction?: string;
+  DescriptionBelow?: string;
+  InvoiceType?: string;
+  PricesOnInvoice?: string;
+  InvoiceForPeriod?: string;
+  IssuedInvoiceRows?: {
+    Item?: MinimaxFkField;
+    ItemName?: string;
+    Description?: string;
+    Quantity?: number;
+    Price?: number;
+    VATPercent?: number;
+    VatRate?: MinimaxFkField;
+    DiscountPercent?: number;
+    Discount?: number;
+  }[];
+  IssuedInvoicePaymentMethods?: {
+    PaymentMethod?: MinimaxFkField;
+    Amount?: number;
+    AlreadyPaid?: string;
+  }[];
   IssuedInvoiceId: number;
   Year?: number;
   InvoiceNumber?: number;

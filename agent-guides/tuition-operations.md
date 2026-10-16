@@ -4,11 +4,11 @@ Last updated: October 16, 2026
 
 ## Current delivery state
 
-Production PR #29 currently uses Checkout for the first payment. The local
-branch `codex/tuition-stripe-email` adds Stripe-originated initial invoice emails;
-it is not published yet. Do not send real invitations until that change and its
-private-state migration are released and verified. Existing Checkout plans keep
-their original flow; new plans use Stripe Invoicing.
+Production PR #30 (`e5dac86`) sends the initial invoice email through Stripe
+after explicit `send`; `create` prepares an unsent draft. Its private-state
+migration is already applied. Existing Checkout plans keep their original flow.
+The local agreement-notice change is not released yet: until its approved release,
+production still requires `approval.agreementSigned=true`.
 
 Neža explicitly allows Stripe's payment-request invoice/PDF. Minimax must still
 create exactly one official service invoice for each verified paid instalment.
@@ -72,7 +72,8 @@ that pool's Minimax item.
 
 Exclude company invoices (manual Minimax), bank standing orders and unresolved
 exceptions. For a split payer, prepare Stripe only for the specifically approved
-personal share; the company share stays manual. Require a signed agreement,
+personal share; the company share stays manual. Require a signed agreement or
+the versioned agreement notice described below,
 resolved decisions and an explicit check for existing payments/invoices before
 approving a manifest. One-payment exceptions omit `second` entirely.
 
@@ -103,6 +104,34 @@ of inbox delivery. Test mode emits invoice.sent but never delivers the real emai
 Sending invitations/reminders needs the operator's explicit instruction. Do not invent a reminder policy. A repeated
 create with identical IDs/input returns the same obligation; changed input or a
 duplicate source obligation is rejected for review.
+
+## Agreement acceptance with payment (local change, October 16)
+
+Samo requested that the notice also state that registration and tuition payment
+accept the 2026/27 participation agreement. New reviewed manifests use
+`agreementNoticeVersion="2026-27-v1"`. Keep `approval.agreementSigned` truthful:
+false is accepted only with that explicit notice version and a service period
+within the agreement season. Other amount, payer, previous-payment and operator
+approval checks remain required. Do not mark a Google Form signed merely because
+a request was created or sent. Do not infer a separate liability or guardian
+declaration from the new participation-agreement sentence.
+
+The version refers to the existing public PDF linked by `siteConfig.tuitionAgreement2026`
+(Drive metadata/read verified October 16), already used in the season emails.
+It appears in the Stripe invoice description and the website payment page.
+The notice hash covers the agreement text/link as well as the finite card consent;
+the verified paid invoice/session is the acceptance evidence. CLI `status` reports
+`acceptedWithPayment` only after that evidence and the first payment exist.
+The card-storage/second-charge consent is still explicit. Plans without the new
+version keep their exact old fingerprints and notices; never retrofit an existing
+Stripe invoice by changing only its manifest. No database migration is needed.
+
+Reuse verified membership payer addresses, matching the actual payer rather than
+email alone. Missing Sheet address cells are not proof that data was never collected.
+Keep address/payment evidence only in ignored operational drafts or source systems.
+
+The CLI now routes `send --apply` to the actual `send` action; it previously
+incorrectly called `sync`. Sending still requires a separate explicit instruction.
 
 ## Payer and integration flow
 
@@ -254,3 +283,40 @@ PORTAL_PGLITE_MODULE=/path/to/@electric-sql/pglite/dist/index.js node scripts/te
 Tests cover replay handling, uncertain accounting/email outcomes, matching paid
 amounts/mode/customer, finite schedule configuration and private SQL access/leases.
 They do not create native Stripe objects, accounting records or messages.
+
+
+## First-payment recovery and Minimax draft verification (pending release)
+
+Apply `supabase/migrations/20261016152641_tuition_atomic_first_payment.sql`
+with the separately approved release, before deploying this code. It adds a
+service-role-only, lease-checked RPC that commits first payment and the verified
+invoice/Checkout consent pointer in one transaction. It leaves the existing
+second-payment RPC and stored manifests intact. Do not reapply the older bridge
+or invitation migrations under their repository timestamps if already hosted.
+
+Cron and operator sync now recover legacy partial first-payment writes by
+re-reading Stripe's paid invoice or Checkout and the original consent evidence.
+They never infer consent from a payment row. Missing or mismatching evidence
+remains in pending work with an error; accounting/email waits for reconciliation.
+Cancellation is attempted before consent recovery. Replaying a verified payment
+preserves the one-payment/one-finite-schedule constraints.
+
+Every recovered or newly created Minimax invoice is validated before issuance:
+payer, reference, currency, series, total, service dates, item, instalment text,
+quantity/price, zero VAT/rate/clause and the paid-card mapping must match the
+approved payload. Missing fields also hold the invoice. The same check runs again
+after issuance, followed by the existing issued/fully-paid/PDF checks. Never
+manually bypass a mismatch to send a receipt; reconcile the provider record first.
+GET field schema: https://moj.minimax.si/SI/API/Help/Api/GET-api-orgs-organisationId-issuedinvoices-issuedInvoiceId
+
+Local recovery regression (synthetic providers, disposable PostgreSQL):
+
+```sh
+PORTAL_PGLITE_MODULE=/path/to/@electric-sql/pglite/dist/index.js node --import tsx scripts/tuition-recovery.test.mjs
+```
+
+This covers rollback between writes, invoice and Checkout legacy recovery, invalid
+consent remaining pending after accounting is complete, replay without a duplicate
+schedule, conflicting payments, expired leases and private RPC grants. The Minimax
+HTTP test includes changed and missing draft fields and verifies zero issue calls
+for every mismatch. No live charge, accounting document or message is a test fixture.

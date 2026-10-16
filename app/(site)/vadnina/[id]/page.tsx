@@ -2,8 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { getPlan, claimPlan, releasePlan } from "@/lib/tuition/store";
 import { tuitionCheckout } from "@/lib/tuition/stripe";
-import { consentText, displayDate, euro } from "@/lib/tuition/plan";
+import { paymentConsentText, displayDate, euro } from "@/lib/tuition/plan";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/lib/config";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Plačilo vadnine",
@@ -25,8 +26,9 @@ export default async function TuitionPaymentPage({
   if (!record) notFound();
   const p = record.manifest;
   const query = await searchParams;
-  const closed =
-    record.cancelled_at || Date.parse(p.firstPaymentDeadline) < Date.now();
+  // This dynamic server response must evaluate expiry at request time.
+  // eslint-disable-next-line react-hooks/purity
+  const closed = record.cancelled_at || Date.parse(p.firstPaymentDeadline) < Date.now();
   async function pay() {
     "use server";
     let url: string | null = null;
@@ -82,7 +84,20 @@ export default async function TuitionPaymentPage({
               <p className="mb-5 text-2xl font-bold text-navy">
                 Zdaj: {euro(p.first.amountCents)}
               </p>
-              <p className="mb-6 text-body">{consentText(p)}</p>
+              {p.agreementNoticeVersion && (
+                <p className="mb-6 text-body">
+                  {siteConfig.tuitionAgreement2026.acceptanceText}.{" "}
+                  <a
+                    href={siteConfig.tuitionAgreement2026.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gold underline"
+                  >
+                    Preberite dogovor
+                  </a>
+                </p>
+              )}
+              <p className="mb-6 text-body">{paymentConsentText(p)}</p>
               {query.received && (
                 <p className="mb-5 text-body">
                   Potrditev plačila se še obdeluje. Če ste že plačali, ne

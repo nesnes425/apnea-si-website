@@ -62,6 +62,7 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     creates = 0,
     issueActions = 0;
   let payload: Record<string, unknown> = {};
+  let mismatch: Record<string, unknown> = {};
   const mockFetch = t.mock.method(
     globalThis,
     "fetch",
@@ -87,6 +88,7 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
       }
       if (path.endsWith("/issuedinvoices/123"))
         return json({
+          ...payload,
           IssuedInvoiceId: 123,
           DocumentReference: payment.id,
           Status: issued ? "I" : "O",
@@ -103,6 +105,7 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
           RowVersion: "version",
           InvoiceNumber: 1,
           Year: 2026,
+          ...mismatch,
         });
       if (path.endsWith("/issuedinvoices/123/attachments"))
         return json([
@@ -122,6 +125,43 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     /Response lost/,
   );
   assert.equal(payment.invoice_state, "creating");
+  const mutations = [
+    { InvoiceValue: 300 },
+    { InvoiceValue: undefined },
+    { Customer: undefined },
+    { Customer: { ID: 99 } },
+    { Currency: { ID: 99 } },
+    { DocumentNumbering: { ID: 99 } },
+    { DateTransactionFrom: "2026-10-06" },
+    { DateTransaction: "2027-06-15" },
+    { DescriptionBelow: "wrong clause" },
+    { InvoiceType: "P" },
+    { IssuedInvoiceRows: [] },
+    ...[
+      { Item: { ID: 99 } },
+      { Price: 300 },
+      { VATPercent: 22 },
+      { VatRate: { ID: 99 } },
+      { Description: "wrong instalment" },
+      { Quantity: 2 },
+      { DiscountPercent: 10 },
+    ].map((change) => ({
+      IssuedInvoiceRows: [
+        { ...(payload.IssuedInvoiceRows as object[])[0], ...change },
+      ],
+    })),
+    { IssuedInvoicePaymentMethods: [] },
+  ];
+  for (const mutation of mutations) {
+    mismatch = mutation;
+    await assert.rejects(
+      () => issueTuitionInvoice(plan, payment, save),
+      /mismatch|differs from approved/,
+    );
+    assert.equal(issueActions, 0, JSON.stringify(mutation));
+    assert.equal(creates, 1);
+  }
+  mismatch = {};
   const result = await issueTuitionInvoice(plan, payment, save);
   assert.equal(creates, 1);
   assert.equal(issueActions, 1);
@@ -139,7 +179,9 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
       { ...payment, instalment, amount_cents: part.amountCents },
       10,
     );
-    assert.ok(draft.DescriptionBelow.includes(settings.MINIMAX_TUITION_VAT_CLAUSE));
+    assert.ok(
+      draft.DescriptionBelow.includes(settings.MINIMAX_TUITION_VAT_CLAUSE),
+    );
     assert.equal(draft.IssuedInvoiceRows[0].VATPercent, 0);
     assert.equal(draft.IssuedInvoiceRows[0].Price, part.amountCents / 100);
   }

@@ -6,6 +6,7 @@ import {
   consentText,
   euro,
   fingerprint,
+  invoicePaymentNotice,
 } from "../lib/tuition/plan";
 import { z } from "zod";
 
@@ -48,6 +49,9 @@ async function main() {
           approvedBy: plan.approval.approvedBy,
           fingerprint: fingerprint(plan),
           consent: consentText(plan),
+          paymentNotice: invoicePaymentNotice(plan),
+          agreementPreviouslySigned: plan.approval.agreementSigned,
+          agreementNoticeVersion: plan.agreementNoticeVersion,
         },
         null,
         2,
@@ -85,7 +89,7 @@ async function main() {
           "Cancellation requires --reason with at least 10 characters",
         );
       body = { action: "cancel", id: input, reason };
-    } else body = { action: "sync", id: input };
+    } else body = { action: command, id: input };
   }
   const response = await fetch(url, {
     method: command === "status" ? "GET" : "POST",
@@ -114,6 +118,15 @@ async function main() {
           secondSchedule: p.schedule_id,
           cancellationRequested: p.cancelled_at,
           cancellationConfirmed: p.cancellation_confirmed,
+          agreement: {
+            previouslySigned: p.manifest.approval.agreementSigned,
+            noticeVersion: p.manifest.agreementNoticeVersion ?? null,
+            acceptedWithPayment: Boolean(
+              p.manifest.agreementNoticeVersion &&
+                p.first_payment_id &&
+                (p.consent_invoice_id || p.consent_session_id),
+            ),
+          },
           error: p.error,
           collectionError: p.collection_error,
           collectionInvoice: p.collection_invoice_id,

@@ -1,3 +1,4 @@
+import { recoverFirstPayment } from "./first-payment";
 import { sendTransactionalEmail } from "@/lib/brevo/client";
 import { issueTuitionInvoice } from "@/lib/minimax/tuition-invoice";
 import {
@@ -20,6 +21,24 @@ export async function processTuitionPlan(id: string) {
   const problems: string[] = [];
   try {
     await assertTuitionStripe(record.manifest.mode);
+    // Cancellation must not wait on recovery of historical consent evidence.
+    if (record.cancelled_at && !record.cancellation_confirmed) {
+      try {
+        await cancelTuition(record);
+      } catch {
+        const error = "Stripe cancellation requires attention";
+        await patchPlan(record, { error });
+        return { processed: id, problems: [error] };
+      }
+    }
+    const payments = await getPayments(id);
+    try {
+      await recoverFirstPayment(record, payments);
+    } catch {
+      const error = "First payment/consent requires reconciliation";
+      await patchPlan(record, { error });
+      return { processed: id, problems: [error] };
+    }
     try {
       if (record.cancelled_at) {
         if (!record.cancellation_confirmed) await cancelTuition(record);
@@ -29,7 +48,7 @@ export async function processTuitionPlan(id: string) {
       problems.push("Stripe schedule/cancellation requires attention");
       await patchPlan(record, { error: problems[0] });
     }
-    for (const payment of await getPayments(id)) {
+    for (const payment of payments) {
       const save = async (patch: Partial<typeof payment>) => {
         await patchPayment(record, payment.id, patch);
         Object.assign(payment, patch);
