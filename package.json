@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "tuition": "node --import tsx --env-file-if-exists=.env.tuition.local scripts/tuition.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

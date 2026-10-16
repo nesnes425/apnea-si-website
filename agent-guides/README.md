@@ -13,6 +13,7 @@ Before helping Samo or Katarina with Apnea.si, read:
 3. The specific guide for the task:
    - `sanity-content-editing.md` — course dates and blog posts in Sanity
    - `stripe-operations.md` — Stripe payments, products, webhooks, refunds
+   - `tuition-operations.md` — approved tuition plans, instalments, Minimax invoices and Samo's setup
    - `brevo-operations.md` — contacts, lists, transactional email, campaigns
    - `website-code.md` — safe website code changes
    - `mcp-setup.md` — connecting and using MCPs safely

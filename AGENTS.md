@@ -127,6 +127,7 @@ When Samo or Katarina use Claude Code / Codex to operate this website, read the 
 - `agent-guides/README.md` — guide index and global guardrails
 - `agent-guides/sanity-content-editing.md` — course dates and blog posts via Sanity MCP
 - `agent-guides/stripe-operations.md` — payment inspection, refunds, webhooks, voucher lookup
+- `agent-guides/tuition-operations.md` — private tuition payment links, finite instalments, invoice recovery and operator setup
 - `agent-guides/brevo-operations.md` — contacts, lists, transactional email, and campaigns
 - `agent-guides/website-code.md` — safe code-editing rules for this site
 - `agent-guides/mcp-setup.md` — how to connect Sanity, Stripe, and optional MCPs safely

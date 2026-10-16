@@ -13,6 +13,7 @@ import {
 } from "@/lib/minimax/training-invoice";
 import { processTrainingPaymentSucceeded } from "@/lib/stripe/training-payment-processor";
 import { sendMetaTrainingPurchase } from "@/lib/meta/conversions-api";
+import { handleTuitionEvent } from "@/lib/tuition/webhook";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,6 +56,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (await handleTuitionEvent(event)) return NextResponse.json({ received: true });
     if (event.type === "payment_intent.succeeded") {
       try {
         await sendMetaTrainingPurchase(event.data.object);
