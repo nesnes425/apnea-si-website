@@ -140,3 +140,32 @@ export async function recordPayment(
   // A unique (plan, instalment) constraint rejects a second distinct charge.
   await tuitionDb("rpc/tuition_record_payment", "POST", { payment });
 }
+
+export async function recordFirstPayment(
+  plan: PlanRecord,
+  payment: Pick<
+    PaymentRecord,
+    "id" | "plan_id" | "instalment" | "amount_cents" | "paid_at"
+  >,
+  consent: Pick<
+    Partial<PlanRecord>,
+    | "checkout_id"
+    | "consent_session_id"
+    | "consent_invoice_id"
+    | "first_payment_id"
+    | "collection_error"
+  >,
+) {
+  const rows = await tuitionDb<PlanRecord[]>(
+    "rpc/tuition_record_first_payment",
+    "POST",
+    {
+      target_plan: plan.id,
+      token: plan.lease_token,
+      payment,
+      consent,
+    },
+  );
+  if (rows.length !== 1) throw new Error("First payment was not committed");
+  Object.assign(plan, rows[0]);
+}

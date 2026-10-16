@@ -283,3 +283,40 @@ PORTAL_PGLITE_MODULE=/path/to/@electric-sql/pglite/dist/index.js node scripts/te
 Tests cover replay handling, uncertain accounting/email outcomes, matching paid
 amounts/mode/customer, finite schedule configuration and private SQL access/leases.
 They do not create native Stripe objects, accounting records or messages.
+
+
+## First-payment recovery and Minimax draft verification (pending release)
+
+Apply `supabase/migrations/20261016152641_tuition_atomic_first_payment.sql`
+with the separately approved release, before deploying this code. It adds a
+service-role-only, lease-checked RPC that commits first payment and the verified
+invoice/Checkout consent pointer in one transaction. It leaves the existing
+second-payment RPC and stored manifests intact. Do not reapply the older bridge
+or invitation migrations under their repository timestamps if already hosted.
+
+Cron and operator sync now recover legacy partial first-payment writes by
+re-reading Stripe's paid invoice or Checkout and the original consent evidence.
+They never infer consent from a payment row. Missing or mismatching evidence
+remains in pending work with an error; accounting/email waits for reconciliation.
+Cancellation is attempted before consent recovery. Replaying a verified payment
+preserves the one-payment/one-finite-schedule constraints.
+
+Every recovered or newly created Minimax invoice is validated before issuance:
+payer, reference, currency, series, total, service dates, item, instalment text,
+quantity/price, zero VAT/rate/clause and the paid-card mapping must match the
+approved payload. Missing fields also hold the invoice. The same check runs again
+after issuance, followed by the existing issued/fully-paid/PDF checks. Never
+manually bypass a mismatch to send a receipt; reconcile the provider record first.
+GET field schema: https://moj.minimax.si/SI/API/Help/Api/GET-api-orgs-organisationId-issuedinvoices-issuedInvoiceId
+
+Local recovery regression (synthetic providers, disposable PostgreSQL):
+
+```sh
+PORTAL_PGLITE_MODULE=/path/to/@electric-sql/pglite/dist/index.js node --import tsx scripts/tuition-recovery.test.mjs
+```
+
+This covers rollback between writes, invoice and Checkout legacy recovery, invalid
+consent remaining pending after accounting is complete, replay without a duplicate
+schedule, conflicting payments, expired leases and private RPC grants. The Minimax
+HTTP test includes changed and missing draft fields and verifies zero issue calls
+for every mismatch. No live charge, accounting document or message is a test fixture.

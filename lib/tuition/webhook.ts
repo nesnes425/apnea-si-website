@@ -1,8 +1,15 @@
+import {
+  acceptFirstCheckout,
+  acceptFirstInvoice,
+  paidInvoiceIntent,
+  verifyPaidIntent,
+  verifySubmittedFirstInvoice,
+} from "./first-payment";
+export { paidInvoiceIntent, verifyPaidIntent } from "./first-payment";
 import type Stripe from "stripe";
 import { trainingStripe } from "@/lib/stripe/training-client";
 import { z } from "zod";
-import { TUITION_TYPE, invoiceConsentHash } from "./plan";
-import { verifyFirstInvoice } from "./invitation";
+import { TUITION_TYPE } from "./plan";
 import { assertTuitionStripe } from "./stripe";
 import {
   claimPlan,
@@ -17,25 +24,6 @@ function objectId(value: string | { id: string } | null | undefined) {
   return typeof value === "string" ? value : value?.id;
 }
 
-export function verifyPaidIntent(
-  intent: Stripe.PaymentIntent,
-  expected: {
-    amountCents: number;
-    customerId: string;
-    live: boolean;
-  },
-) {
-  if (
-    intent.status !== "succeeded" ||
-    intent.currency !== "eur" ||
-    intent.amount !== expected.amountCents ||
-    intent.amount_received !== expected.amountCents ||
-    objectId(intent.customer) !== expected.customerId ||
-    intent.livemode !== expected.live
-  )
-    throw new Error("Paid tuition amount/customer/mode mismatch");
-}
-
 export async function handleTuitionEvent(
   event: Stripe.Event,
 ): Promise<boolean> {
@@ -47,52 +35,7 @@ export async function handleTuitionEvent(
     const plan = await claimPlan(id);
     try {
       await assertTuitionStripe(plan.manifest.mode);
-      if (plan.first_payment_flow === "stripe_invoice")
-        throw new Error(
-          "Invoice obligations cannot collect a second first payment through Checkout",
-        );
-      if (
-        session.status !== "complete" ||
-        session.payment_status !== "paid" ||
-        session.mode !== "payment" ||
-        session.consent?.terms_of_service !== "accepted" ||
-        session.currency !== "eur" ||
-        session.amount_total !== plan.manifest.first.amountCents ||
-        objectId(session.customer) !== plan.customer_id ||
-        session.livemode !== (plan.manifest.mode === "live")
-      )
-        throw new Error("Tuition checkout verification failed");
-      const intentId = objectId(session.payment_intent);
-      if (!intentId || !plan.customer_id)
-        throw new Error("Missing tuition payment/customer");
-      const intent = await trainingStripe.paymentIntents.retrieve(intentId);
-      verifyPaidIntent(intent, {
-        amountCents: plan.manifest.first.amountCents,
-        customerId: plan.customer_id,
-        live: plan.manifest.mode === "live",
-      });
-      if (
-        intent.metadata.planId !== id ||
-        intent.metadata.type !== TUITION_TYPE ||
-        (plan.manifest.second && intent.setup_future_usage !== "off_session")
-      )
-        throw new Error("Payment metadata/card agreement mismatch");
-      if (plan.first_payment_id && plan.first_payment_id !== intentId)
-        throw new Error(
-          "A distinct first payment already exists; reconcile duplicate",
-        );
-      await recordPayment({
-        id: intentId,
-        plan_id: id,
-        instalment: 1,
-        amount_cents: intent.amount_received,
-        paid_at: new Date(event.created * 1000).toISOString(),
-      });
-      await patchPlan(plan, {
-        first_payment_id: intentId,
-        checkout_id: session.id,
-        consent_session_id: session.id,
-      });
+      await acceptFirstCheckout(plan, session, event.created);
     } finally {
       await releasePlan(plan);
     }
@@ -120,18 +63,7 @@ export async function handleTuitionEvent(
     const plan = await claimPlan(id);
     try {
       await assertTuitionStripe(plan.manifest.mode);
-      if (
-        plan.first_payment_flow !== "stripe_invoice" ||
-        plan.first_invoice_id !== invoice.id ||
-        !plan.invitation_requested_at ||
-        !["submitted", "sending", "uncertain"].includes(
-          plan.invitation_state ?? "",
-        )
-      )
-        throw new Error(
-          "First invoice was not prepared and submitted for this plan",
-        );
-      verifyFirstInvoice(invoice, plan);
+      verifySubmittedFirstInvoice(plan, invoice);
       if (
         event.type === "invoice.payment_failed" ||
         event.type === "invoice.payment_action_required"
@@ -144,50 +76,7 @@ export async function handleTuitionEvent(
         });
         return true;
       }
-      if (invoice.status !== "paid")
-        throw new Error("First request has not been paid");
-      const intent = await paidInvoiceIntent(invoice.id);
-      verifyPaidIntent(intent, {
-        amountCents: plan.manifest.first.amountCents,
-        customerId: plan.customer_id!,
-        live: plan.manifest.mode === "live",
-      });
-      if (
-        intent.metadata.planId !== id ||
-        intent.metadata.type !== TUITION_TYPE ||
-        intent.metadata.instalment !== "1" ||
-        intent.metadata.consent_hash !== invoiceConsentHash(plan.manifest) ||
-        (plan.manifest.second && intent.setup_future_usage !== "off_session")
-      )
-        throw new Error("First payment/card authorization mismatch");
-      if (plan.manifest.second) {
-        const pm = objectId(intent.payment_method);
-        if (!pm) throw new Error("Missing saved card");
-        const card = await trainingStripe.paymentMethods.retrieve(pm);
-        if (
-          card.type !== "card" ||
-          objectId(card.customer) !== plan.customer_id
-        )
-          throw new Error(
-            "Second-instalment card is not attached to the approved customer",
-          );
-      }
-      if (plan.first_payment_id && plan.first_payment_id !== intent.id)
-        throw new Error("A different first payment already exists");
-      await recordPayment({
-        id: intent.id,
-        plan_id: id,
-        instalment: 1,
-        amount_cents: intent.amount_received,
-        paid_at: new Date(
-          (invoice.status_transitions.paid_at ?? event.created) * 1000,
-        ).toISOString(),
-      });
-      await patchPlan(plan, {
-        first_payment_id: intent.id,
-        consent_invoice_id: invoice.id,
-        collection_error: null,
-      });
+      await acceptFirstInvoice(plan, invoice, event.created);
     } finally {
       await releasePlan(plan);
     }
@@ -285,22 +174,4 @@ export async function handleTuitionEvent(
   if (result.problems.length)
     throw new Error("Tuition integration pending reconciliation");
   return true;
-}
-
-export async function paidInvoiceIntent(invoiceId: string) {
-  const payments = await trainingStripe.invoicePayments.list({
-    invoice: invoiceId,
-    limit: 100,
-  });
-  const paid = payments.data.filter((p) => p.status === "paid");
-  if (
-    payments.has_more ||
-    paid.length !== 1 ||
-    paid[0].payment.type !== "payment_intent" ||
-    !paid[0].payment.payment_intent
-  )
-    throw new Error("Invoice has no single verified Stripe card payment");
-  return trainingStripe.paymentIntents.retrieve(
-    objectId(paid[0].payment.payment_intent)!,
-  );
 }
