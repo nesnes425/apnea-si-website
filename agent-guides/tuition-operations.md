@@ -20,8 +20,11 @@ Confirmed by Neža in the October 16 implementation conversation:
 
 Minimax authentication and read access succeeded on October 16 using the
 documented Next.js environment loader. Organisation `241557` is **ŠPORTNO DRUŠTVO
-APNEA SLOVENIJA**. Only the membership item exists; tuition items per pool/location
-have not been created. No real Minimax document was created. Loading this local
+APNEA SLOVENIJA**. Samo subsequently confirmed VAT category O at 0%, the exact
+clause below on every invoice, domestic revenue account 76010, all ten pool items
+and the existing FURS numbering series. The ten tuition items now exist with
+verified settings; see the parent hub's `website/tuition-pool-catalog.json`.
+No real Minimax document was created. Loading this local
 file with Node's `--env-file` instead produced `invalid_grant`; this was a parsing
 mismatch, not evidence that the credential needed replacing. Use the loader below.
 
@@ -31,6 +34,17 @@ Samo can ask Codex: “Prepare tuition links for the approved personal-payment r
 The assistant reads the authoritative sheet, prepares the approved inputs, shows
 the named people, exact amounts, periods and dates, and uses the commands below.
 Samo does not need to run commands, configure MCP, or handle Stripe/Minimax keys.
+
+**Mandatory amount review:** prepare a complete review of the source rows for
+Samo before creating or sending links. Show participant, actual payer, pool,
+total, first/second instalments, dates, prior-payment state and exceptions.
+Samo corrects the authoritative Sheet, then the assistant refreshes the review.
+Only Samo's explicit approval of the named rows and exact amounts permits setting
+their manifest approval fields. General permission to configure the system, a
+generated review, or a filled amount cell is not approval to release those rows.
+Use the hub's offline `scripts/review-tuition-amounts.mjs` to render the full
+private review under ignored `temp/`; do not commit real member data or publish
+that report. Link creation and sending remain separate actions.
 
 Authoritative input: [Vadnina 2026/27 – priprava računov](https://docs.google.com/spreadsheets/d/1WiIeVtQgJR0gKKOEt2-4ZLrJfdJ-AuozVWY0kMpWqHM/edit#gid=0), tab `Sheet1`.
 Use its individual approved instalments, never a calculated standard percentage.
@@ -161,8 +175,12 @@ push approval, PR with passing Vercel preview, then explicit production merge ap
    currency, invoice template, employee and Stripe payment mapping. Set the separate
    approved per-pool `minimaxItemId` values in `TUITION_ITEMS_JSON`, `MINIMAX_TUITION_VAT_RATE_ID`,
    `MINIMAX_TUITION_VAT_PERCENT=0` and `MINIMAX_TUITION_VAT_CLAUSE`.
+   Samo confirmed `MINIMAX_TUITION_VAT_RATE_ID=29`, percent `0`, and this exact
+   clause on every invoice: `DDV ni obračunan skladno z 12. točko 1. odstavka 42. člena ZDDV-1.`
+   Set `MINIMAX_TUITION_DOCUMENT_NUMBERING_ID=62831` for the confirmed existing
+   `Minimax - FURS - Apnea.si` series without changing membership settings.
+   The local TRAINING numbering 62735 is stale; do not copy it to the server.
    This version requires the approved zero-VAT treatment and refuses other rates.
-   Do not copy the membership item's tax assumption without confirmation.
 7. Set `MINIMAX_TUITION_POLICY=service_per_instalment` and enable
    `MINIMAX_TUITION_ENABLED=true` only for the approved live setup. Test-mode
    payments always skip real Minimax documents and Brevo, regardless of this flag.

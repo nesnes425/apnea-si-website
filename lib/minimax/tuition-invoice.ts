@@ -48,7 +48,13 @@ export function tuitionInvoicePayload(
   if (!itemId)
     throw new Error("Missing Minimax tuition item for the approved location");
   return {
-    DocumentNumbering: { ID: id("MINIMAX_TRAINING_DOCUMENT_NUMBERING_ID") },
+    DocumentNumbering: {
+      ID: id(
+        process.env.MINIMAX_TUITION_DOCUMENT_NUMBERING_ID
+          ? "MINIMAX_TUITION_DOCUMENT_NUMBERING_ID"
+          : "MINIMAX_TRAINING_DOCUMENT_NUMBERING_ID",
+      ),
+    },
     Customer: { ID: customerId },
     DateIssued: issuedDay,
     DateTransactionFrom: service.serviceFrom,

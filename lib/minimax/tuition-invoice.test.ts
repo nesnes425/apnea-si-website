@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { issueTuitionInvoice } from "./tuition-invoice";
+import { issueTuitionInvoice, tuitionInvoicePayload } from "./tuition-invoice";
 import { planSchema } from "../tuition/plan";
 import type { PaymentRecord } from "../tuition/store";
 
@@ -16,7 +16,9 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     MINIMAX_TUITION_ENABLED: "true",
     MINIMAX_TUITION_POLICY: "service_per_instalment",
     MINIMAX_TUITION_VAT_PERCENT: "0",
-    MINIMAX_TUITION_VAT_CLAUSE: "Approved test clause",
+    MINIMAX_TUITION_VAT_CLAUSE:
+      "DDV ni obračunan skladno z 12. točko 1. odstavka 42. člena ZDDV-1.",
+    MINIMAX_TUITION_DOCUMENT_NUMBERING_ID: "8",
     MINIMAX_TUITION_VAT_RATE_ID: "3",
     TUITION_ITEMS_JSON: JSON.stringify({
       "TEST-POOL": { stripeProductId: "prod_synthetic", minimaxItemId: 2 },
@@ -128,6 +130,19 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
   assert.equal(payload.DateTransactionFrom, "2026-10-05");
   assert.equal(payload.DateTransaction, "2027-06-14");
   assert.equal(payload.DocumentReference, payment.id);
+  assert.deepEqual(payload.DocumentNumbering, { ID: 8 });
+  assert.equal(process.env.MINIMAX_TRAINING_DOCUMENT_NUMBERING_ID, "4");
+  for (const instalment of [1, 2] as const) {
+    const part = instalment === 1 ? plan.first : plan.second!;
+    const draft = tuitionInvoicePayload(
+      plan,
+      { ...payment, instalment, amount_cents: part.amountCents },
+      10,
+    );
+    assert.ok(draft.DescriptionBelow.includes(settings.MINIMAX_TUITION_VAT_CLAUSE));
+    assert.equal(draft.IssuedInvoiceRows[0].VATPercent, 0);
+    assert.equal(draft.IssuedInvoiceRows[0].Price, part.amountCents / 100);
+  }
   assert.equal(
     (
       payload.IssuedInvoicePaymentMethods as {
