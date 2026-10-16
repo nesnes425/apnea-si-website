@@ -34,6 +34,7 @@ export async function ensureTuitionCustomer(record: PlanRecord) {
     {
       name: p.payer.name,
       email: p.payer.email,
+      preferred_locales: ["sl"],
       address: {
         line1: p.payer.address,
         postal_code: p.payer.postalCode,
@@ -55,6 +56,10 @@ export async function tuitionCheckout(
   await assertTuitionStripe(p.mode);
   if (record.cancelled_at) throw new Error("Plan cancelled");
   if (record.first_payment_id) return null;
+  if (record.first_payment_flow === "stripe_invoice") {
+    const { invoicePaymentUrl } = await import("./invitation");
+    return invoicePaymentUrl(record);
+  }
   if (Date.now() + 31 * 60_000 >= Date.parse(p.firstPaymentDeadline))
     throw new Error("First payment deadline has passed or is too close");
   const customer = await ensureTuitionCustomer(record);
@@ -215,8 +220,8 @@ export async function ensureSecondSchedule(record: PlanRecord) {
   if (!record.manifest.second || record.cancelled_at || record.schedule_id)
     return;
   if (!record.first_payment_id || !record.customer_id) return;
-  if (!record.consent_session_id)
-    throw new Error("Missing recorded checkout consent");
+  if (!record.consent_session_id && !record.consent_invoice_id)
+    throw new Error("Missing recorded card-charge consent");
   tuitionItem(record.manifest.locationCode);
   // Recover creation before using the idempotency key, even after 24 hours.
   const matches: Stripe.SubscriptionSchedule[] = [];
@@ -247,7 +252,8 @@ export async function ensureSecondSchedule(record: PlanRecord) {
   if (
     intent.status !== "succeeded" ||
     intent.metadata.planId !== record.id ||
-    !intent.payment_method
+    !intent.payment_method ||
+    (record.manifest.second && intent.setup_future_usage !== "off_session")
   )
     throw new Error("First payment/card not verified");
   const pm =
@@ -280,6 +286,10 @@ export async function cancelTuition(record: PlanRecord) {
   // and prevents the worker from creating a new schedule.
   if (!record.cancelled_at)
     await patchPlan(record, { cancelled_at: new Date().toISOString() });
+  if (record.first_payment_flow === "stripe_invoice") {
+    const { cancelFirstInvoice } = await import("./invitation");
+    await cancelFirstInvoice(record);
+  }
   if (record.checkout_id) {
     const session = await trainingStripe.checkout.sessions.retrieve(
       record.checkout_id,

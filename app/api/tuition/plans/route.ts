@@ -18,6 +18,10 @@ import {
 import { processTuitionPlan } from "@/lib/tuition/worker";
 import { tuitionInvoicePayload } from "@/lib/minimax/tuition-invoice";
 import { trainingStripe } from "@/lib/stripe/training-client";
+import {
+  ensureFirstInvoice,
+  sendFirstInvitation,
+} from "@/lib/tuition/invitation";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -113,12 +117,17 @@ export async function POST(request: Request) {
       const record = await claimPlan(p.id);
       try {
         await ensureTuitionCustomer(record);
+        if (record.first_payment_flow === "stripe_invoice")
+          await ensureFirstInvoice(record);
       } finally {
         await releasePlan(record);
       }
       return NextResponse.json({
         id: p.id,
         mode: p.mode,
+        emailSent: false,
+        nextAction:
+          "Review the draft, then use send with explicit recipient approval",
         paymentLink: `${process.env.TUITION_SITE_URL ?? "https://www.apnea.si"}/vadnina/${p.id}`,
       });
     } catch {
@@ -133,7 +142,7 @@ export async function POST(request: Request) {
   }
   const parsed = z
     .object({
-      action: z.enum(["sync", "cancel"]),
+      action: z.enum(["send", "sync", "cancel"]),
       id: z.uuid(),
       reason: z.string().min(10).max(500).optional(),
     })
@@ -145,7 +154,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "Use sync/cancel with a valid ID; cancellation requires a reason",
+          "Use send/sync/cancel with a valid ID; cancellation requires a reason",
       },
       { status: 422 },
     );
@@ -153,6 +162,15 @@ export async function POST(request: Request) {
     const input = parsed.data;
     if (!(await getPlan(input.id)))
       return NextResponse.json({ error: "Unknown plan" }, { status: 404 });
+    if (input.action === "send") {
+      const record = await claimPlan(input.id);
+      try {
+        const result = await sendFirstInvitation(record);
+        return NextResponse.json({ id: input.id, ...result });
+      } finally {
+        await releasePlan(record);
+      }
+    }
     if (input.action === "sync") {
       const result = await processTuitionPlan(input.id);
       return NextResponse.json(result, {
