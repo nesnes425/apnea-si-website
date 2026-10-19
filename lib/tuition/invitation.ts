@@ -186,7 +186,7 @@ export async function submitInvitation(
   ) {
     await deps.save({ invitation_state: "uncertain" });
     throw new Error(
-      "Inspect Stripe invoice.sent/email history before any resend",
+      "Inspect invitation provider delivery history before any resend",
     );
   }
   await deps.save({
@@ -204,27 +204,20 @@ export async function submitInvitation(
     await deps.save({
       invitation_state: "uncertain",
       error:
-        "Stripe invitation acceptance uncertain; inspect invoice.sent/email history before retry",
+        "Invitation acceptance uncertain; inspect provider delivery history before retry",
     });
     throw error;
   }
   return "submitted";
 }
 
-export async function sendFirstInvitation(record: PlanRecord) {
+// Prepare/finalize the hosted payment page without sending a Stripe email.
+export async function prepareFirstInvitation(record: PlanRecord) {
   await assertTuitionStripe(record.manifest.mode);
-  if (record.cancelled_at || record.first_payment_id)
+  if (record.cancelled_at || record.first_payment_id || record.bank_state)
     throw new Error("Obligation is closed or paid");
   if (Date.now() + 3600_000 >= Date.parse(record.manifest.firstPaymentDeadline))
     throw new Error("Payment deadline is too close or passed");
-  if (record.invitation_state === "submitted")
-    return {
-      invoice: record.first_invoice_id,
-      state: "submitted",
-      alreadySubmitted: true,
-    };
-  if (["sending", "uncertain"].includes(record.invitation_state ?? ""))
-    throw new Error("Reconcile Stripe delivery before retrying");
   const customer = await trainingStripe.customers.retrieve(record.customer_id!);
   if (
     customer.deleted ||
@@ -270,6 +263,25 @@ export async function sendFirstInvitation(record: PlanRecord) {
   const configured = await trainingStripe.paymentIntents.retrieve(intent.id);
   if (record.manifest.second && configured.setup_future_usage !== "off_session")
     throw new Error("Future card collection is not configured");
+  return invoice;
+}
+export async function sendFirstInvitation(record: PlanRecord) {
+  if (record.invitation_channel === "club" || record.bank_reference)
+    throw new Error("Use the combined club invitation for this obligation");
+  await assertTuitionStripe(record.manifest.mode);
+  if (record.cancelled_at || record.first_payment_id)
+    throw new Error("Obligation is closed or paid");
+  if (Date.now() + 3600_000 >= Date.parse(record.manifest.firstPaymentDeadline))
+    throw new Error("Payment deadline is too close or passed");
+  if (record.invitation_state === "submitted")
+    return {
+      invoice: record.first_invoice_id,
+      state: "submitted",
+      alreadySubmitted: true,
+    };
+  if (["sending", "uncertain"].includes(record.invitation_state ?? ""))
+    throw new Error("Reconcile Stripe delivery before retrying");
+  const invoice = await prepareFirstInvitation(record);
   await submitInvitation(record, {
     save: (patch) => patchPlan(record, patch),
     send: async () => {

@@ -162,7 +162,7 @@ test("provider timeout holds invitation as uncertain and never auto-resends", as
     },
   };
   await assert.rejects(() => submitInvitation(r, deps));
-  await assert.rejects(() => submitInvitation(r, deps), /Inspect Stripe/);
+  await assert.rejects(() => submitInvitation(r, deps), /Inspect invitation provider/);
   assert.equal(calls, 1);
   assert.equal(r.invitation_state, "uncertain");
 });
@@ -180,7 +180,7 @@ test("lost DB acknowledgment after provider acceptance cannot duplicate the emai
     },
   };
   await assert.rejects(() => submitInvitation(r, deps));
-  await assert.rejects(() => submitInvitation(r, deps), /Inspect Stripe/);
+  await assert.rejects(() => submitInvitation(r, deps), /Inspect invitation provider/);
   assert.equal(calls, 1);
   assert.equal(r.invitation_state, "uncertain");
 });
@@ -198,7 +198,7 @@ test("a crashed sending state is held even after the provider deduplication wind
           throw new Error("must never send");
         },
       }),
-    /Inspect Stripe/,
+    /Inspect invitation provider/,
   );
   assert.equal(r.invitation_state, "uncertain");
 });

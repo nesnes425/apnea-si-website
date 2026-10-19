@@ -39,6 +39,7 @@ for (const f of [
   "202610160001_tuition_bridge.sql",
   "20261016134033_tuition_stripe_invitation.sql",
   "20261016152641_tuition_atomic_first_payment.sql",
+  "20261019095459_tuition_bank_reconciliation.sql",
 ])
   await db.exec(readFileSync("supabase/migrations/" + f, "utf8"));
 await db.query(

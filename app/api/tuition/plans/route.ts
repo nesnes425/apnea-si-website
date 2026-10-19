@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { tuitionAdminAuthorized } from "@/lib/tuition/auth";
+import { getEmailDelivery } from "@/lib/brevo/delivery";
 import { fingerprint, planSchema, tuitionItem } from "@/lib/tuition/plan";
 import {
   claimPlan,
@@ -16,6 +17,7 @@ import {
   ensureTuitionCustomer,
 } from "@/lib/tuition/stripe";
 import { processTuitionPlan } from "@/lib/tuition/worker";
+import {prepareCombinedInvitation, sendCombinedInvitation} from "@/lib/tuition/combined-invitation";
 import { tuitionInvoicePayload } from "@/lib/minimax/tuition-invoice";
 import { trainingStripe } from "@/lib/stripe/training-client";
 import {
@@ -39,7 +41,7 @@ export async function GET(request: Request) {
     if (!plan)
       return NextResponse.json({ error: "Unknown plan" }, { status: 404 });
     return NextResponse.json(
-      { plan, payments: await getPayments(plan.id) },
+      { plan, payments: await getPayments(plan.id), emailDelivery: await getEmailDelivery({ planId: plan.id }) },
       { headers: { "cache-control": "no-store" } },
     );
   } catch {
@@ -142,7 +144,7 @@ export async function POST(request: Request) {
   }
   const parsed = z
     .object({
-      action: z.enum(["send", "sync", "cancel"]),
+      action: z.enum(["send", "send-combined", "preview-combined", "sync", "cancel"]),
       id: z.uuid(),
       reason: z.string().min(10).max(500).optional(),
     })
@@ -162,11 +164,13 @@ export async function POST(request: Request) {
     const input = parsed.data;
     if (!(await getPlan(input.id)))
       return NextResponse.json({ error: "Unknown plan" }, { status: 404 });
-    if (input.action === "send") {
+    if (["send", "send-combined", "preview-combined"].includes(input.action)) {
       const record = await claimPlan(input.id);
       try {
-        const result = await sendFirstInvitation(record);
-        return NextResponse.json({ id: input.id, ...result });
+        const result = input.action === "preview-combined" ? await prepareCombinedInvitation(record)
+          : input.action === "send-combined" ? await sendCombinedInvitation(record)
+          : await sendFirstInvitation(record);
+        return NextResponse.json({ id: input.id, ...result }, {headers: {"cache-control":"no-store"}});
       } finally {
         await releasePlan(record);
       }

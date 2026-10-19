@@ -113,6 +113,9 @@ async function getMigratedSlugs(): Promise<string[]> {
 }
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/api/tuition/plans": ["./public/fonts/Roboto-Regular.ttf"],
+  },
   images: {
     remotePatterns: [
       {

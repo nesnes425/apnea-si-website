@@ -320,3 +320,199 @@ consent remaining pending after accounting is complete, replay without a duplica
 schedule, conflicting payments, expired leases and private RPC grants. The Minimax
 HTTP test includes changed and missing draft fields and verifies zero issue calls
 for every mismatch. No live charge, accounting document or message is a test fixture.
+
+## Combined club invitation and daily bank import (local implementation, October 19)
+
+Samo approved one email from `info@apnea.si`: the existing hosted Stripe invoice
+collects two instalments, while an attached PDF supplies UPN details for the full
+season. The first card instalment is collected when payment is confirmed, not on
+the deadline. New combined invitations replace the initial Stripe email; they do
+not call `invoices.sendInvoice`. The sender must equal `info@apnea.si`; replies use
+that address. Existing submitted invitations (including prior pilots) must not be
+converted or resent. Manual Minimax rows remain excluded by the hub operator.
+
+This feature is off until the separately approved release. Apply the reviewed new migrations
+`20261019095459_tuition_bank_reconciliation.sql` and
+`20261019105859_tuition_email_delivery.sql`, then deploy the reviewed branch.
+Do not bulk-push older migrations. Set `TUITION_BANK_ENABLED=true` only after a real
+OTP statement has passed the read-only preview. OTP offers “XML sepa” and “XML SEPA
+(ISO SEPA 2019)”; the actual namespaces remain unverified without a file. The local
+parser supports camt.053.001.02 and .08 (UTF-8) and rejects payment-order pain.001,
+DTD/entities and unknown formats. The bank statement must contain booked credits,
+a stable bank transaction ID and the structured RF creditor reference.
+
+For a general sample (no provider access):
+`node --import tsx scripts/preview-combined-tuition.ts`.
+For an approved real unsent plan, `tuition.ts preview-combined UUID --apply`
+finalizes its Stripe invoice and saves its RF/full-season offer, but sends nothing.
+It writes HTML/text/PDF into ignored `temp/tuition-previews/UUID/`; protect these as
+participant records. Review them with Samo before sending. Use the hub's
+`tuition-operator.mjs send approved.json --combined --apply` for sending, preserving
+fresh source-row checks and original sent date. The ordinary `send` command remains
+legacy Stripe-only and refuses any plan already prepared for combined sending.
+Never bypass the wrapper for sending merely to avoid a Sheet failure.
+
+After the release and validation, Samo saves each day's bank statement locally.
+From this checkout:
+
+```sh
+node --env-file-if-exists=.env.tuition.local scripts/tuition-bank-import.mjs /private/path/statement.xml
+# Read-only matching above. Apply the same file after checking its report:
+node --env-file-if-exists=.env.tuition.local scripts/tuition-bank-import.mjs /private/path/statement.xml --apply
+```
+
+Python 3 must be available (`TUITION_PYTHON` can specify its path). Reports are
+private 0600 JSON files in ignored `temp/bank-imports/`. Original statements remain
+local, outside Git. Only normalized transaction evidence is submitted to the
+existing authenticated tuition API. This is automation triggered by importing a
+file, not an unattended bank connection or a scheduled download. No file means no
+new bank reconciliation. Review `review` entries; rerun the same file for deferred
+entries or after a provider outage. Successfully processed entries are skipped so
+large files make progress across bounded requests.
+
+Matching requires the club IBAN, exact full-season EUR amount, BOOK/CRDT,
+non-reversal, unique structured reference and stable bank ID. No fuzzy name matching.
+Partial payments, overpayments, unrecognized references, grouped entries, reversals
+and changed evidence under an existing transaction ID go to review. The private
+ledger deduplicates overlapping/repeated statements. A lease-checked SQL operation
+records the credit and stops new local card collection atomically before contacting
+Stripe. Recovery uses the existing cron/worker; already pending settlements remain
+recoverable even if the feature flag is later disabled.
+
+The Stripe adapter cancels finite schedules without prorations/final invoices,
+voids only unpaid requests, then re-reads PaymentIntents. A paid or in-flight card
+payment yields review and no refund. `cancelled_at` here stops the payment plan,
+**not participation in training**; `bank_state` distinguishes it from withdrawal.
+The member page hides the payment button. An unexpected provider object or failure
+keeps bank state pending with a visible error; never tell the member collection is
+closed until `cancellation_confirmed=true`. Late card webhooks recheck bank state
+and cannot create another schedule. Daily importing cannot prevent a member from
+paying by card between their bank transfer and its import; the email explains this.
+
+Bank money is not recorded as a fake Stripe/card instalment or `paid_out_of_band`.
+Bank entries have `accounting_state=review`; Minimax accounting/receipt delivery for
+full-season bank payments is an explicit accounting follow-up, not automated here.
+No automatic refund, receipt email, reminder or trainer-registration change occurs
+on bank import. The API report and operator status are the review surface.
+
+Verification: parser regression tests, isolated PostgreSQL grants/leases/rollback,
+replay and evidence-conflict tests, native Stripe test-mode unpaid/paid cases with
+replay, full application tests, TypeScript, build, local member page and message/PDF
+preview. Native test customers were deleted and test products deactivated; no live
+objects or messages were created. The PDF contains readable UPN fields and a vector UPN QR code. It does not claim
+to be a preprinted bank form. QR encoding follows ZBS section 5: fixed V15, ECC M,
+ISO 8859-2 with ECI 4, LF-delimited fields and a byte-length checksum. Unsupported
+characters or payloads over 411 bytes block generation rather than corrupting or
+truncating payer data. The generic sample encodes only a non-payable warning.
+Project Nayuki v1.8.0 is vendored with its MIT license in `lib/vendor/`; production
+does not call a remote QR service. `scripts/test-upn-pdf.mjs` creates synthetic PDFs
+and `scripts/verify-upn-pdf.py` independently decodes them with ZXing, including
+Slovenian diacritics, amount, IBAN, RF reference and checksum. Never send/pay these
+synthetic verification PDFs. Real OTP mobile-bank scanning is not yet verified.
+Actual OTP export validation and live sender/delivery remain release acceptance.
+
+
+## Brevo delivery tracking and internal test (local, October 19)
+
+Samo chose to retain Brevo Transactional and requested delivery tracking plus a
+prepared final-message test before member sending. This implementation covers new
+combined tuition invitations and explicitly approved internal tests. Legacy Stripe
+invitations, membership messages and Minimax PDF emails keep their existing flows;
+no historical delivery status is invented. `Poslano` still means provider submission,
+not delivery/read confirmation; no additional Sheet columns are created here.
+
+`sendTrackedTuitionEmail` inserts a private, unique send record **before** contacting
+Brevo. The response messageId is normalized and saved, and an opaque `tuition-email:UUID`
+tag correlates early callbacks. A duplicate ID/plan or uncertain response cannot
+send again. A callback can recover the provider ID after a lost HTTP response, but
+it never silently marks an uncertain invitation safe to resend or rewrites the
+original invitation date. An operator reconciles that evidence first.
+
+The migration adds `tuition_email_deliveries` and append-only `tuition_email_events`,
+RLS with no public policies, explicit service-role grants (after revoking Supabase's
+default ALL grants, including DELETE/TRUNCATE) and invoker RPCs with empty search
+paths. It stores normalized recipient, message ID, event type/time and a bounded
+provider reason, never message bodies, payment links or raw webhook payloads.
+Event identity hashes message ID, recipient, event type and occurrence time; Brevo's
+webhook `id` is not treated as a unique event ID. Repeated deliveries are harmless.
+Mismatched recipients/message IDs fail closed. Account mail outside this flow is
+ignored. Opens/clicks are ignored, not interpreted as evidence that a person read it.
+
+`POST /api/brevo/tuition-webhook` requires a separate, random 32+ character
+`BREVO_TUITION_WEBHOOK_SECRET` in the Authorization bearer header. Configure this
+header in Brevo's webhook settings; do not put secrets in the URL, reuse the operator
+key, or disable authentication. Use the canonical www HTTPS URL to avoid redirects.
+Use non-batched delivery (`batched=false`). Choose transactional events `request`, `delivered`, `deferred`, `softBounce`,
+`hardBounce`, `blocked`, `invalid`, `spam`, `unsubscribed` (and error if the account UI
+supports it). Callback event names use `soft_bounce`, `hard_bounce`, `invalid_email`.
+Single events and batches of up to 50 are accepted, with a streamed 128 KB byte limit.
+Database failures return 503 for retry; invalid input returns 400; invalid auth 401.
+
+Operator `tuition.ts status UUID` includes `emailDelivery` with provider ID, submission
+state, delivery status/time, failure reason, history and `needs_review`. Internal
+tests use authenticated `GET /api/tuition/email-delivery?id=UUID`. Delayed request or
+soft-bounce events cannot erase delivery; permanent failures/complaints stay visible.
+An uncertain submission or missing delivery evidence after 24 hours requires review.
+No webhook sends reminders, retries an email, changes payments, or writes the Sheet.
+`delivered` means the recipient server accepted it, not inbox placement or reading.
+This is a pull-based status report; automatic staff alerts are not implemented.
+
+### Release and internal test steps
+
+1. Obtain the normal push/PR, migration and production-release approvals. Neither
+   this source migration nor an internal-test draft is a production change.
+2. Apply the reviewed migration, deploy the route, securely set the dedicated webhook
+   secret and configure the authenticated Brevo webhook. The provider settings and
+   secrets are not configured by this local implementation.
+3. Set `TUITION_EMAIL_TEST_ENABLED=true` and `TUITION_EMAIL_TEST_RECIPIENTS` to the exact
+   approved internal addresses, comma-separated. Keep `TUITION_EMAIL_TRACKING_READY=false`
+   during verification. Internal tests do not require enabling bank collection.
+4. Prepare each test locally (no env/database/provider access):
+   `node --import tsx scripts/tuition-email-test.ts prepare approved-address@example.com`.
+   Review the generated HTML/text/UPN in ignored `temp/tuition-email-tests/UUID/`.
+   Files are private; preserve test.json and its ID through all retries/status checks.
+5. Only after explicit sending approval, use the existing local operator settings:
+   `node --import tsx --env-file-if-exists=.env.tuition.local scripts/tuition-email-test.ts send /private/path/test.json --apply`.
+   It uses `TUITION_API_URL` and `TUITION_ADMIN_KEY`, exact server-side allowlisting,
+   the actual sender/reply-to and the shared final template. Subject starts with
+   `[TEST – NI ZA PLAČILO]`. Synthetic payer, placeholder Stripe link/IBAN/reference
+   and a non-payable QR prevent accidental payment. No Stripe/Minimax/Sheet action.
+6. Read status with the same command replacing `send` with `status` and omitting
+   `--apply`. Check the message in the actual mailbox: inbox/spam/promotions, SPF,
+   DKIM, DMARC, mobile/desktop layout, readable PDF, sample QR warning and reply-to.
+   A successful API response alone is not a passed delivery test. Mailbox replies
+   are a separate sending action; don't send them without authorization.
+7. Resolve rejects, missing callbacks or uncertainty. Disable internal-test sending
+   after verification. Set `TUITION_EMAIL_TRACKING_READY=true` only after the real
+   end-to-end delivery check passes. Combined member sending requires this flag plus
+   the configured secret, the bank readiness gate and normal recipient approval.
+
+The prepared user-selected test recipients cover Gmail and the club-domain mailbox;
+no Outlook address was supplied. On October 19, an approved UI test of template 299
+was submitted to those three addresses and Samo confirmed receipt on at least one.
+That UI test bypassed this application's send/evidence flow and does not verify the
+live callback. The local API key was subsequently reactivated with Samo's explicit
+approval; a read-only sender check passed. A sample checks layout/delivery, not a
+real payment or banking QR.
+
+Release preflight, October 19: hosted `apnea-trenerji` has neither delivery table;
+Brevo's transactional webhook list returned `document_not_found`. No production
+setup was changed by this preflight. The SQL test now reproduces the hosted ALL
+default table grants and confirms service-role DELETE/UPDATE/TRUNCATE of event
+history are rejected. All 105 application tests, the isolated SQL test, focused
+lint, TypeScript/build and localhost route checks passed. Localhost used synthetic
+credentials and disabled sending: missing auth 401, malformed payload 400, oversized
+payload 413, ignored open 200, and disabled internal send 409. The real callback
+check must still run after the separately approved deployment/configuration.
+
+Verified documentation: [send API](https://developers.brevo.com/docs/send-a-transactional-email),
+[events](https://developers.brevo.com/docs/transactional-webhooks),
+[webhook authentication/configuration](https://developers.brevo.com/reference/create-webhook).
+
+October 19 release follow-up: the combined invitation now supports both one and
+two approved instalments and shows the actual service period in the email/PDF.
+The real OTP camt.053.001.08 export parsed successfully (14 entries); matching
+preview and production activation still require the deployed API. Samo authorized
+the production release and a four-person pilot. Use registration-form addresses
+as the source; if absent, Samo permits omission (current schema still requires
+address fields, so do not fabricate placeholders or bypass validation).

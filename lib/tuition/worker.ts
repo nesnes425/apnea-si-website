@@ -1,4 +1,5 @@
 import { recoverFirstPayment } from "./first-payment";
+import { reconcileBankPlan } from "./bank";
 import { sendTransactionalEmail } from "@/lib/brevo/client";
 import { issueTuitionInvoice } from "@/lib/minimax/tuition-invoice";
 import {
@@ -21,6 +22,7 @@ export async function processTuitionPlan(id: string) {
   const problems: string[] = [];
   try {
     await assertTuitionStripe(record.manifest.mode);
+    if (record.bank_state) return await reconcileBankPlan(record);
     // Cancellation must not wait on recovery of historical consent evidence.
     if (record.cancelled_at && !record.cancellation_confirmed) {
       try {

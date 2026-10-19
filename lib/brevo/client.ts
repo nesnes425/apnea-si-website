@@ -110,7 +110,7 @@ export type EmailAttachment = {
   contentBase64: string; // base64-encoded file contents
 };
 
-export async function sendTransactionalEmail(params: {
+export type TransactionalEmail = {
   to: { email: string; name?: string };
   subject: string;
   text: string;
@@ -118,13 +118,15 @@ export async function sendTransactionalEmail(params: {
   replyTo?: { email: string; name?: string };
   attachments?: EmailAttachment[];
   idempotencyKey?: string;
-}): Promise<void> {
+  tags?: string[];
+};
+async function submitTransactionalEmail(params: TransactionalEmail) {
   const attachment = params.attachments?.map((a) => ({
     name: a.name,
     content: a.contentBase64,
   }));
 
-  await brevoFetch("/smtp/email", {
+  const result = await brevoFetch<{ messageId?: string }>("/smtp/email", {
     method: "POST",
     body: JSON.stringify({
       sender: {
@@ -137,7 +139,19 @@ export async function sendTransactionalEmail(params: {
       htmlContent: params.html,
       replyTo: params.replyTo,
       attachment,
+      tags: params.tags,
       ...(params.idempotencyKey ? { headers: { idempotencyKey: params.idempotencyKey } } : {}),
     }),
   });
+  return result;
+}
+// Existing flows keep their void contract; tracking is opt-in for tuition invitations.
+export async function sendTransactionalEmail(params: TransactionalEmail): Promise<void> {
+  await submitTransactionalEmail(params);
+}
+export async function sendTransactionalEmailWithReceipt(params: TransactionalEmail): Promise<{ messageId: string }> {
+  const result = await submitTransactionalEmail(params);
+  if (!result?.messageId || typeof result.messageId !== "string")
+    throw new Error("Brevo acceptance has no message ID; reconcile before retrying");
+  return { messageId: result.messageId };
 }

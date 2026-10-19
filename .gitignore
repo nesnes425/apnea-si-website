@@ -39,6 +39,7 @@ yarn-error.log*
 
 # blog migration temp files (saved HTML exports, generated scripts)
 /temp/
+__pycache__/
 
 # typescript
 *.tsbuildinfo
