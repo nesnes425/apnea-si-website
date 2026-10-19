@@ -28,6 +28,7 @@ export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample
     `Plačilo prek Stripa: ${paymentUrl}`, "",
     "2. Bančno nakazilo za celotno sezono",
     `Z UPN v prilogi poravnate celotno vadnino ${euro(upn.amountCents)} v enem znesku do ${upn.deadline}.`,
+    "QR kodo na UPN skenirajte v bančni aplikaciji in pred potrditvijo preverite podatke.",
     `Prejemnik: ${upn.name}`, `${upn.address}, ${upn.city}`,
     `IBAN: ${upn.iban}`, `Sklic: ${upn.reference}`, `Koda namena: ${upn.purposeCode}`,
     `Namen: ${upn.purpose}`, "",

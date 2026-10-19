@@ -1,11 +1,13 @@
 import React from "react";
 import path from "node:path";
-import {Document, Page, Text, View, Font, renderToBuffer} from "@react-pdf/renderer";
+import {Document, Page, Text, View, Font, Svg, Path, Rect, renderToBuffer} from "@react-pdf/renderer";
 import {upnDetails} from "./combined-template";
+import {tuitionQr} from "./upn-qr";
 import {euro, type TuitionPlan} from "./plan";
 Font.register({family: "TuitionRoboto", src: path.join(process.cwd(), "public/fonts/Roboto-Regular.ttf")});
 export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
   const p = upnDetails(plan, sample);
+  const qr = tuitionQr(plan, sample);
   const rows = [
     ["Plačnik", `${p.payer.name}\n${p.payer.address}\n${p.payer.postalCode} ${p.payer.city}`],
     ["Prejemnik", `${p.name}\n${p.address}\n${p.city}`],
@@ -15,10 +17,21 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
   ];
   return renderToBuffer(<Document title="UPN - vadnina za celotno sezono">
     <Page size="A4" style={{fontFamily:"TuitionRoboto",padding:48,color:"#33404f",fontSize:11,lineHeight:1.5}}>
-      <Text style={{fontSize:20,marginBottom:22}}>APNEA.SI</Text>
-      {sample && <Text style={{color:"#9e3f23",fontSize:14,marginBottom:15}}>VZOREC - NI ZA PLAČILO</Text>}
-      <Text style={{fontSize:22,marginBottom:14}}>Plačilni nalog za celotno sezono</Text>
-      <Text style={{marginBottom:24}}>Vadnina 2026/27 - podatki za vnos UPN v spletno ali mobilno banko</Text>
+      <View style={{flexDirection:"row",justifyContent:"space-between",marginBottom:20}}>
+        <View style={{width:350}}>
+          <Text style={{fontSize:20,marginBottom:14}}>APNEA.SI</Text>
+          {sample && <Text style={{color:"#9e3f23",fontSize:13,marginBottom:12}}>VZOREC - NI ZA PLAČILO</Text>}
+          <Text style={{fontSize:21,marginBottom:12}}>Plačilni nalog za celotno sezono</Text>
+          <Text>Vadnina 2026/27</Text>
+        </View>
+        <View style={{width:110,alignItems:"center"}}>
+          <Svg width={102} height={102} viewBox="0 0 85 85">
+            <Rect x={0} y={0} width={85} height={85} fill="#fff"/>
+            <Path d={qr.path} fill="#000"/>
+          </Svg>
+          <Text style={{fontSize:8,textAlign:"center",marginTop:6}}>{sample ? "Vzorčna QR koda\nNi za plačilo" : "UPN QR\nSkenirajte v bančni aplikaciji"}</Text>
+        </View>
+      </View>
       {rows.map(([label,value]) => <View key={label} style={{flexDirection:"row",paddingVertical:9,borderBottomWidth:0.5,borderBottomColor:"#ddd"}}>
         <Text style={{width:160,color:"#585a5a"}}>{label}</Text><Text style={{flex:1}}>{value}</Text>
       </View>)}

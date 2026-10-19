@@ -398,6 +398,14 @@ Verification: parser regression tests, isolated PostgreSQL grants/leases/rollbac
 replay and evidence-conflict tests, native Stripe test-mode unpaid/paid cases with
 replay, full application tests, TypeScript, build, local member page and message/PDF
 preview. Native test customers were deleted and test products deactivated; no live
-objects or messages were created. The PDF contains readable UPN entry fields;
-it does not currently include a QR code or claim to be a preprinted bank form.
+objects or messages were created. The PDF contains readable UPN fields and a vector UPN QR code. It does not claim
+to be a preprinted bank form. QR encoding follows ZBS section 5: fixed V15, ECC M,
+ISO 8859-2 with ECI 4, LF-delimited fields and a byte-length checksum. Unsupported
+characters or payloads over 411 bytes block generation rather than corrupting or
+truncating payer data. The generic sample encodes only a non-payable warning.
+Project Nayuki v1.8.0 is vendored with its MIT license in `lib/vendor/`; production
+does not call a remote QR service. `scripts/test-upn-pdf.mjs` creates synthetic PDFs
+and `scripts/verify-upn-pdf.py` independently decodes them with ZXing, including
+Slovenian diacritics, amount, IBAN, RF reference and checksum. Never send/pay these
+synthetic verification PDFs. Real OTP mobile-bank scanning is not yet verified.
 Actual OTP export validation and live sender/delivery remain release acceptance.
