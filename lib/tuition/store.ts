@@ -12,6 +12,13 @@ export type PlanRecord = {
   invitation_state?: "not_sent" | "sending" | "submitted" | "uncertain";
   invitation_requested_at?: string | null;
   invitation_submitted_at?: string | null;
+  invitation_channel?: "stripe" | "club";
+  bank_reference?: string | null;
+  bank_iban?: string | null;
+  bank_amount_cents?: number | null;
+  bank_state?: "pending" | "paid" | "review" | null;
+  bank_entry_key?: string | null;
+  bank_booked_on?: string | null;
   customer_id: string | null;
   checkout_id: string | null;
   schedule_id: string | null;

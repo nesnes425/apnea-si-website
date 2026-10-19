@@ -3,6 +3,14 @@ export const siteConfig = {
   url: "https://www.apnea.si",
   email: "info@apnea.si",
   phone: "+386 41 874 187",
+  // Club identity/TRR: hub posel/business-context.md, verified 19 October 2026.
+  tuitionBank: {
+    name: "Športno društvo Apnea Slovenija",
+    address: "Saveljska cesta 70A",
+    city: "1000 Ljubljana",
+    iban: "SI56040000277781751",
+    purposeCode: "OTHR",
+  },
   description:
     "Največja šola prostega potapljanja v Sloveniji. SSI tečaji, treningi in klubsko potapljanje.",
 

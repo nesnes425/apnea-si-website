@@ -1,6 +1,7 @@
 // Operator client: only a scoped tuition API key is needed on Samo's computer.
 // Run: npm run tuition -- preview temp/tuition-plan.json
-import { readFile } from "node:fs/promises";
+import { readFile, mkdir, writeFile } from "node:fs/promises";
+import {resolve} from "node:path";
 import {
   planSchema,
   consentText,
@@ -14,11 +15,11 @@ async function main() {
   const [command, input, ...flags] = process.argv.slice(2);
   const applied = flags.includes("--apply");
   const usage =
-    "Use preview/create <plan.json>, status/send/sync <plan-uuid>, or cancel <plan-uuid> --reason <reason>. Mutations require --apply.";
+    "Use preview/create <plan.json>, status/preview-combined/send/sync <plan-uuid>, or cancel <plan-uuid> --reason <reason>. Mutations (including finalizing a combined preview) require --apply.";
   if (
     !command ||
     !input ||
-    !["preview", "create", "status", "send", "sync", "cancel"].includes(command)
+    !["preview", "preview-combined", "create", "status", "send", "sync", "cancel"].includes(command)
   )
     throw new Error(usage);
   const plan = ["preview", "create"].includes(command)
@@ -114,6 +115,9 @@ async function main() {
           stripePaymentRequest: p.first_invoice_id,
           invitationState: p.invitation_state,
           invitationSubmittedAt: p.invitation_submitted_at,
+          invitationChannel: p.invitation_channel,
+          bankState: p.bank_state,
+          bankBookedOn: p.bank_booked_on,
           firstPayment: p.first_payment_id,
           secondSchedule: p.schedule_id,
           cancellationRequested: p.cancelled_at,
@@ -136,6 +140,13 @@ async function main() {
         2,
       ),
     );
+  } else if (command === "preview-combined") {
+    const dir = resolve("temp/tuition-previews", input);
+    await mkdir(dir, {recursive: true, mode: 0o700});
+    await writeFile(resolve(dir,"sporocilo.html"), result.html, {mode:0o600});
+    await writeFile(resolve(dir,"sporocilo.txt"), result.text, {mode:0o600});
+    await writeFile(resolve(dir,"UPN.pdf"), Buffer.from(result.attachment.contentBase64,"base64"), {mode:0o600});
+    console.log(JSON.stringify({directory:dir,emailSent:false}));
   } else console.log(JSON.stringify(result, null, 2));
 }
 main().catch((error) => {

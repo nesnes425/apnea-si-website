@@ -58,7 +58,12 @@ export default async function TuitionPaymentPage({
             {displayDate(p.first.serviceTo)}. Rok prvega plačila:{" "}
             {displayDate(p.firstPaymentDeadline)}.
           </p>
-          {record.first_payment_id ? (
+          {record.bank_state ? (
+            <p className="text-body">
+              {record.bank_state === "paid" ? "Bančno plačilo za celotno sezono smo evidentirali. Nadaljnjih kartičnih plačil ni."
+                : "Vaše nakazilo usklajujemo. Ne plačujte ponovno. Za pomoč odgovorite na prejeto sporočilo društva."}
+            </p>
+          ) : record.first_payment_id ? (
             <p className="text-body">
               Plačilo smo prejeli. Račun boste prejeli po e-pošti.{" "}
               {record.cancelled_at && !record.cancellation_confirmed
@@ -72,7 +77,7 @@ export default async function TuitionPaymentPage({
             record.invitation_state !== "submitted" ? (
             <p className="text-body">
               Plačilni poziv še pripravljamo. Ko bo pripravljen, boste prejeli
-              sporočilo iz Stripa.
+              sporočilo s podatki za plačilo.
             </p>
           ) : closed ? (
             <p className="text-body">

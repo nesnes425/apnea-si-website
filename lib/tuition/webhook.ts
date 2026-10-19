@@ -19,6 +19,7 @@ import {
   releasePlan,
 } from "./store";
 import { processTuitionPlan } from "./worker";
+import { reconcileBankPlan } from "./bank";
 
 function objectId(value: string | { id: string } | null | undefined) {
   return typeof value === "string" ? value : value?.id;
@@ -63,6 +64,11 @@ export async function handleTuitionEvent(
     const plan = await claimPlan(id);
     try {
       await assertTuitionStripe(plan.manifest.mode);
+      if (plan.bank_state) {
+        await reconcileBankPlan(plan);
+        if (plan.bank_state === "pending") throw new Error("Bank reconciliation pending");
+        return true;
+      }
       verifySubmittedFirstInvoice(plan, invoice);
       if (
         event.type === "invoice.payment_failed" ||
@@ -102,6 +108,14 @@ export async function handleTuitionEvent(
     invoice.livemode !== (plan.manifest.mode === "live")
   )
     throw new Error("Tuition invoice customer/mode mismatch");
+  if (plan.bank_state) {
+    const locked = await claimPlan(id);
+    try {
+      await reconcileBankPlan(locked);
+      if (locked.bank_state === "pending") throw new Error("Bank reconciliation pending");
+      return true;
+    } finally { await releasePlan(locked); }
+  }
   if (subscription.schedule) {
     if (objectId(subscription.schedule) !== plan.schedule_id)
       throw new Error("Tuition invoice schedule mismatch");

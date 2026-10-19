@@ -320,3 +320,84 @@ consent remaining pending after accounting is complete, replay without a duplica
 schedule, conflicting payments, expired leases and private RPC grants. The Minimax
 HTTP test includes changed and missing draft fields and verifies zero issue calls
 for every mismatch. No live charge, accounting document or message is a test fixture.
+
+## Combined club invitation and daily bank import (local implementation, October 19)
+
+Samo approved one email from `info@apnea.si`: the existing hosted Stripe invoice
+collects two instalments, while an attached PDF supplies UPN details for the full
+season. The first card instalment is collected when payment is confirmed, not on
+the deadline. New combined invitations replace the initial Stripe email; they do
+not call `invoices.sendInvoice`. The sender must equal `info@apnea.si`; replies use
+that address. Existing submitted invitations (including prior pilots) must not be
+converted or resent. Manual Minimax rows remain excluded by the hub operator.
+
+This feature is off until the separately approved release. Apply only
+`20261019095459_tuition_bank_reconciliation.sql`, then deploy the reviewed branch.
+Do not bulk-push older migrations. Set `TUITION_BANK_ENABLED=true` only after a real
+OTP statement has passed the read-only preview. OTP offers “XML sepa” and “XML SEPA
+(ISO SEPA 2019)”; the actual namespaces remain unverified without a file. The local
+parser supports camt.053.001.02 and .08 (UTF-8) and rejects payment-order pain.001,
+DTD/entities and unknown formats. The bank statement must contain booked credits,
+a stable bank transaction ID and the structured RF creditor reference.
+
+For a general sample (no provider access):
+`node --import tsx scripts/preview-combined-tuition.ts`.
+For an approved real unsent plan, `tuition.ts preview-combined UUID --apply`
+finalizes its Stripe invoice and saves its RF/full-season offer, but sends nothing.
+It writes HTML/text/PDF into ignored `temp/tuition-previews/UUID/`; protect these as
+participant records. Review them with Samo before sending. Use the hub's
+`tuition-operator.mjs send approved.json --combined --apply` for sending, preserving
+fresh source-row checks and original sent date. The ordinary `send` command remains
+legacy Stripe-only and refuses any plan already prepared for combined sending.
+Never bypass the wrapper for sending merely to avoid a Sheet failure.
+
+After the release and validation, Samo saves each day's bank statement locally.
+From this checkout:
+
+```sh
+node --env-file-if-exists=.env.tuition.local scripts/tuition-bank-import.mjs /private/path/statement.xml
+# Read-only matching above. Apply the same file after checking its report:
+node --env-file-if-exists=.env.tuition.local scripts/tuition-bank-import.mjs /private/path/statement.xml --apply
+```
+
+Python 3 must be available (`TUITION_PYTHON` can specify its path). Reports are
+private 0600 JSON files in ignored `temp/bank-imports/`. Original statements remain
+local, outside Git. Only normalized transaction evidence is submitted to the
+existing authenticated tuition API. This is automation triggered by importing a
+file, not an unattended bank connection or a scheduled download. No file means no
+new bank reconciliation. Review `review` entries; rerun the same file for deferred
+entries or after a provider outage. Successfully processed entries are skipped so
+large files make progress across bounded requests.
+
+Matching requires the club IBAN, exact full-season EUR amount, BOOK/CRDT,
+non-reversal, unique structured reference and stable bank ID. No fuzzy name matching.
+Partial payments, overpayments, unrecognized references, grouped entries, reversals
+and changed evidence under an existing transaction ID go to review. The private
+ledger deduplicates overlapping/repeated statements. A lease-checked SQL operation
+records the credit and stops new local card collection atomically before contacting
+Stripe. Recovery uses the existing cron/worker; already pending settlements remain
+recoverable even if the feature flag is later disabled.
+
+The Stripe adapter cancels finite schedules without prorations/final invoices,
+voids only unpaid requests, then re-reads PaymentIntents. A paid or in-flight card
+payment yields review and no refund. `cancelled_at` here stops the payment plan,
+**not participation in training**; `bank_state` distinguishes it from withdrawal.
+The member page hides the payment button. An unexpected provider object or failure
+keeps bank state pending with a visible error; never tell the member collection is
+closed until `cancellation_confirmed=true`. Late card webhooks recheck bank state
+and cannot create another schedule. Daily importing cannot prevent a member from
+paying by card between their bank transfer and its import; the email explains this.
+
+Bank money is not recorded as a fake Stripe/card instalment or `paid_out_of_band`.
+Bank entries have `accounting_state=review`; Minimax accounting/receipt delivery for
+full-season bank payments is an explicit accounting follow-up, not automated here.
+No automatic refund, receipt email, reminder or trainer-registration change occurs
+on bank import. The API report and operator status are the review surface.
+
+Verification: parser regression tests, isolated PostgreSQL grants/leases/rollback,
+replay and evidence-conflict tests, native Stripe test-mode unpaid/paid cases with
+replay, full application tests, TypeScript, build, local member page and message/PDF
+preview. Native test customers were deleted and test products deactivated; no live
+objects or messages were created. The PDF contains readable UPN entry fields;
+it does not currently include a QR code or claim to be a preprinted bank form.
+Actual OTP export validation and live sender/delivery remain release acceptance.
