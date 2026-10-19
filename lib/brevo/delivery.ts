@@ -11,7 +11,8 @@ export async function sendTrackedTuitionEmail(id: string, planId: string | null,
   });
   let stage: "provider_submission" | "receipt_storage" = "provider_submission";
   try {
-    const result = await sendTransactionalEmailWithReceipt({ ...email, tags: [deliveryTag(id)], idempotencyKey: `tuition-email-${id}` });
+    // Brevo requires a UUID; a prefixed key exceeds its accepted length.
+    const result = await sendTransactionalEmailWithReceipt({ ...email, tags: [deliveryTag(id)], idempotencyKey: id });
     const messageId = normalizeMessageId(result.messageId);
     stage = "receipt_storage";
     await tuitionDb("rpc/tuition_email_submitted", "POST", { target_id: id, provider_id: messageId });
