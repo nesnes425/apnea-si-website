@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 const {PGlite}=await import(pathToFileURL(process.env.PORTAL_PGLITE_MODULE).href);
 const db=new PGlite();
 await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
+// Match the hosted project's default ACL, not vanilla PostgreSQL defaults.
+await db.exec('alter default privileges in schema public grant all on tables to anon, authenticated, service_role;');
 for(const f of ['202610160001_tuition_bridge.sql','20261019105859_tuition_email_delivery.sql']) await db.exec(await readFile(`supabase/migrations/${f}`,'utf8'));
 const id='b41d5dd2-ff7a-45a6-935a-d08b03f9d525';
 const event={event_key:'a'.repeat(64),delivery_id:id,message_id:'synthetic@brevo',recipient:'test@example.invalid',event:'delivered',occurred_at:'2026-10-19T09:00:00Z',reason:null};
@@ -35,6 +37,8 @@ await call({...event,delivery_id:null,event_key:'b'.repeat(64),event:'request'})
 assert.equal((await db.query('select * from public.tuition_email_events')).rows.length,2);
 await assert.rejects(()=>db.exec('delete from public.tuition_email_events'));
 await assert.rejects(()=>db.exec("update public.tuition_email_events set reason='rewritten'"));
+await assert.rejects(()=>db.exec('truncate public.tuition_email_events'));
+await assert.rejects(()=>db.exec('delete from public.tuition_email_deliveries'));
 assert.equal((await db.query("select count(*)::int as n from pg_class where relname in ('tuition_email_deliveries','tuition_email_events') and relrowsecurity")).rows[0].n,2);
 await db.close();
 console.log('Email SQL: RLS/grants, immutable events, unique send lock, early callbacks, duplicate callbacks, identity conflicts, submission replay passed.');

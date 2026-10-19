@@ -429,7 +429,8 @@ it never silently marks an uncertain invitation safe to resend or rewrites the
 original invitation date. An operator reconciles that evidence first.
 
 The migration adds `tuition_email_deliveries` and append-only `tuition_email_events`,
-RLS with no public policies, service-role grants and invoker RPCs with empty search
+RLS with no public policies, explicit service-role grants (after revoking Supabase's
+default ALL grants, including DELETE/TRUNCATE) and invoker RPCs with empty search
 paths. It stores normalized recipient, message ID, event type/time and a bounded
 provider reason, never message bodies, payment links or raw webhook payloads.
 Event identity hashes message ID, recipient, event type and occurrence time; Brevo's
@@ -441,7 +442,7 @@ ignored. Opens/clicks are ignored, not interpreted as evidence that a person rea
 `BREVO_TUITION_WEBHOOK_SECRET` in the Authorization bearer header. Configure this
 header in Brevo's webhook settings; do not put secrets in the URL, reuse the operator
 key, or disable authentication. Use the canonical www HTTPS URL to avoid redirects.
-Choose transactional events `request`, `delivered`, `deferred`, `softBounce`,
+Use non-batched delivery (`batched=false`). Choose transactional events `request`, `delivered`, `deferred`, `softBounce`,
 `hardBounce`, `blocked`, `invalid`, `spam`, `unsubscribed` (and error if the account UI
 supports it). Callback event names use `soft_bounce`, `hard_bounce`, `invalid_email`.
 Single events and batches of up to 50 are accepted, with a streamed 128 KB byte limit.
@@ -487,8 +488,22 @@ This is a pull-based status report; automatic staff alerts are not implemented.
    the configured secret, the bank readiness gate and normal recipient approval.
 
 The prepared user-selected test recipients cover Gmail and the club-domain mailbox;
-no Outlook address was supplied. Actual sending/inbox placement and the live callback
-remain unverified. A sample checks layout/delivery, not a real payment or banking QR.
+no Outlook address was supplied. On October 19, an approved UI test of template 299
+was submitted to those three addresses and Samo confirmed receipt on at least one.
+That UI test bypassed this application's send/evidence flow and does not verify the
+live callback. The local API key was subsequently reactivated with Samo's explicit
+approval; a read-only sender check passed. A sample checks layout/delivery, not a
+real payment or banking QR.
+
+Release preflight, October 19: hosted `apnea-trenerji` has neither delivery table;
+Brevo's transactional webhook list returned `document_not_found`. No production
+setup was changed by this preflight. The SQL test now reproduces the hosted ALL
+default table grants and confirms service-role DELETE/UPDATE/TRUNCATE of event
+history are rejected. All 105 application tests, the isolated SQL test, focused
+lint, TypeScript/build and localhost route checks passed. Localhost used synthetic
+credentials and disabled sending: missing auth 401, malformed payload 400, oversized
+payload 413, ignored open 200, and disabled internal send 409. The real callback
+check must still run after the separately approved deployment/configuration.
 
 Verified documentation: [send API](https://developers.brevo.com/docs/send-a-transactional-email),
 [events](https://developers.brevo.com/docs/transactional-webhooks),

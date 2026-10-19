@@ -24,7 +24,9 @@ create table public.tuition_email_events (
 create index tuition_email_events_delivery_time on public.tuition_email_events(delivery_id,occurred_at);
 alter table public.tuition_email_deliveries enable row level security;
 alter table public.tuition_email_events enable row level security;
-revoke all on public.tuition_email_deliveries, public.tuition_email_events from public, anon, authenticated;
+-- Supabase default ACLs can already grant ALL to service_role. Remove those
+-- defaults before granting only the operations this append-only evidence needs.
+revoke all on public.tuition_email_deliveries, public.tuition_email_events from public, anon, authenticated, service_role;
 grant select, insert, update on public.tuition_email_deliveries to service_role;
 grant select, insert on public.tuition_email_events to service_role;
 
