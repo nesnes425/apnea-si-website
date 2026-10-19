@@ -15,14 +15,14 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
     ["Koda namena", p.purposeCode], ["Namen plačila", p.purpose],
     ["Rok plačila", p.deadline], ["Znesek", euro(p.amountCents)],
   ];
-  return renderToBuffer(<Document title="UPN - vadnina za celotno sezono">
+  return renderToBuffer(<Document title="UPN - celotna vadnina">
     <Page size="A4" style={{fontFamily:"TuitionRoboto",padding:48,color:"#33404f",fontSize:11,lineHeight:1.5}}>
       <View style={{flexDirection:"row",justifyContent:"space-between",marginBottom:20}}>
         <View style={{width:350}}>
           <Text style={{fontSize:20,marginBottom:14}}>APNEA.SI</Text>
           {sample && <Text style={{color:"#9e3f23",fontSize:13,marginBottom:12}}>VZOREC - NI ZA PLAČILO</Text>}
-          <Text style={{fontSize:21,marginBottom:12}}>Plačilni nalog za celotno sezono</Text>
-          <Text>Vadnina 2026/27</Text>
+          <Text style={{fontSize:21,marginBottom:12}}>Plačilni nalog za vadnino</Text>
+          <Text>Vadnina 2026/27: {plan.first.serviceFrom}–{plan.first.serviceTo}</Text>
         </View>
         <View style={{width:110,alignItems:"center"}}>
           <Svg width={102} height={102} viewBox="0 0 85 85">
@@ -35,7 +35,7 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
       {rows.map(([label,value]) => <View key={label} style={{flexDirection:"row",paddingVertical:9,borderBottomWidth:0.5,borderBottomColor:"#ddd"}}>
         <Text style={{width:160,color:"#585a5a"}}>{label}</Text><Text style={{flex:1}}>{value}</Text>
       </View>)}
-      <Text style={{marginTop:26}}>Izberite samo eno možnost: celotno vadnino s tem UPN ali dva obroka prek Stripe povezave v sporočilu.</Text>
+      <Text style={{marginTop:26}}>Izberite samo eno možnost: celotno vadnino s tem UPN ali {plan.second ? "dva obroka" : "enkratno plačilo"} prek Stripe povezave v sporočilu.</Text>
       <Text style={{marginTop:12}}>Če ste že plačali s kartico, tega UPN ne plačujte. Če ste že nakazali na banko, ne plačujte še prek Stripe povezave.</Text>
       <Text style={{marginTop:24,fontSize:9,color:"#585a5a"}}>To je plačilni nalog, ne račun. Uradni račun prejmete po potrditvi plačila. Za pomoč: info@apnea.si.</Text>
     </Page>

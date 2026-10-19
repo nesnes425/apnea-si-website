@@ -508,3 +508,11 @@ check must still run after the separately approved deployment/configuration.
 Verified documentation: [send API](https://developers.brevo.com/docs/send-a-transactional-email),
 [events](https://developers.brevo.com/docs/transactional-webhooks),
 [webhook authentication/configuration](https://developers.brevo.com/reference/create-webhook).
+
+October 19 release follow-up: the combined invitation now supports both one and
+two approved instalments and shows the actual service period in the email/PDF.
+The real OTP camt.053.001.08 export parsed successfully (14 entries); matching
+preview and production activation still require the deployed API. Samo authorized
+the production release and a four-person pilot. Use registration-form addresses
+as the source; if absent, Samo permits omission (current schema still requires
+address fields, so do not fabricate placeholders or bypass validation).

@@ -9,8 +9,8 @@ import {tuitionUpnPdf} from "./upn-pdf";
 
 export async function prepareCombinedInvitation(record: PlanRecord) {
   assertBankEnabled();
-  if (!record.manifest.second || record.first_payment_flow !== "stripe_invoice" || record.checkout_id)
-    throw new Error("Combined invitation needs a native two-instalment plan");
+  if (record.first_payment_flow !== "stripe_invoice" || record.checkout_id)
+    throw new Error("Combined invitation needs a native invoice plan");
   if (record.invitation_state !== "not_sent") throw new Error("Invitation already submitted or needs delivery review");
   if (record.cancelled_at || record.first_payment_id || record.bank_state) throw new Error("Plan is closed or already paid");
   const upn = upnDetails(record.manifest);
@@ -22,7 +22,7 @@ export async function prepareCombinedInvitation(record: PlanRecord) {
   if (!invoice.hosted_invoice_url) throw new Error("Hosted Stripe URL missing");
   const message = combinedInvitation(record.manifest, invoice.hosted_invoice_url);
   const pdf = await tuitionUpnPdf(record.manifest);
-  return {...message, invoice: invoice.id, attachment: {name:"UPN-vadnina-cela-sezona.pdf",contentBase64:pdf.toString("base64")}};
+  return {...message, invoice: invoice.id, attachment: {name:"UPN-vadnina.pdf",contentBase64:pdf.toString("base64")}};
 }
 export async function sendCombinedInvitation(record: PlanRecord) {
   assertBankEnabled();

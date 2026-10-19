@@ -14,19 +14,19 @@ export function upnDetails(plan: TuitionPlan, sample = false) {
   };
 }
 export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample = false) {
-  if (!plan.second) throw new Error("Combined invitation requires two approved instalments");
+  const period = `${displayDate(plan.first.serviceFrom)}–${displayDate(plan.first.serviceTo)}`;
   const upn = upnDetails(plan, sample);
   const subject = "Vadnina 2026/27 – izberite način plačila";
   const text = [
     ...(sample ? ["VZOREC – NI ZA PLAČILO", ""] : []),
     "Pozdravljeni,", "",
-    `za ${sample ? "[ime in priimek]" : plan.participant} znaša vadnina za sezono 2026/27 skupaj ${euro(upn.amountCents)}. Izberete lahko eno od dveh možnosti:`,
+    `za ${sample ? "[ime in priimek]" : plan.participant} znaša vadnina za obdobje ${period} skupaj ${euro(upn.amountCents)}. Izberete lahko eno od dveh možnosti:`,
     "",
-    "1. Plačilo s kartico v dveh obrokih",
-    `Prvi obrok ${euro(plan.first.amountCents)} plačate prek spodnje povezave do ${upn.deadline}. Kartica se bremeni takoj, ko potrdite plačilo; ne čaka do roka plačila.`,
-    `Drugi obrok ${euro(plan.second.amountCents)} se samodejno zaračuna na isto kartico ${displayDate(plan.second.chargeAt)}. Po drugem obroku se plačila končajo. Odpoved drugega obroka sporočite do ${displayDate(plan.cancellationDeadline)}.`,
+    plan.second ? "1. Plačilo s kartico v dveh obrokih" : "1. Enkratno plačilo s kartico",
+    `${plan.second ? "Prvi obrok" : "Vadnino"} ${euro(plan.first.amountCents)} plačate prek spodnje povezave do ${upn.deadline}. Kartica se bremeni takoj, ko potrdite plačilo; ne čaka do roka plačila.`,
+    ...(plan.second ? [`Drugi obrok ${euro(plan.second.amountCents)} se samodejno zaračuna na isto kartico ${displayDate(plan.second.chargeAt)}. Po drugem obroku se plačila končajo. Odpoved drugega obroka sporočite do ${displayDate(plan.cancellationDeadline)}.`] : []),
     `Plačilo prek Stripa: ${paymentUrl}`, "",
-    "2. Bančno nakazilo za celotno sezono",
+    "2. Bančno nakazilo celotne vadnine",
     `Z UPN v prilogi poravnate celotno vadnino ${euro(upn.amountCents)} v enem znesku do ${upn.deadline}.`,
     "QR kodo na UPN skenirajte v bančni aplikaciji in pred potrditvijo preverite podatke.",
     `Prejemnik: ${upn.name}`, `${upn.address}, ${upn.city}`,

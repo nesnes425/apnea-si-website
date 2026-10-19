@@ -56,3 +56,11 @@ test('bank closure stops schedule first, voids open invoices and re-reads paymen
   trainingStripe.accounts.retrieve=originals.account;trainingStripe.subscriptionSchedules.list=originals.schedules;trainingStripe.subscriptionSchedules.cancel=originals.cancel;trainingStripe.invoices.list=originals.invoices;trainingStripe.invoices.voidInvoice=originals.void;trainingStripe.paymentIntents.list=originals.intents;
  }
 });
+
+test('one-payment invitation preserves short service period and never promises a second charge',()=>{
+ const single={...p,first:{amountCents:12400,serviceFrom:'2026-10-05',serviceTo:'2026-11-30'},second:undefined};
+ const message=combinedInvitation(single,'https://example.invalid/payment');
+ assert.match(message.text,/124,00/);assert.match(message.text,/Enkratno plačilo/);
+ assert.ok(message.text.includes('30. 11. 2026'));
+ assert.doesNotMatch(message.text,/Drugi obrok|dveh obrokih|celotno sezono/);
+});
