@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { brevoWebhookAuthorized, parseDeliveryEvent, deliverySummary, type DeliveryRecord } from "./delivery-model";
 import { sendTrackedTuitionEmail } from "./delivery";
 import { sendInternalTuitionTest } from "./email-test";
+import { BrevoRequestError } from "./client";
 import { POST } from "@/app/api/brevo/tuition-webhook/route";
 function setEnv(t: TestContext, key: string, value: string) {
   const previous = process.env[key];
@@ -14,6 +15,40 @@ const now = Math.floor(Date.now() / 1000);
 const raw = { event: "delivered", email: "TEST@example.invalid", "message-id": "<synthetic@brevo>", ts_event: now, tags: [`tuition-email:${id}`] };
 const record: DeliveryRecord = { id, plan_id: id, kind: "tuition_combined", recipient: "test@example.invalid", message_id: "synthetic@brevo", submission_state: "submitted", created_at: new Date().toISOString(), submitted_at: new Date().toISOString() };
 const email = { to: { email: record.recipient }, subject: "Synthetic", text: "Synthetic", html: "<p>Synthetic</p>" };
+
+test("provider rejection logs only safe diagnostics and cannot be retried with the same ID", async t => {
+  for (const [key, value] of Object.entries({ PORTAL_SUPABASE_URL: "https://db.example.invalid", PORTAL_SUPABASE_SERVICE_KEY: "PRIVATE-SERVICE-KEY", BREVO_API_KEY: "PRIVATE-BREVO-KEY", BREVO_FROM_EMAIL: "info@apnea.si", BREVO_FROM_NAME: "Apnea" })) setEnv(t, key, value);
+  const logs = t.mock.method(console, "error", () => {});
+  let inserted = false, sends = 0, uncertain = false;
+  t.mock.method(globalThis, "fetch", async (url: string | URL | Request, init?: RequestInit) => {
+    if (String(url).endsWith("/smtp/email")) {
+      sends++;
+      return Response.json({ code: "unauthorized", message: "PRIVATE-BREVO-KEY rejected for test@example.invalid" }, { status: 401 });
+    }
+    if (init?.method === "PATCH") { uncertain = true; return Response.json([]); }
+    if (inserted) return Response.json({}, { status: 409 });
+    inserted = true; return Response.json([]);
+  });
+  await assert.rejects(() => sendTrackedTuitionEmail(id, null, email), BrevoRequestError);
+  await assert.rejects(() => sendTrackedTuitionEmail(id, null, email));
+  assert.equal(sends, 1); assert.equal(uncertain, true);
+  assert.deepEqual(logs.mock.calls.map(c => c.arguments), [["Tuition email submission failed", { stage: "provider_submission", providerStatus: 401, providerCode: "unauthorized" }]]);
+  assert.doesNotMatch(JSON.stringify(logs.mock.calls.map(c => c.arguments)), /PRIVATE|example\.invalid|Synthetic/);
+  assert.equal(new BrevoRequestError("private", 400, JSON.stringify({ code: "PRIVATE-BREVO-KEY" })).providerCode, null);
+  assert.equal(new BrevoRequestError("private", 502, "not JSON").providerCode, null);
+});
+
+test("receipt storage failure is distinguishable from a provider rejection without logging its error", async t => {
+  for (const [key, value] of Object.entries({ PORTAL_SUPABASE_URL: "https://db.example.invalid", PORTAL_SUPABASE_SERVICE_KEY: "synthetic", BREVO_API_KEY: "synthetic", BREVO_FROM_EMAIL: "info@apnea.si", BREVO_FROM_NAME: "Apnea" })) setEnv(t, key, value);
+  const logs = t.mock.method(console, "error", () => {});
+  t.mock.method(globalThis, "fetch", async (url: string | URL | Request) => {
+    if (String(url).endsWith("/smtp/email")) return Response.json({ messageId: "<private@brevo>" });
+    if (String(url).endsWith("/rpc/tuition_email_submitted")) return Response.json({ message: "PRIVATE database error" }, { status: 503 });
+    return Response.json([]);
+  });
+  await assert.rejects(() => sendTrackedTuitionEmail(id, null, email));
+  assert.deepEqual(logs.mock.calls.map(c => c.arguments), [["Tuition email submission failed", { stage: "receipt_storage", providerStatus: null, providerCode: null }]]);
+});
 
 test("events normalize IDs, use event time, deduplicate without trusting webhook configuration id", () => {
   const a = parseDeliveryEvent({ ...raw, id: 10 })!;

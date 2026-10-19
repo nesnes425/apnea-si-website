@@ -1,6 +1,6 @@
 # Tuition payments: Samo and Katarina
 
-Last updated: October 16, 2026
+Last updated: October 19, 2026
 
 ## Current delivery state
 
@@ -486,6 +486,14 @@ This is a pull-based status report; automatic staff alerts are not implemented.
    after verification. Set `TUITION_EMAIL_TRACKING_READY=true` only after the real
    end-to-end delivery check passes. Combined member sending requires this flag plus
    the configured secret, the bank readiness gate and normal recipient approval.
+
+On an uncertain submission, inspect the same delivery ID before any retry. The
+server logs `Tuition email submission failed` with only the failure stage,
+provider HTTP status and a bounded provider code; raw errors, credentials,
+recipients and message content are excluded. A successful local-key preflight
+does not verify Vercel's separate Production Secret. `vercel env run` can fall
+back to local values for unpullable Secrets; do not mistake that for a Production
+credential test. Keep tracking readiness disabled until actual delivery passes.
 
 The prepared user-selected test recipients cover Gmail and the club-domain mailbox;
 no Outlook address was supplied. On October 19, an approved UI test of template 299

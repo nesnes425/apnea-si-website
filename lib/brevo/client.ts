@@ -4,6 +4,17 @@ import { normalizePhoneForBrevo } from "./phone";
 const BREVO_API = "https://api.brevo.com/v3";
 const REQUEST_TIMEOUT_MS = 10000;
 
+export class BrevoRequestError extends Error {
+  readonly providerCode: string | null;
+  constructor(message: string, readonly status: number, body: string) {
+    super(message);
+    this.name = "BrevoRequestError";
+    let code: unknown;
+    try { code = JSON.parse(body).code; } catch { /* Non-JSON responses have no provider code. */ }
+    this.providerCode = typeof code === "string" && /^[a-z_]{1,64}$/.test(code) ? code : null;
+  }
+}
+
 function authHeaders() {
   return {
     "api-key": readEnv("BREVO_API_KEY"),
@@ -24,7 +35,7 @@ async function brevoFetch<T = unknown>(
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Brevo ${init.method ?? "GET"} ${path} failed (${res.status}): ${body}`);
+    throw new BrevoRequestError(`Brevo ${init.method ?? "GET"} ${path} failed (${res.status}): ${body}`, res.status, body);
   }
 
   if (res.status === 204) return undefined as T;

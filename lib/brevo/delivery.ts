@@ -1,4 +1,4 @@
-import { sendTransactionalEmailWithReceipt, type TransactionalEmail } from "./client";
+import { BrevoRequestError, sendTransactionalEmailWithReceipt, type TransactionalEmail } from "./client";
 import { tuitionDb } from "@/lib/tuition/store";
 import { deliverySummary, deliveryTag, normalizeMessageId, type DeliveryEvent, type DeliveryRecord } from "./delivery-model";
 
@@ -9,12 +9,20 @@ export async function sendTrackedTuitionEmail(id: string, planId: string | null,
   await tuitionDb("tuition_email_deliveries", "POST", {
     id, plan_id: planId, kind: planId ? "tuition_combined" : "tuition_test", recipient,
   });
+  let stage: "provider_submission" | "receipt_storage" = "provider_submission";
   try {
     const result = await sendTransactionalEmailWithReceipt({ ...email, tags: [deliveryTag(id)], idempotencyKey: `tuition-email-${id}` });
     const messageId = normalizeMessageId(result.messageId);
+    stage = "receipt_storage";
     await tuitionDb("rpc/tuition_email_submitted", "POST", { target_id: id, provider_id: messageId });
     return { id, messageId };
   } catch (error) {
+    // Never log the raw error: it may contain message bodies or recipient data.
+    console.error("Tuition email submission failed", {
+      stage,
+      providerStatus: error instanceof BrevoRequestError ? error.status : null,
+      providerCode: error instanceof BrevoRequestError ? error.providerCode : null,
+    });
     // Never erase webhook evidence or the original submission time.
     await tuitionDb(`tuition_email_deliveries?id=eq.${id}&submission_state=eq.sending`, "PATCH", { submission_state: "uncertain" });
     throw error;
