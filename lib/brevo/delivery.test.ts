@@ -100,6 +100,9 @@ test("send stores ID/tag and a persistent lock; timeouts and replay never call B
     const path = String(url), body = JSON.parse(String(init?.body ?? "{}"));
     if (path.endsWith("/smtp/email")) {
       sends++;
+      // Brevo requires a UUID; the prefixed 50-character key is rejected natively.
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.headers?.idempotencyKey ?? ""))
+        return Response.json({ code: "out_of_range", message: "Idempotency key exceeds char limit" }, { status: 400 });
       assert.deepEqual(body.tags, [`tuition-email:${id}`]);
       assert.equal(body.replyTo, undefined);
       if (timeout) throw new Error("accepted, response lost");
@@ -147,6 +150,7 @@ test("approved internal test uses final template, safe PDF, real sender/reply-to
       assert.match(body.textContent, /\[Stripe povezava za dva obroka\]/);
       assert.doesNotMatch(body.htmlContent, /https:\/\/invoice\.stripe\.com/);
       assert.equal(body.attachment.length, 1);
+      assert.equal(body.headers.idempotencyKey, id);
       assert.equal(Buffer.from(body.attachment[0].content, "base64").subarray(0, 5).toString(), "%PDF-");
       return Response.json({ messageId: "<synthetic@brevo>" });
     }

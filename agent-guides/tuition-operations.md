@@ -495,6 +495,14 @@ does not verify Vercel's separate Production Secret. `vercel env run` can fall
 back to local values for unpullable Secrets; do not mistake that for a Production
 credential test. Keep tracking readiness disabled until actual delivery passes.
 
+Brevo requires the idempotency header to be a UUID. Tracked tuition sends use
+the immutable delivery UUID directly; the `tuition-email:` prefix belongs only
+to the correlation tag. Production and a native API reproduction rejected the
+old 50-character prefixed key with HTTP 400 `out_of_range` ("Idempotency key
+exceeds char limit"). Do not unlock earlier uncertain records or automatically
+resend them after this fix. Explicitly approved separate internal diagnostics
+remain distinct records. [Provider contract](https://developers.brevo.com/docs/heterogenous-versions-batch-emails).
+
 The prepared user-selected test recipients cover Gmail and the club-domain mailbox;
 no Outlook address was supplied. On October 19, an approved UI test of template 299
 was submitted to those three addresses and Samo confirmed receipt on at least one.
