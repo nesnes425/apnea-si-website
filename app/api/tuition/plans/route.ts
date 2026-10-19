@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { tuitionAdminAuthorized } from "@/lib/tuition/auth";
+import { getEmailDelivery } from "@/lib/brevo/delivery";
 import { fingerprint, planSchema, tuitionItem } from "@/lib/tuition/plan";
 import {
   claimPlan,
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
     if (!plan)
       return NextResponse.json({ error: "Unknown plan" }, { status: 404 });
     return NextResponse.json(
-      { plan, payments: await getPayments(plan.id) },
+      { plan, payments: await getPayments(plan.id), emailDelivery: await getEmailDelivery({ planId: plan.id }) },
       { headers: { "cache-control": "no-store" } },
     );
   } catch {

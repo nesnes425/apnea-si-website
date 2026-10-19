@@ -331,8 +331,9 @@ not call `invoices.sendInvoice`. The sender must equal `info@apnea.si`; replies 
 that address. Existing submitted invitations (including prior pilots) must not be
 converted or resent. Manual Minimax rows remain excluded by the hub operator.
 
-This feature is off until the separately approved release. Apply only
-`20261019095459_tuition_bank_reconciliation.sql`, then deploy the reviewed branch.
+This feature is off until the separately approved release. Apply the reviewed new migrations
+`20261019095459_tuition_bank_reconciliation.sql` and
+`20261019105859_tuition_email_delivery.sql`, then deploy the reviewed branch.
 Do not bulk-push older migrations. Set `TUITION_BANK_ENABLED=true` only after a real
 OTP statement has passed the read-only preview. OTP offers “XML sepa” and “XML SEPA
 (ISO SEPA 2019)”; the actual namespaces remain unverified without a file. The local
@@ -409,3 +410,86 @@ and `scripts/verify-upn-pdf.py` independently decodes them with ZXing, including
 Slovenian diacritics, amount, IBAN, RF reference and checksum. Never send/pay these
 synthetic verification PDFs. Real OTP mobile-bank scanning is not yet verified.
 Actual OTP export validation and live sender/delivery remain release acceptance.
+
+
+## Brevo delivery tracking and internal test (local, October 19)
+
+Samo chose to retain Brevo Transactional and requested delivery tracking plus a
+prepared final-message test before member sending. This implementation covers new
+combined tuition invitations and explicitly approved internal tests. Legacy Stripe
+invitations, membership messages and Minimax PDF emails keep their existing flows;
+no historical delivery status is invented. `Poslano` still means provider submission,
+not delivery/read confirmation; no additional Sheet columns are created here.
+
+`sendTrackedTuitionEmail` inserts a private, unique send record **before** contacting
+Brevo. The response messageId is normalized and saved, and an opaque `tuition-email:UUID`
+tag correlates early callbacks. A duplicate ID/plan or uncertain response cannot
+send again. A callback can recover the provider ID after a lost HTTP response, but
+it never silently marks an uncertain invitation safe to resend or rewrites the
+original invitation date. An operator reconciles that evidence first.
+
+The migration adds `tuition_email_deliveries` and append-only `tuition_email_events`,
+RLS with no public policies, service-role grants and invoker RPCs with empty search
+paths. It stores normalized recipient, message ID, event type/time and a bounded
+provider reason, never message bodies, payment links or raw webhook payloads.
+Event identity hashes message ID, recipient, event type and occurrence time; Brevo's
+webhook `id` is not treated as a unique event ID. Repeated deliveries are harmless.
+Mismatched recipients/message IDs fail closed. Account mail outside this flow is
+ignored. Opens/clicks are ignored, not interpreted as evidence that a person read it.
+
+`POST /api/brevo/tuition-webhook` requires a separate, random 32+ character
+`BREVO_TUITION_WEBHOOK_SECRET` in the Authorization bearer header. Configure this
+header in Brevo's webhook settings; do not put secrets in the URL, reuse the operator
+key, or disable authentication. Use the canonical www HTTPS URL to avoid redirects.
+Choose transactional events `request`, `delivered`, `deferred`, `softBounce`,
+`hardBounce`, `blocked`, `invalid`, `spam`, `unsubscribed` (and error if the account UI
+supports it). Callback event names use `soft_bounce`, `hard_bounce`, `invalid_email`.
+Single events and batches of up to 50 are accepted, with a streamed 128 KB byte limit.
+Database failures return 503 for retry; invalid input returns 400; invalid auth 401.
+
+Operator `tuition.ts status UUID` includes `emailDelivery` with provider ID, submission
+state, delivery status/time, failure reason, history and `needs_review`. Internal
+tests use authenticated `GET /api/tuition/email-delivery?id=UUID`. Delayed request or
+soft-bounce events cannot erase delivery; permanent failures/complaints stay visible.
+An uncertain submission or missing delivery evidence after 24 hours requires review.
+No webhook sends reminders, retries an email, changes payments, or writes the Sheet.
+`delivered` means the recipient server accepted it, not inbox placement or reading.
+This is a pull-based status report; automatic staff alerts are not implemented.
+
+### Release and internal test steps
+
+1. Obtain the normal push/PR, migration and production-release approvals. Neither
+   this source migration nor an internal-test draft is a production change.
+2. Apply the reviewed migration, deploy the route, securely set the dedicated webhook
+   secret and configure the authenticated Brevo webhook. The provider settings and
+   secrets are not configured by this local implementation.
+3. Set `TUITION_EMAIL_TEST_ENABLED=true` and `TUITION_EMAIL_TEST_RECIPIENTS` to the exact
+   approved internal addresses, comma-separated. Keep `TUITION_EMAIL_TRACKING_READY=false`
+   during verification. Internal tests do not require enabling bank collection.
+4. Prepare each test locally (no env/database/provider access):
+   `node --import tsx scripts/tuition-email-test.ts prepare approved-address@example.com`.
+   Review the generated HTML/text/UPN in ignored `temp/tuition-email-tests/UUID/`.
+   Files are private; preserve test.json and its ID through all retries/status checks.
+5. Only after explicit sending approval, use the existing local operator settings:
+   `node --import tsx --env-file-if-exists=.env.tuition.local scripts/tuition-email-test.ts send /private/path/test.json --apply`.
+   It uses `TUITION_API_URL` and `TUITION_ADMIN_KEY`, exact server-side allowlisting,
+   the actual sender/reply-to and the shared final template. Subject starts with
+   `[TEST – NI ZA PLAČILO]`. Synthetic payer, placeholder Stripe link/IBAN/reference
+   and a non-payable QR prevent accidental payment. No Stripe/Minimax/Sheet action.
+6. Read status with the same command replacing `send` with `status` and omitting
+   `--apply`. Check the message in the actual mailbox: inbox/spam/promotions, SPF,
+   DKIM, DMARC, mobile/desktop layout, readable PDF, sample QR warning and reply-to.
+   A successful API response alone is not a passed delivery test. Mailbox replies
+   are a separate sending action; don't send them without authorization.
+7. Resolve rejects, missing callbacks or uncertainty. Disable internal-test sending
+   after verification. Set `TUITION_EMAIL_TRACKING_READY=true` only after the real
+   end-to-end delivery check passes. Combined member sending requires this flag plus
+   the configured secret, the bank readiness gate and normal recipient approval.
+
+The prepared user-selected test recipients cover Gmail and the club-domain mailbox;
+no Outlook address was supplied. Actual sending/inbox placement and the live callback
+remain unverified. A sample checks layout/delivery, not a real payment or banking QR.
+
+Verified documentation: [send API](https://developers.brevo.com/docs/send-a-transactional-email),
+[events](https://developers.brevo.com/docs/transactional-webhooks),
+[webhook authentication/configuration](https://developers.brevo.com/reference/create-webhook).

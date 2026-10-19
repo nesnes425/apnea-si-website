@@ -131,3 +131,13 @@ only with `PORTAL_EMAIL_ENABLED=true`. Recipient is fixed to `info@apnea.si`.
 Attendance commits before the send attempt; failures remain visible and recoverable
 in the private outbox. Local demo never sends. See [trainer-portal.md](trainer-portal.md)
 for invitation, SMTP, delivery verification and uncertain-delivery recovery rules.
+
+
+## Tuition invitation delivery tracking — October 19, local implementation
+
+New combined tuition invitations use the existing transactional API with receipt IDs
+and an authenticated delivery webhook. Internal testing is separately enabled and
+restricted to exact approved addresses; preparation never sends. See the canonical
+[tuition delivery and test guide](tuition-operations.md#brevo-delivery-tracking-and-internal-test-local-october-19)
+for schema, secrets, release gates, event semantics and commands. This is not yet a
+production configuration and does not add tracking to older mail flows.

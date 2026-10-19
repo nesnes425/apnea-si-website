@@ -1,5 +1,5 @@
 import {siteConfig} from "@/lib/config";
-import {sendTransactionalEmail} from "@/lib/brevo/client";
+import {sendTrackedTuitionEmail} from "@/lib/brevo/delivery";
 import {bankReference} from "./bank-model";
 import {assertBankEnabled} from "./bank";
 import {combinedInvitation, upnDetails} from "./combined-template";
@@ -30,18 +30,20 @@ export async function sendCombinedInvitation(record: PlanRecord) {
     if (record.invitation_channel !== "club") throw new Error("A Stripe invitation was already sent; do not send another");
     return {state:"submitted",alreadySubmitted:true};
   }
+  if (process.env.TUITION_EMAIL_TRACKING_READY !== "true" || (process.env.BREVO_TUITION_WEBHOOK_SECRET?.length ?? 0) < 32)
+    throw new Error("Verify the delivery webhook with an internal test before member invitations");
   if (record.manifest.mode !== "live") throw new Error("Test plans render previews only; no real email");
   if (process.env.BREVO_FROM_EMAIL?.trim().toLowerCase() !== siteConfig.email)
     throw new Error("Combined invitation must be sent from info@apnea.si");
   const message = await prepareCombinedInvitation(record);
   await submitInvitation(record, {
     save: patch => patchPlan(record, patch),
-    send: () => sendTransactionalEmail({
+    send: async () => { await sendTrackedTuitionEmail(record.id, record.id, {
       to: {email: record.manifest.payer.email, name:record.manifest.payer.name},
       subject: message.subject, text:message.text, html:message.html,
       replyTo:{email:siteConfig.email, name:siteConfig.tuitionBank.name},
       attachments:[message.attachment], idempotencyKey:`tuition-combined-${record.id}`,
-    }),
+    }); },
   });
   return {state:"submitted",alreadySubmitted:false,invoice:message.invoice};
 }

@@ -116,6 +116,7 @@ async function main() {
           invitationState: p.invitation_state,
           invitationSubmittedAt: p.invitation_submitted_at,
           invitationChannel: p.invitation_channel,
+          emailDelivery: result.emailDelivery,
           bankState: p.bank_state,
           bankBookedOn: p.bank_booked_on,
           firstPayment: p.first_payment_id,
