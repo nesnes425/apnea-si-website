@@ -6,6 +6,7 @@ import {combinedInvitation, upnDetails} from "./combined-template";
 import {prepareFirstInvitation, submitInvitation} from "./invitation";
 import {patchPlan, type PlanRecord} from "./store";
 import {tuitionUpnPdf} from "./upn-pdf";
+import {tuitionQrPng} from "./upn-image";
 
 export async function prepareCombinedInvitation(record: PlanRecord) {
   assertBankEnabled();
@@ -22,7 +23,7 @@ export async function prepareCombinedInvitation(record: PlanRecord) {
   if (!invoice.hosted_invoice_url) throw new Error("Hosted Stripe URL missing");
   const message = combinedInvitation(record.manifest, invoice.hosted_invoice_url);
   const pdf = await tuitionUpnPdf(record.manifest);
-  return {...message, invoice: invoice.id, attachment: {name:"UPN-vadnina.pdf",contentBase64:pdf.toString("base64")}};
+  return {...message, qrImage:tuitionQrPng(record.manifest).toString("base64"), invoice: invoice.id, attachment: {name:"UPN-vadnina.pdf",contentBase64:pdf.toString("base64")}};
 }
 export async function sendCombinedInvitation(record: PlanRecord) {
   assertBankEnabled();

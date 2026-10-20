@@ -532,3 +532,37 @@ preview and production activation still require the deployed API. Samo authorize
 the production release and a four-person pilot. Use registration-form addresses
 as the source; if absent, Samo permits omission (current schema still requires
 address fields, so do not fabricate placeholders or bypass validation).
+
+### October 20 email copy and inline UPN QR
+
+The combined template now uses Samo's October 20 copy and `ŠD Apnea.Si`
+signature. Two-instalment plans offer card payment first and a full-obligation
+UPN second. One-instalment plans retain truthful one-payment wording; editing
+copy never adds an instalment to a plan. Sender, reply-to, delivery callbacks,
+original submission date and replay locks are unchanged.
+
+Brevo does not support attachment CID images for transactional messages
+([provider clarification](https://community.brevo.com/t/does-transactional-email-support-embedded-image/6665)).
+The HTML therefore loads a PNG from `/api/tuition/upn-qr/[token]`, beside the bank
+details on desktop and below them on mobile. It uses the PDF's exact QR matrix
+(UPNQR, ISO 8859-2/ECI 4, V15/M) with a four-module quiet zone. The PDF remains
+attached for clients that block images; no external QR service receives payer data.
+
+The image URL is a bearer capability: anyone with the complete URL can see the
+payer details encoded in that QR. Treat it as private, like the attached PDF;
+never put a real URL into public logs, screenshots or issue bodies. It contains
+only plan ID, manifest hash, expiry and a domain-separated HMAC, not plaintext
+payer/bank details. Signing reuses the existing server-only `TUITION_ADMIN_KEY`;
+rotation invalidates image URLs (PDF attachments are unaffected). URLs expire 30
+days after the first service period ends. Signature and expiry are checked before
+storage access; the server then checks the exact manifest and saved club bank
+offer. Missing/invalid capabilities return 404; cancelled, card-paid or bank-held
+plans return 410. Reads never send email or change any record. Responses use
+private/no-store, noindex and no-referrer headers. Email-provider caches and
+already downloaded images/PDFs cannot be revoked by this endpoint.
+
+`/api/tuition/upn-qr/sample` serves only the non-payable sample without database
+access. Offline and operator previews embed the PNG in their saved HTML, while
+outgoing HTML uses HTTPS. Verify the actual received email image in an explicitly
+approved internal send after deployment; a localhost image or provider-delivered
+callback alone does not prove display in a recipient's email client.

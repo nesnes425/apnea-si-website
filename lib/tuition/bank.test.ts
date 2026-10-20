@@ -58,8 +58,11 @@ test('bank closure stops schedule first, voids open invoices and re-reads paymen
 });
 
 test('one-payment invitation preserves short service period and never promises a second charge',()=>{
+ const oldKey=process.env.TUITION_ADMIN_KEY;process.env.TUITION_ADMIN_KEY='synthetic-test-only-key-'.repeat(2);
  const single={...p,first:{amountCents:12400,serviceFrom:'2026-10-05',serviceTo:'2026-11-30'},second:undefined};
- const message=combinedInvitation(single,'https://example.invalid/payment');
+ let message;
+ try {message=combinedInvitation(single,'https://example.invalid/payment');}
+ finally {if(oldKey===undefined)delete process.env.TUITION_ADMIN_KEY;else process.env.TUITION_ADMIN_KEY=oldKey;}
  assert.match(message.text,/124,00/);assert.match(message.text,/Enkratno plačilo/);
  assert.ok(message.text.includes('30. 11. 2026'));
  assert.doesNotMatch(message.text,/Drugi obrok|dveh obrokih|celotno sezono/);

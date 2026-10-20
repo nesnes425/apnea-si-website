@@ -15,7 +15,8 @@ async function main() {
     const message = await combinedPreview();
     await mkdir(dir, { recursive: true, mode: 0o700 });
     await writeFile(resolve(dir, "test.json"), JSON.stringify(input, null, 2), { mode: 0o600, flag: "wx" });
-    await writeFile(resolve(dir, "sporocilo.html"), message.html, { mode: 0o600 });
+    const html = message.html.replace(/src="[^"]*\/api\/tuition\/upn-qr\/[^"]+"/, `src="data:image/png;base64,${message.qrImage}"`);
+    await writeFile(resolve(dir, "sporocilo.html"), html, { mode: 0o600 });
     await writeFile(resolve(dir, "sporocilo.txt"), `Od: info@apnea.si\nZa: ${recipient}\nZadeva: [TEST – NI ZA PLAČILO] ${message.subject}\n\n${message.text}`, { mode: 0o600 });
     await writeFile(resolve(dir, message.attachment.name), Buffer.from(message.attachment.contentBase64, "base64"), { mode: 0o600 });
     console.log(`Prepared only; nothing sent: ${resolve(dir, "test.json")}`);
