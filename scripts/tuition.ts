@@ -144,7 +144,11 @@ async function main() {
   } else if (command === "preview-combined") {
     const dir = resolve("temp/tuition-previews", input);
     await mkdir(dir, {recursive: true, mode: 0o700});
-    await writeFile(resolve(dir,"sporocilo.html"), result.html, {mode:0o600});
+    // Local previews embed the same PNG; sent emails use the protected HTTPS URL.
+    const html = result.qrImage
+      ? result.html.replace(/src="[^"]*\/api\/tuition\/upn-qr\/[^"]+"/, `src="data:image/png;base64,${result.qrImage}"`)
+      : result.html;
+    await writeFile(resolve(dir,"sporocilo.html"), html, {mode:0o600});
     await writeFile(resolve(dir,"sporocilo.txt"), result.text, {mode:0o600});
     await writeFile(resolve(dir,"UPN.pdf"), Buffer.from(result.attachment.contentBase64,"base64"), {mode:0o600});
     console.log(JSON.stringify({directory:dir,emailSent:false}));

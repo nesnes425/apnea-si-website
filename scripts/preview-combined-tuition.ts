@@ -6,7 +6,8 @@ async function main() {
 const message = await combinedPreview();
 const dir = resolve("temp/combined-tuition-preview");
 await mkdir(dir,{recursive:true});
-await writeFile(resolve(dir,"sporocilo.html"),message.html);
+const html = message.html.replace(/src="[^"]*\/api\/tuition\/upn-qr\/[^"]+"/, `src="data:image/png;base64,${message.qrImage}"`);
+await writeFile(resolve(dir,"sporocilo.html"),html);
 await writeFile(resolve(dir,"sporocilo.txt"),`Od: info@apnea.si\nZadeva: ${message.subject}\n\n${message.text}`);
 await writeFile(resolve(dir,"UPN-vzorec.pdf"),Buffer.from(message.attachment.contentBase64,"base64"));
 console.log(dir);

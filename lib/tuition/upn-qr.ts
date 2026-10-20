@@ -1,6 +1,6 @@
 import {qrcodegen} from "@/lib/vendor/qrcodegen";
 import {compact, mod97, validIban} from "./bank-model";
-import {upnDetails} from "./combined-template";
+import {upnDetails} from "./upn-details";
 import type {TuitionPlan} from "./plan";
 
 // ZBS UPN QR technical standard v1.1, section 5: ISO 8859-2, ECI 4,
@@ -39,12 +39,19 @@ export function upnPayload(plan: TuitionPlan) {
   if (iso88592(payload).length > 411) throw new Error("UPN QR exceeds 411 bytes; review long payer details without truncation");
   return payload;
 }
-export function tuitionQr(plan: TuitionPlan, sample = false) {
+function encodeTuitionQr(plan: TuitionPlan, sample = false) {
   // The generic preview must never turn into a payable banking instruction.
   const payload = sample ? "VZOREC - NI ZA PLACILO\nAPNEA.SI - vadnina 2026/27" : upnPayload(plan);
   const qr = qrcodegen.QrCode.encodeSegments([
     qrcodegen.QrSegment.makeEci(4), qrcodegen.QrSegment.makeBytes(Array.from(iso88592(payload))),
   ], qrcodegen.QrCode.Ecc.MEDIUM, 15, 15, -1, false);
+  return {payload, qr};
+}
+export function tuitionQrMatrix(plan: TuitionPlan, sample = false) {
+  return encodeTuitionQr(plan, sample).qr;
+}
+export function tuitionQr(plan: TuitionPlan, sample = false) {
+  const {payload, qr} = encodeTuitionQr(plan, sample);
   // Vector horizontal runs; four white modules on every edge. 85 x 85 modules
   // rendered at 102pt gives the standard 0.42333mm module pitch at print size.
   let path = "";
