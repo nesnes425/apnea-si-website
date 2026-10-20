@@ -6,6 +6,8 @@ export {upnDetails} from "./upn-details";
 
 const escape = (s: string) => s.replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"})[c]!);
 export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample = false) {
+  const upnOnly = plan.invitationFormat === "upn_only";
+  if (upnOnly && plan.second) throw new Error("UPN-only cannot promise instalments");
   const period = `${displayDate(plan.first.serviceFrom)} – ${displayDate(plan.first.serviceTo)}`;
   const upn = upnDetails(plan, sample);
   const subject = `Vadnina 2026/27 – ${sample ? "Vzorec Član" : plan.participant}`;
@@ -19,18 +21,18 @@ export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample
     `Pozdravljeni ${sample ? "Vzorec Član" : plan.participant},`,
     "še enkrat hvala za vašo udeležbo na treningih!",
     `Za obdobje ${period} vam pošiljamo plačilni nalog za plačilo vadnine v skupnem znesku ${euro(upn.amountCents)}.`,
-    "Izberete lahko eno od dveh možnosti plačila:",
+    ...(!upnOnly ? ["Izberete lahko eno od dveh možnosti plačila:",
     plan.second ? "1. Plačilo s kartico v dveh obrokih" : "1. Enkratno plačilo s kartico",
     plan.second
       ? `Prvi in drugi obrok se poravnata s plačilno kartico. Prvi obrok ${euro(plan.first.amountCents)} bremeni kartico takoj ob potrditvi plačila, drugi obrok ${euro(plan.second.amountCents)} pa samodejno bremeni isto kartico ${displayDate(plan.second.chargeAt)}.`
       : `Vadnino ${euro(plan.first.amountCents)} poravnate s plačilno kartico do ${upn.deadline}. Kartica se bremeni takoj ob potrditvi plačila.`,
     ...(plan.second ? [`Po drugem obroku se plačila končajo. Odpoved udeležbe in s tem drugega obroka sporočite najkasneje do ${displayDate(plan.cancellationDeadline)} na ${siteConfig.email}.`] : []),
     `Povezava na plačilo s kartico: ${paymentUrl}`,
-    "2. Nakazilo celotne vadnine s QR kodo",
+    "2. Nakazilo celotne vadnine s QR kodo"] : ["Nakazilo vadnine s QR kodo"]),
     `Z UPN v prilogi poravnate celotno vadnino ${euro(upn.amountCents)} v enem znesku do ${upn.deadline}.`,
     "QR kodo skenirajte v bančni aplikaciji in pred potrditvijo preverite podatke.",
     bankDetails,
-    "Prosimo, plačajte samo na en način.",
+    ...(upnOnly ? ["Če ste vadnino že poravnali, je ne plačujte ponovno; odgovorite na to sporočilo, da preverimo plačilo."] : ["Prosimo, plačajte samo na en način."]),
     ...(agreementNotice(plan) ? [agreementNotice(plan)] : []),
     "Račun prejmete po potrditvi plačila.",
     `Za dodatna pojasnila smo na voljo na ${siteConfig.email}.`,
@@ -41,7 +43,7 @@ export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample
   const htmlParagraph = (s: string) => `<p style="margin:0 0 19px">${escape(s).replace(/\n/g,"<br>")}</p>`;
   const body = paragraphs.map(p => {
     if (p === bankDetails) return `<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 22px"><tr><td class="bank-details" style="vertical-align:top;padding:0 16px 0 0;overflow-wrap:anywhere">${htmlParagraph(p)}</td><td class="bank-qr" width="204" style="vertical-align:top;text-align:center"><img src="${escape(qrUrl)}" width="204" height="204" alt="${sample ? "Vzorčna QR koda – ni za plačilo" : "UPN QR za plačilo celotne vadnine; na voljo tudi v PDF prilogi"}" style="display:block;width:204px;height:204px;margin:0 auto"><p style="font-size:12px;line-height:1.4;margin:8px 0 0">${sample ? "VZORČNA QR KODA<br>Ni za plačilo" : "UPN QR<br>Skenirajte v bančni aplikaciji"}</p></td></tr></table>`;
-    if (/^[12]\. /.test(p)) return `<h2 style="font-size:19px;margin:30px 0 12px">${escape(p)}</h2>`;
+    if (/^[12]\. /.test(p) || p === "Nakazilo vadnine s QR kodo") return `<h2 style="font-size:19px;margin:30px 0 12px">${escape(p)}</h2>`;
     if (p === `Povezava na plačilo s kartico: ${paymentUrl}`) {
       const buttonStyle = "display:inline-block;margin-top:12px;background:#33404f;color:#fff;padding:12px 20px;border-radius:4px;font-weight:bold;text-decoration:none";
       return sample ? htmlParagraph(p) : `<p style="margin:0 0 19px">Povezava na plačilo s kartico:<br><a href="${escape(paymentUrl)}" style="${buttonStyle}">Odprite varno plačilo s kartico</a></p>`;

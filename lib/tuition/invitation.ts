@@ -213,6 +213,8 @@ export async function submitInvitation(
 
 // Prepare/finalize the hosted payment page without sending a Stripe email.
 export async function prepareFirstInvitation(record: PlanRecord) {
+  if (record.manifest.invitationFormat === "upn_only")
+    throw new Error("UPN-only obligation cannot activate card collection");
   await assertTuitionStripe(record.manifest.mode);
   if (record.cancelled_at || record.first_payment_id || record.bank_state)
     throw new Error("Obligation is closed or paid");
@@ -266,6 +268,8 @@ export async function prepareFirstInvitation(record: PlanRecord) {
   return invoice;
 }
 export async function sendFirstInvitation(record: PlanRecord) {
+  if (record.manifest.invitationFormat === "upn_only")
+    throw new Error("UPN-only obligation must use the club invitation");
   if (record.invitation_channel === "club" || record.bank_reference)
     throw new Error("Use the combined club invitation for this obligation");
   await assertTuitionStripe(record.manifest.mode);
@@ -300,6 +304,8 @@ export async function sendFirstInvitation(record: PlanRecord) {
   };
 }
 export async function invoicePaymentUrl(record: PlanRecord) {
+  if (record.manifest.invitationFormat === "upn_only")
+    throw new Error("UPN-only obligation has no card payment link");
   if (
     !record.first_invoice_id ||
     record.invitation_state !== "submitted" ||

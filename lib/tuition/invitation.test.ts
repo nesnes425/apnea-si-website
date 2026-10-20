@@ -13,10 +13,14 @@ import {
   verifyFirstInvoice,
   submitInvitation,
   cancelFirstInvoice,
+  prepareFirstInvitation,
+  sendFirstInvitation,
+  invoicePaymentUrl,
 } from "./invitation";
 import type { PlanRecord } from "./store";
 import { trainingStripe } from "@/lib/stripe/training-client";
 import { paidInvoiceIntent } from "./webhook";
+import {tuitionCheckout, ensureSecondSchedule} from "./stripe";
 process.env.TRAINING_STRIPE_SECRET_KEY = "sk_test_synthetic";
 
 const manifest = planSchema.parse(
@@ -266,4 +270,18 @@ test("manual or multiple paid invoice records cannot stand in for a single verif
     () => paidInvoiceIntent("in_synthetic"),
     /single verified/,
   );
+});
+
+test("UPN-only cannot activate, send or expose a card request, including legacy Checkout", async (t) => {
+  const r = record();
+  r.manifest = {...manifest, invitationFormat:"upn_only", second:undefined};
+  const account = t.mock.method(trainingStripe.accounts, "retrieve", async () => {throw Error("No Stripe access expected");});
+  for (const action of [prepareFirstInvitation, sendFirstInvitation, invoicePaymentUrl, tuitionCheckout])
+    await assert.rejects(() => action(r), /UPN-only/);
+  r.first_payment_flow = "checkout";
+  await assert.rejects(() => tuitionCheckout(r), /UPN-only/);
+  await ensureSecondSchedule(r);
+  r.manifest.second = manifest.second;
+  await assert.rejects(() => ensureSecondSchedule(r), /UPN-only/);
+  assert.equal(account.mock.callCount(), 0);
 });

@@ -68,3 +68,14 @@ test('one-payment invitation preserves short service period and never promises a
  assert.ok(message.text.includes('30. 11. 2026'));
  assert.doesNotMatch(message.text,/Drugi obrok|dveh obrokih|celotno sezono/);
 });
+
+test('UPN-only has full amount, original period, QR and no card link or instalment promise',()=>{
+ const single=planSchema.parse({...p,invitationFormat:'upn_only',second:undefined,
+   first:{amountCents:37800,serviceFrom:'2026-10-12',serviceTo:'2027-05-10'}});
+ const message=combinedInvitation(single,'https://example.invalid/must-not-appear',true);
+ assert.match(message.text,/378,00/);
+ assert.match(message.text,/12\. 10\. 2026 – 10\. 5\. 2027/);
+ assert.match(message.html,/<img /);
+ assert.doesNotMatch(message.html+message.text,/must-not-appear|Stripe|kartic|obrok|eno od dveh/i);
+ assert.equal(planSchema.safeParse({...single,second:p.second}).success,false);
+});

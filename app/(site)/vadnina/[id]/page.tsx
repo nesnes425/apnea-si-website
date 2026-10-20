@@ -84,6 +84,11 @@ export default async function TuitionPaymentPage({
               Ta povezava za plačilo ni več aktivna. Za dogovor se obrnite na
               društvo.
             </p>
+          ) : p.invitationFormat === "upn_only" ? (
+            <p className="text-body">
+              Vadnino {euro(p.first.amountCents)} poravnajte z UPN in QR kodo iz prejetega sporočila.
+              Če ste že plačali, ne plačujte ponovno. Za drugačen dogovor odgovorite na sporočilo društva.
+            </p>
           ) : (
             <>
               <p className="mb-5 text-2xl font-bold text-navy">

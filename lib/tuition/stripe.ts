@@ -53,6 +53,8 @@ export async function tuitionCheckout(
   record: PlanRecord,
 ): Promise<string | null> {
   const p = record.manifest;
+  if (p.invitationFormat === "upn_only")
+    throw new Error("UPN-only obligation has no card checkout");
   await assertTuitionStripe(p.mode);
   if (record.cancelled_at) throw new Error("Plan cancelled");
   if (record.first_payment_id) return null;
@@ -217,6 +219,11 @@ export function verifySecondSchedule(
 }
 
 export async function ensureSecondSchedule(record: PlanRecord) {
+  if (record.manifest.invitationFormat === "upn_only") {
+    if (record.manifest.second || record.schedule_id)
+      throw new Error("UPN-only obligation cannot have a card schedule");
+    return;
+  }
   if (!record.manifest.second || record.cancelled_at || record.schedule_id)
     return;
   if (!record.first_payment_id || !record.customer_id) return;

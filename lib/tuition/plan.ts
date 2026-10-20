@@ -42,6 +42,9 @@ export const planSchema = z
     participant: z.string().min(2).max(150),
     locationCode: z.string().regex(/^[A-Z0-9][A-Z0-9-]{2,39}$/),
     description: z.string().min(3).max(200),
+    // Optional so existing fingerprints remain unchanged. Bank-only invitations
+    // retain an unsent Stripe draft for the existing reconciliation workflow.
+    invitationFormat: z.literal("upn_only").optional(),
     first: instalment,
     second: instalment
       .safeExtend({ chargeAt: z.iso.datetime({ offset: true }) })
@@ -64,6 +67,8 @@ export const planSchema = z
   })
   .strict()
   .superRefine((p, ctx) => {
+    if (p.invitationFormat === "upn_only" && p.second)
+      ctx.addIssue({code: "custom", path: ["second"], message: "UPN-only requires one full-obligation bank payment"});
     if (!p.approval.agreementSigned && !p.agreementNoticeVersion)
       ctx.addIssue({
         code: "custom",
