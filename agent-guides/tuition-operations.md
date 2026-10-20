@@ -536,7 +536,9 @@ address fields, so do not fabricate placeholders or bypass validation).
 ### October 20 email copy and inline UPN QR
 
 The combined template now uses Samo's October 20 copy and `ŠD Apnea.Si`
-signature. Two-instalment plans offer card payment first and a full-obligation
+signature. The subject is `Vadnina 2026/27 – [participant name]`, using the
+participant rather than the payer; safe samples use `Vzorec Član`.
+Two-instalment plans offer card payment first and a full-obligation
 UPN second. One-instalment plans retain truthful one-payment wording; editing
 copy never adds an instalment to a plan. Sender, reply-to, delivery callbacks,
 original submission date and replay locks are unchanged.

@@ -8,7 +8,7 @@ const escape = (s: string) => s.replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt
 export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample = false) {
   const period = `${displayDate(plan.first.serviceFrom)} – ${displayDate(plan.first.serviceTo)}`;
   const upn = upnDetails(plan, sample);
-  const subject = "Vadnina 2026/27 – izberite način plačila";
+  const subject = `Vadnina 2026/27 – ${sample ? "Vzorec Član" : plan.participant}`;
   const bankDetails = [
     `Prejemnik: ${upn.name}`, `${upn.address}, ${upn.city}`,
     `IBAN: ${upn.iban}`, `Sklic: ${upn.reference}`, `Koda namena: ${upn.purposeCode}`,
