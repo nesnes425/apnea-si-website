@@ -1,14 +1,16 @@
 # Tuition payments: Samo and Katarina
 
-Last updated: October 19, 2026
+Last updated: October 20, 2026
 
 ## Current delivery state
 
-Production PR #30 (`e5dac86`) sends the initial invoice email through Stripe
-after explicit `send`; `create` prepares an unsent draft. Its private-state
-migration is already applied. Existing Checkout plans keep their original flow.
-The local agreement-notice change is not released yet: until its approved release,
-production still requires `approval.agreementSigned=true`.
+Production through PR #36 (`c313472`) supports the combined Brevo invitation
+with the Stripe payment link and full-season UPN PDF. Use the hub operator with
+`--combined` for new invitations; ordinary `send` is the legacy Stripe-only path.
+`create` prepares an unsent draft. Existing submitted invitations and Checkout
+plans retain their original flow. PR #31 released the versioned agreement notice
+and atomic first-payment/consent recovery. See the parent hub's current tuition
+protocol for production settings and approved sending batches.
 
 Neža explicitly allows Stripe's payment-request invoice/PDF. Minimax must still
 create exactly one official service invoice for each verified paid instalment.
@@ -29,7 +31,7 @@ APNEA SLOVENIJA**. Samo subsequently confirmed VAT category O at 0%, the exact
 clause below on every invoice, domestic revenue account 76010, all ten pool items
 and the existing FURS numbering series. The ten tuition items now exist with
 verified settings; see the parent hub's `website/tuition-pool-catalog.json`.
-No real Minimax document was created. Loading this local
+That setup verification created no real Minimax document. Loading this local
 file with Node's `--env-file` instead produced `invalid_grant`; this was a parsing
 mismatch, not evidence that the credential needed replacing. Use the loader below.
 
@@ -285,10 +287,10 @@ amounts/mode/customer, finite schedule configuration and private SQL access/leas
 They do not create native Stripe objects, accounting records or messages.
 
 
-## First-payment recovery and Minimax draft verification (pending release)
+## First-payment recovery and Minimax draft verification
 
-Apply `supabase/migrations/20261016152641_tuition_atomic_first_payment.sql`
-with the separately approved release, before deploying this code. It adds a
+`supabase/migrations/20261016152641_tuition_atomic_first_payment.sql` was applied
+on October 16 under hosted version `20261016154316`; do not reapply it. It adds a
 service-role-only, lease-checked RPC that commits first payment and the verified
 invoice/Checkout consent pointer in one transaction. It leaves the existing
 second-payment RPC and stored manifests intact. Do not reapply the older bridge
@@ -302,12 +304,47 @@ Cancellation is attempted before consent recovery. Replaying a verified payment
 preserves the one-payment/one-finite-schedule constraints.
 
 Every recovered or newly created Minimax invoice is validated before issuance:
-payer, reference, currency, series, total, service dates, item, instalment text,
+payer, reference, currency, series, row value, service dates, item, instalment text,
 quantity/price, zero VAT/rate/clause and the paid-card mapping must match the
 approved payload. Missing fields also hold the invoice. The same check runs again
 after issuance, followed by the existing issued/fully-paid/PDF checks. Never
 manually bypass a mismatch to send a receipt; reconcile the provider record first.
 GET field schema: https://moj.minimax.si/SI/API/Help/Api/GET-api-orgs-organisationId-issuedinvoices-issuedInvoiceId
+
+### Minimax response compatibility — October 20, pending release
+
+A live read-only inspection found an accepted tuition draft with correct row and
+card amounts, `InvoiceValue=0`, and `InvoiceForPeriod=N` despite the submitted D.
+The approved service dates and instalment description were preserved. A draft
+now requires the exact `Value`, quantity, price, zero discounts/VAT and payment
+mapping; its header total may be zero or the approved amount. After issuance,
+the header total and paid total must both equal the paid instalment. The period
+flag accepts D/N only, with both exact service dates and row description mandatory.
+No service period, price, VAT clause or accounting policy is changed.
+
+An empty/missing-ID creation response or transport error triggers a read-only
+search by payer and exact PaymentIntent reference in the same execution. Exactly
+one matching document is reused and validated before issuance. Zero matches keep
+the durable `creating` state for later reconciliation; multiple matches block.
+Never repeat creation to discover the outcome of an earlier POST. Existing
+`creating` records without an ID use the same recovery on webhook retry, daily
+cron or authorized operator `sync`. These fixes require no database migration.
+The existing email send lock continues to hold uncertain submissions for review.
+
+Local HTTP acceptance check (no env files or real providers):
+
+```sh
+node --import tsx scripts/test-tuition-invoice-local.ts
+```
+
+It exercises the Minimax/Brevo adapters through localhost: accepted creation with
+an empty response, read-back, normalized draft validation, issue/paid/PDF, payer
+email, replay, and recovery of an existing draft without another creation.
+It does not prove production issuance, fiscal confirmation or recipient delivery.
+After approved deployment, use the original affected plan's status and Minimax
+record before recovery; a Stripe webhook retry may already have completed it.
+`sync` can issue/send the original approved invoice, so never run it as a read-only
+diagnostic. Verify issued/paid/PDF and Brevo submission separately from delivery.
 
 Local recovery regression (synthetic providers, disposable PostgreSQL):
 
