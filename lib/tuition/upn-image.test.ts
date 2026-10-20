@@ -85,6 +85,7 @@ test("signed image reads only matching saved offers; payment/cancellation hides 
 test("email uses approved copy, escaped personal data and HTTPS PNG instead of CID or SVG", t => {
   setEnv(t, "TUITION_ADMIN_KEY",key);
   const message=combinedInvitation({...plan,participant:'Član <img src=x onerror="alert(1)">'}, "https://example.invalid/pay");
+  assert.equal(message.subject,'Vadnina 2026/27 – Član <img src=x onerror="alert(1)">');
   assert.match(message.text,/ŠD Apnea.Si$/);
   assert.match(message.text,/še enkrat hvala za vašo udeležbo/);
   assert.match(message.text,/takoj ob potrditvi plačila/);

@@ -23,6 +23,7 @@ test('only exact booked EUR full-season credits auto-match',()=>{
 });
 test('combined sample includes immediate first charge, full UPN, agreement and no payable bank details',()=>{
  const m=combinedInvitation({...p,participant:'<script>alert(1)</script>'},'[Stripe povezava]',true);
+ assert.equal(m.subject,'Vadnina 2026/27 – Vzorec Član');
  assert.match(m.text,/585,00/);assert.match(m.text,/325,00/);assert.match(m.text,/260,00/);assert.match(m.text,/takoj/);assert.match(m.text,/Dogovorom/);
  assert.ok(!m.html.includes('<script>'));assert.ok(!m.text.includes(e.account));
 });
