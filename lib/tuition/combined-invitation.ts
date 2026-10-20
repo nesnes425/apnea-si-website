@@ -3,7 +3,7 @@ import {sendTrackedTuitionEmail} from "@/lib/brevo/delivery";
 import {bankReference} from "./bank-model";
 import {assertBankEnabled} from "./bank";
 import {combinedInvitation, upnDetails} from "./combined-template";
-import {prepareFirstInvitation, submitInvitation} from "./invitation";
+import {ensureFirstInvoice, prepareFirstInvitation, submitInvitation} from "./invitation";
 import {patchPlan, type PlanRecord} from "./store";
 import {tuitionUpnPdf} from "./upn-pdf";
 import {tuitionQrPng} from "./upn-image";
@@ -14,14 +14,21 @@ export async function prepareCombinedInvitation(record: PlanRecord) {
     throw new Error("Combined invitation needs a native invoice plan");
   if (record.invitation_state !== "not_sent") throw new Error("Invitation already submitted or needs delivery review");
   if (record.cancelled_at || record.first_payment_id || record.bank_state) throw new Error("Plan is closed or already paid");
+  if (Date.now() + 3600_000 >= Date.parse(record.manifest.firstPaymentDeadline))
+    throw new Error("Payment deadline is too close or passed");
+  const upnOnly = record.manifest.invitationFormat === "upn_only";
+  if (upnOnly && record.manifest.second) throw new Error("UPN-only cannot include a second instalment");
   const upn = upnDetails(record.manifest);
   if (record.bank_reference && (record.bank_reference !== bankReference(record.id) || record.bank_iban !== upn.iban || record.bank_amount_cents !== upn.amountCents))
     throw new Error("Saved bank offer differs from the approved obligation");
   // Store the immutable offer before exposing its reference or any payment link.
   await patchPlan(record, {invitation_channel:"club", bank_reference: upn.reference, bank_iban: upn.iban, bank_amount_cents: upn.amountCents});
-  const invoice = await prepareFirstInvitation(record);
-  if (!invoice.hosted_invoice_url) throw new Error("Hosted Stripe URL missing");
-  const message = combinedInvitation(record.manifest, invoice.hosted_invoice_url);
+  // Reuse the obligation's draft for bank reconciliation, but never finalize it,
+  // create a payable URL or send a Stripe message for an UPN-only invitation.
+  const invoice = upnOnly ? await ensureFirstInvoice(record) : await prepareFirstInvitation(record);
+  if (upnOnly && invoice.status !== "draft") throw new Error("UPN-only draft was activated; review before sending");
+  if (!upnOnly && !invoice.hosted_invoice_url) throw new Error("Hosted Stripe URL missing");
+  const message = combinedInvitation(record.manifest, upnOnly ? "" : invoice.hosted_invoice_url!);
   const pdf = await tuitionUpnPdf(record.manifest);
   return {...message, qrImage:tuitionQrPng(record.manifest).toString("base64"), invoice: invoice.id, attachment: {name:"UPN-vadnina.pdf",contentBase64:pdf.toString("base64")}};
 }

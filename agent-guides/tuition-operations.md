@@ -4,6 +4,35 @@ Last updated: October 20, 2026
 
 ## Current delivery state
 
+Local change awaiting release: an approved manifest may set
+`invitationFormat: "upn_only"` and omit `second`. Its first amount is the entire
+bank obligation. Use the existing `preview-combined` / `send-combined` actions
+(hub `--combined`): this immutable field selects an UPN-only email and PDF, with
+no card link, card instructions or promised instalments. The member page and
+all card-entry functions reject card payment for that obligation.
+
+The existing Stripe customer and **unfinalized, unsent draft** remain internal
+reconciliation records; preview never creates a payable page or PaymentIntent.
+`auto_advance=false` remains mandatory. Preview/send rejects an externally
+finalized request. Bank import uses the existing RF reference, deletes the draft
+and confirms no card payment. Delivery tracking, replay locks, AD/AE and bank
+accounting review retain their existing semantics. No migration or credentials
+are needed. A later instalment request needs approval and reconciliation of the
+same obligation, never a second independent payable invitation or an ad hoc
+manifest edit.
+
+`node --import tsx scripts/test-upn-only-stripe.mjs` uses the existing TEST key,
+in-memory storage and synthetic data. It checks repeat preview, an unpayable
+draft/no PaymentIntent, blocked card entry points and replayed bank settlement,
+then removes its test customer and deactivates its test product. No mail is sent.
+See [Stripe's draft contract](https://docs.stripe.com/api/invoices/create).
+
+October 20 local verification: 115 application tests, TypeScript, focused lint
+and production build passed. Native TEST-mode acceptance passed without email;
+localhost production-page check with synthetic storage showed UPN instructions
+and no card form. The local email and one-page sample PDF were visually checked.
+Production deployment and a real UPN-only delivery remain pending.
+
 Production through PR #36 (`c313472`) supports the combined Brevo invitation
 with the Stripe payment link and full-season UPN PDF. Use the hub operator with
 `--combined` for new invitations; ordinary `send` is the legacy Stripe-only path.

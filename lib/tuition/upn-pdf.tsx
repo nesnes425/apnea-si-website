@@ -35,8 +35,14 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
       {rows.map(([label,value]) => <View key={label} style={{flexDirection:"row",paddingVertical:9,borderBottomWidth:0.5,borderBottomColor:"#ddd"}}>
         <Text style={{width:160,color:"#585a5a"}}>{label}</Text><Text style={{flex:1}}>{value}</Text>
       </View>)}
-      <Text style={{marginTop:26}}>Izberite samo eno možnost: celotno vadnino s tem UPN ali {plan.second ? "dva obroka" : "enkratno plačilo"} prek Stripe povezave v sporočilu.</Text>
-      <Text style={{marginTop:12}}>Če ste že plačali s kartico, tega UPN ne plačujte. Če ste že nakazali na banko, ne plačujte še prek Stripe povezave.</Text>
+      {plan.invitationFormat === "upn_only" ? (
+        <Text style={{marginTop:26}}>Celotno vadnino poravnajte s tem UPN. Če ste vadnino že poravnali, ne plačujte ponovno; za preverbo odgovorite na sporočilo društva.</Text>
+      ) : (
+        <>
+          <Text style={{marginTop:26}}>Izberite samo eno možnost: celotno vadnino s tem UPN ali {plan.second ? "dva obroka" : "enkratno plačilo"} prek Stripe povezave v sporočilu.</Text>
+          <Text style={{marginTop:12}}>Če ste že plačali s kartico, tega UPN ne plačujte. Če ste že nakazali na banko, ne plačujte še prek Stripe povezave.</Text>
+        </>
+      )}
       <Text style={{marginTop:24,fontSize:9,color:"#585a5a"}}>To je plačilni nalog, ne račun. Uradni račun prejmete po potrditvi plačila. Za pomoč: info@apnea.si.</Text>
     </Page>
   </Document>);
