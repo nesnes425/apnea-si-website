@@ -277,7 +277,21 @@ export async function getInvoicePdf(params: {
 }): Promise<{ fileName: string; contentBase64: string } | undefined> {
   if (params.invoiceOnly) {
     const invoice = await getIssuedInvoice(params);
-    const official = await resolveAttachment(params.organisationId, invoice.InvoiceAttachment);
+    const reference = invoice.InvoiceAttachment;
+    let official = reference;
+    if (reference && !reference.AttachmentData) {
+      // Minimax's invoice FK may contain a ResourceUrl that returns 404.
+      // The invoice attachments endpoint carries the bytes. Select only the
+      // exact official attachment ID, never an arbitrary uploaded PDF.
+      const id = reference.ID ?? reference.AttachmentId ?? reference.DocumentAttachmentId;
+      if (!id) return undefined;
+      const attachments = await listIssuedInvoiceAttachments(params);
+      const matches = attachments.filter(attachment =>
+        (attachment.AttachmentId ?? attachment.DocumentAttachmentId ?? attachment.ID) === id,
+      );
+      if (matches.length > 1) throw new Error("Ambiguous official Minimax PDF attachment");
+      official = await resolveAttachment(params.organisationId, matches[0]);
+    }
     if (!official?.AttachmentData) return undefined;
     return { fileName: official.AttachmentFileName ?? official.FileName ?? `minimax-racun-${params.issuedInvoiceId}.pdf`, contentBase64: official.AttachmentData };
   }
