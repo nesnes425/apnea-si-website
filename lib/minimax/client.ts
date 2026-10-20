@@ -32,6 +32,7 @@ export type MinimaxDocumentAttachment = {
 };
 
 export type MinimaxIssuedInvoice = {
+  Rabate?: number;
   Currency?: MinimaxFkField;
   DocumentNumbering?: MinimaxFkField;
   DateTransactionFrom?: string;
@@ -46,6 +47,7 @@ export type MinimaxIssuedInvoice = {
     Description?: string;
     Quantity?: number;
     Price?: number;
+    Value?: number;
     VATPercent?: number;
     VatRate?: MinimaxFkField;
     DiscountPercent?: number;
@@ -191,6 +193,8 @@ async function minimaxFetch<T>(
 }
 
 function unwrapIssuedInvoice(response: unknown): MinimaxIssuedInvoice {
+  if (!response || typeof response !== "object")
+    throw new Error("Minimax response did not include IssuedInvoiceId");
   const value = response as
     | MinimaxIssuedInvoice
     | { Data?: MinimaxIssuedInvoice; Content?: MinimaxIssuedInvoice };

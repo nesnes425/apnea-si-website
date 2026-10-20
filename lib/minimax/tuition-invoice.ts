@@ -112,8 +112,8 @@ export function tuitionInvoicePayload(
   };
 }
 
-// GET returns provider-calculated fields as well as the submitted invoice rows.
-// Missing evidence is a reconciliation error, never permission to issue a draft.
+// Drafts can report InvoiceValue=0 before issuance. Verify their actual row
+// value and all approved inputs; require the provider's final total after issue.
 export function assertTuitionInvoiceMatches(
   invoice: MinimaxIssuedInvoice,
   expected: ReturnType<typeof tuitionInvoicePayload>,
@@ -130,7 +130,11 @@ export function assertTuitionInvoiceMatches(
     invoice.Customer?.ID !== expected.Customer.ID ||
     invoice.Currency?.ID !== expected.Currency.ID ||
     invoice.DocumentNumbering?.ID !== expected.DocumentNumbering.ID ||
-    cents(invoice.InvoiceValue) !== amountCents ||
+    (invoice.Status === "I"
+      ? cents(invoice.InvoiceValue) !== amountCents
+      : cents(row?.Value) !== amountCents ||
+        ![0, amountCents].includes(cents(invoice.InvoiceValue))) ||
+    (invoice.Rabate ?? 0) !== 0 ||
     invoice.DateTransactionFrom?.slice(0, 10) !==
       expected.DateTransactionFrom ||
     invoice.DateTransaction?.slice(0, 10) !== expected.DateTransaction ||
@@ -138,7 +142,10 @@ export function assertTuitionInvoiceMatches(
       expected.DescriptionBelow ||
     invoice.InvoiceType !== expected.InvoiceType ||
     invoice.PricesOnInvoice !== expected.PricesOnInvoice ||
-    invoice.InvoiceForPeriod !== expected.InvoiceForPeriod ||
+    // Minimax returns N for the observed API-created period invoice despite D
+    // in the payload. The exact two service dates and row description above/below
+    // remain mandatory; this flag alone is not evidence of the service period.
+    !["D", "N"].includes(invoice.InvoiceForPeriod ?? "") ||
     invoice.IssuedInvoiceRows?.length !== 1 ||
     row?.Item?.ID !== wanted.Item.ID ||
     row.ItemName !== wanted.ItemName ||
@@ -268,10 +275,23 @@ export async function issueTuitionInvoice(
       );
     // Persist BEFORE create: a crash/timeout can never cause a blind second POST.
     await save({ invoice_state: "creating" });
-    const created = await createIssuedInvoice({
-      organisationId,
-      issuedInvoice: tuitionInvoicePayload(p, payment, customer.CustomerId),
-    });
+    let created;
+    try {
+      created = await createIssuedInvoice({
+        organisationId,
+        issuedInvoice: tuitionInvoicePayload(p, payment, customer.CustomerId),
+      });
+    } catch (error) {
+      // An accepted POST may return no usable body or lose its response. Read
+      // back the exact reference; never repeat POST to discover its outcome.
+      const recovered = await findByReference(
+        organisationId,
+        customer.CustomerId,
+        payment.id,
+      );
+      if (!recovered) throw error;
+      created = { issuedInvoiceId: recovered.IssuedInvoiceId };
+    }
     await save({
       minimax_id: created.issuedInvoiceId,
       invoice_state: "created",

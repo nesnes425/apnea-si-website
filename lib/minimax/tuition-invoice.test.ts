@@ -58,11 +58,15 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     error: null,
   };
   let accepted = false,
+    visible = false,
     issued = false,
     creates = 0,
     issueActions = 0;
   let payload: Record<string, unknown> = {};
   let mismatch: Record<string, unknown> = {};
+  let createResponse = "lost";
+  let duplicate = false;
+  let loseIssueResponse = false;
   const mockFetch = t.mock.method(
     globalThis,
     "fetch",
@@ -74,16 +78,23 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
         return json({ access_token: "synthetic", expires_in: 300 });
       if (path.includes("/customers/code(")) return json({ CustomerId: 10 });
       if (path.includes("/issuedinvoices?"))
-        return json({ Rows: accepted ? [{ IssuedInvoiceId: 123 }] : [] });
+        return json({
+          Rows: accepted && visible
+            ? Array.from({ length: duplicate ? 2 : 1 }, () => ({ IssuedInvoiceId: 123 }))
+            : [],
+        });
       if (path.endsWith("/issuedinvoices") && init?.method === "POST") {
         creates++;
         accepted = true;
         payload = JSON.parse(String(init.body));
+        if (createResponse === "empty") return new Response(null, { status: 201 });
+        if (createResponse === "missing-id") return json({});
         throw new Error("Response lost after Minimax accepted create");
       }
       if (path.includes("/actions/issueAndGeneratepdf")) {
         issued = true;
         issueActions++;
+        if (loseIssueResponse) throw new Error("Issue response lost");
         return new Response(null, { status: 204 });
       }
       if (path.endsWith("/issuedinvoices/123"))
@@ -93,7 +104,11 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
           DocumentReference: payment.id,
           Status: issued ? "I" : "O",
           PaymentStatus: issued ? "Placan" : "Osnutek",
-          InvoiceValue: 325,
+          InvoiceValue: issued ? 325 : 0,
+          InvoiceForPeriod: "N",
+          IssuedInvoiceRows: (payload.IssuedInvoiceRows as object[]).map(row => ({
+            ...row, Value: 325,
+          })),
           PaidValue: issued ? 325 : 0,
           InvoiceAttachment: issued
             ? {
@@ -125,6 +140,12 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     /Response lost/,
   );
   assert.equal(payment.invoice_state, "creating");
+  await assert.rejects(
+    () => issueTuitionInvoice(plan, payment, save),
+    /Previous Minimax creation outcome is unknown/,
+  );
+  assert.equal(creates, 1);
+  visible = true;
   const mutations = [
     { InvoiceValue: 300 },
     { InvoiceValue: undefined },
@@ -136,6 +157,9 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     { DateTransaction: "2027-06-15" },
     { DescriptionBelow: "wrong clause" },
     { InvoiceType: "P" },
+    { InvoiceForPeriod: undefined },
+    { InvoiceForPeriod: "invalid" },
+    { Rabate: 10 },
     { IssuedInvoiceRows: [] },
     ...[
       { Item: { ID: 99 } },
@@ -145,9 +169,11 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
       { Description: "wrong instalment" },
       { Quantity: 2 },
       { DiscountPercent: 10 },
+      { Value: 300 },
+      { Value: undefined },
     ].map((change) => ({
       IssuedInvoiceRows: [
-        { ...(payload.IssuedInvoiceRows as object[])[0], ...change },
+        { ...(payload.IssuedInvoiceRows as object[])[0], Value: 325, ...change },
       ],
     })),
     { IssuedInvoicePaymentMethods: [] },
@@ -162,6 +188,15 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
     assert.equal(creates, 1);
   }
   mismatch = {};
+  // Ambiguous references never authorize issuing either document.
+  payment.minimax_id = null;
+  duplicate = true;
+  await assert.rejects(
+    () => issueTuitionInvoice(plan, payment, save),
+    /Duplicate Minimax/,
+  );
+  assert.equal(issueActions, 0);
+  duplicate = false;
   const result = await issueTuitionInvoice(plan, payment, save);
   assert.equal(creates, 1);
   assert.equal(issueActions, 1);
@@ -197,6 +232,46 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
   await issueTuitionInvoice(plan, payment, save);
   assert.equal(creates, 1);
   assert.equal(issueActions, 1);
+  // Final totals/paid status remain strict even when a draft was acceptable.
+  for (const mutation of [
+    { InvoiceValue: 0 },
+    { InvoiceValue: undefined },
+    { PaidValue: 0 },
+    { PaymentStatus: "NeplacanNezapadel" },
+  ]) {
+    mismatch = mutation;
+    await assert.rejects(
+      () => issueTuitionInvoice(plan, payment, save),
+      /differs from approved|not verified issued/,
+    );
+  }
+  mismatch = {};
+  // Both provider response forms recover immediately in the same execution.
+  for (const response of ["empty", "missing-id", "lost"]) {
+    createResponse = response;
+    accepted = false;
+    issued = false;
+    payment.invoice_state = "pending";
+    payment.minimax_id = null;
+    const previousCreates: number = creates;
+    const previousIssues: number = issueActions;
+    await issueTuitionInvoice(plan, payment, save);
+    assert.equal(creates, previousCreates + 1);
+    assert.equal(issueActions, previousIssues + 1);
+    await issueTuitionInvoice(plan, payment, save);
+    assert.equal(creates, previousCreates + 1);
+    assert.equal(issueActions, previousIssues + 1);
+  }
+  issued = false;
+  loseIssueResponse = true;
+  const issuesBeforeLostResponse: number = issueActions;
+  await assert.rejects(
+    () => issueTuitionInvoice(plan, payment, save),
+    /Issue response lost/,
+  );
+  loseIssueResponse = false;
+  await issueTuitionInvoice(plan, payment, save);
+  assert.equal(issueActions, issuesBeforeLostResponse + 1);
   mockFetch.mock.restore();
 });
 
