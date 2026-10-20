@@ -63,8 +63,12 @@ async function main() {
         InvoiceForPeriod: "N", Rabate: 0,
         IssuedInvoiceRows: (draft.IssuedInvoiceRows as object[]).map(row => ({ ...row, Value: 325 })),
         InvoiceNumber: issued ? 1 : null, Year: issued ? 2026 : null,
-        InvoiceAttachment: issued ? { AttachmentData: pdf, AttachmentFileName: "synthetic.pdf" } : undefined,
+        InvoiceAttachment: issued ? { ID: 456, ResourceUrl: "/api/orgs/241557/attachments/456" } : undefined,
       });
+      if (path.endsWith("/issuedinvoices/123/attachments")) return json([
+        { AttachmentId: 999, AttachmentData: Buffer.from("%PDF-unrelated").toString("base64") },
+        { AttachmentId: 456, AttachmentData: pdf, AttachmentFileName: "synthetic.pdf" },
+      ]);
       if (path === "/smtp/email") {
         assert.equal(issued, true);
         assert.equal(payment.invoice_state, "issued");

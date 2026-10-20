@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { issueTuitionInvoice, tuitionInvoicePayload } from "./tuition-invoice";
+import { getInvoicePdf } from "./training-invoice";
 import { planSchema } from "../tuition/plan";
 import type { PaymentRecord } from "../tuition/store";
 
@@ -67,6 +68,7 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
   let createResponse = "lost";
   let duplicate = false;
   let loseIssueResponse = false;
+  let attachmentMode = "official";
   const mockFetch = t.mock.method(
     globalThis,
     "fetch",
@@ -112,9 +114,8 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
           PaidValue: issued ? 325 : 0,
           InvoiceAttachment: issued
             ? {
-                AttachmentData:
-                  Buffer.from("%PDF-synthetic").toString("base64"),
-                AttachmentFileName: "racun.pdf",
+                ID: 456,
+                ResourceUrl: "/api/orgs/241557/attachments/456",
               }
             : undefined,
           RowVersion: "version",
@@ -122,13 +123,22 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
           Year: 2026,
           ...mismatch,
         });
-      if (path.endsWith("/issuedinvoices/123/attachments"))
+      if (path.endsWith("/issuedinvoices/123/attachments")) {
+        const official = {
+          AttachmentId: 456,
+          AttachmentData: Buffer.from("%PDF-synthetic").toString("base64"),
+          AttachmentFileName: "racun.pdf",
+        };
         return json([
           {
-            AttachmentData: Buffer.from("%PDF-synthetic").toString("base64"),
-            AttachmentFileName: "racun.pdf",
+            AttachmentId: 999,
+            AttachmentData: Buffer.from("%PDF-unrelated").toString("base64"),
+            AttachmentFileName: "unrelated.pdf",
           },
+          ...(attachmentMode === "missing" ? [] : [official]),
+          ...(attachmentMode === "duplicate" ? [official] : []),
         ]);
+      }
       throw new Error(`Unexpected synthetic request: ${path}`);
     },
   );
@@ -201,6 +211,7 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
   assert.equal(creates, 1);
   assert.equal(issueActions, 1);
   assert.equal(result.invoiceId, 123);
+  assert.equal(Buffer.from(result.pdf.contentBase64, "base64").toString(), "%PDF-synthetic");
   assert.equal(payment.invoice_state, "issued");
   assert.equal(payload.DateTransactionFrom, "2026-10-05");
   assert.equal(payload.DateTransaction, "2027-06-14");
@@ -272,6 +283,15 @@ test("Minimax bridge resumes an accepted invoice after a lost response and verif
   loseIssueResponse = false;
   await issueTuitionInvoice(plan, payment, save);
   assert.equal(issueActions, issuesBeforeLostResponse + 1);
+  attachmentMode = "missing";
+  assert.equal(await getInvoicePdf({
+    organisationId: 241557, issuedInvoiceId: 123, invoiceOnly: true,
+  }), undefined, "An unrelated uploaded PDF cannot replace the official invoice");
+  attachmentMode = "duplicate";
+  await assert.rejects(
+    () => getInvoicePdf({ organisationId: 241557, issuedInvoiceId: 123, invoiceOnly: true }),
+    /Ambiguous official/,
+  );
   mockFetch.mock.restore();
 });
 

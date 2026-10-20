@@ -311,7 +311,7 @@ after issuance, followed by the existing issued/fully-paid/PDF checks. Never
 manually bypass a mismatch to send a receipt; reconcile the provider record first.
 GET field schema: https://moj.minimax.si/SI/API/Help/Api/GET-api-orgs-organisationId-issuedinvoices-issuedInvoiceId
 
-### Minimax response compatibility — October 20, pending release
+### Minimax response compatibility — October 20
 
 A live read-only inspection found an accepted tuition draft with correct row and
 card amounts, `InvoiceValue=0`, and `InvoiceForPeriod=N` despite the submitted D.
@@ -345,6 +345,21 @@ After approved deployment, use the original affected plan's status and Minimax
 record before recovery; a Stripe webhook retry may already have completed it.
 `sync` can issue/send the original approved invoice, so never run it as a read-only
 diagnostic. Verify issued/paid/PDF and Brevo submission separately from delivery.
+
+PR #37 released the creation/draft fix after Samo approved production merge and
+waived protected-preview review. The authorized recovery issued the original
+document and verified its full paid amount, but stopped before sending: Minimax's
+`InvoiceAttachment.ResourceUrl` returned 404. Its official bytes were present in
+the existing invoice `/attachments` endpoint.
+
+Follow-up PDF fix (pending release): read that invoice's attachment list and select
+exactly the `InvoiceAttachment.ID`. Never select the first arbitrary PDF; missing
+official content holds delivery, and duplicate IDs fail closed. Inline official
+content remains supported. Tests include an unrelated PDF before the official
+one, missing/duplicate official IDs, and localhost adapter processing. No new
+accounting document or email is needed to test retrieval. Production recovery
+must reuse the already-issued document; `email_state=pending` means sending has
+not begun.
 
 Local recovery regression (synthetic providers, disposable PostgreSQL):
 
