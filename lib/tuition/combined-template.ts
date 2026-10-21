@@ -2,11 +2,24 @@ import {siteConfig} from "@/lib/config";
 import {agreementNotice, displayDate, euro, type TuitionPlan} from "./plan";
 import {upnDetails} from "./upn-details";
 import {upnImageUrl} from "./upn-image";
+import {monthlyBankDates} from "./monthly-bank";
 export {upnDetails} from "./upn-details";
+
+export function monthlyBankInstructions(plan: TuitionPlan) {
+  const monthly = plan.monthlyBankPayments;
+  if (!monthly) return [];
+  const dates = monthlyBankDates(plan);
+  return [
+    `V prilogi je UPN za celotno vadnino ${euro(plan.first.amountCents)}. Po dogovoru jo poravnate v ${monthly.count} mesečnih obrokih po ${euro(monthly.amountCents)}, vsak zadnji dan v mesecu. Prvi obrok zapade ${displayDate(dates[0])}, zadnji pa ${displayDate(dates.at(-1)!)}.`,
+    `UPN in QR koda vsebujeta celotni znesek. Pred vsakim mesečnim plačilom znesek spremenite na ${euro(monthly.amountCents)}. Pri vseh nakazilih uporabite isti osebni sklic, naveden na UPN; drugih podatkov prejemnika ne spreminjajte.`,
+    `Po ${monthly.count} obrokih bo poravnana celotna vadnina ${euro(plan.first.amountCents)}.`,
+  ];
+}
 
 const escape = (s: string) => s.replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"})[c]!);
 export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample = false) {
   const upnOnly = plan.invitationFormat === "upn_only";
+  const monthly = plan.monthlyBankPayments;
   if (upnOnly && plan.second) throw new Error("UPN-only cannot promise instalments");
   const period = `${displayDate(plan.first.serviceFrom)} – ${displayDate(plan.first.serviceTo)}`;
   const upn = upnDetails(plan, sample);
@@ -29,7 +42,7 @@ export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample
     ...(plan.second ? [`Po drugem obroku se plačila končajo. Odpoved udeležbe in s tem drugega obroka sporočite najkasneje do ${displayDate(plan.cancellationDeadline)} na ${siteConfig.email}.`] : []),
     `Povezava na plačilo s kartico: ${paymentUrl}`,
     "2. Nakazilo celotne vadnine s QR kodo"] : ["Nakazilo vadnine s QR kodo"]),
-    `Z UPN v prilogi poravnate celotno vadnino ${euro(upn.amountCents)} v enem znesku do ${upn.deadline}.`,
+    ...(monthly ? monthlyBankInstructions(plan) : [`Z UPN v prilogi poravnate celotno vadnino ${euro(upn.amountCents)} v enem znesku do ${upn.deadline}.`]),
     "QR kodo skenirajte v bančni aplikaciji in pred potrditvijo preverite podatke.",
     bankDetails,
     ...(upnOnly ? ["Če ste vadnino že poravnali, je ne plačujte ponovno; odgovorite na to sporočilo, da preverimo plačilo."] : ["Prosimo, plačajte samo na en način."]),

@@ -2,6 +2,7 @@ import {qrcodegen} from "@/lib/vendor/qrcodegen";
 import {compact, mod97, validIban} from "./bank-model";
 import {upnDetails} from "./upn-details";
 import type {TuitionPlan} from "./plan";
+import {upnDeadline} from "./monthly-bank";
 
 // ZBS UPN QR technical standard v1.1, section 5: ISO 8859-2, ECI 4,
 // binary segments, fixed V15 / ECC M, 19 LF-terminated fields + length checksum.
@@ -30,7 +31,7 @@ export function upnPayload(plan: TuitionPlan) {
     throw new Error("Invalid UPN amount");
   if (!/^[A-Z]{4}$/.test(p.purposeCode)) throw new Error("Invalid UPN purpose code");
   const date = new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Ljubljana",day:"2-digit",month:"2-digit",year:"numeric"})
-    .format(new Date(plan.firstPaymentDeadline)).replaceAll("/", ".");
+    .format(new Date(upnDeadline(plan))).replaceAll("/", ".");
   const fields = ["UPNQR", "", "", "", "", field(p.payer.name), field(p.payer.address),
     field(`${p.payer.postalCode} ${p.payer.city}`), String(p.amountCents).padStart(11,"0"), "", "",
     p.purposeCode, field(p.purpose), date, p.iban, p.reference, field(p.name), field(p.address), field(p.city)];
