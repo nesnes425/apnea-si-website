@@ -1,7 +1,7 @@
 import React from "react";
 import path from "node:path";
 import {Document, Page, Text, View, Font, Svg, Path, Rect, renderToBuffer} from "@react-pdf/renderer";
-import {upnDetails} from "./combined-template";
+import {upnDetails, monthlyBankInstructions} from "./combined-template";
 import {tuitionQr} from "./upn-qr";
 import {euro, type TuitionPlan} from "./plan";
 Font.register({family: "TuitionRoboto", src: path.join(process.cwd(), "public/fonts/Roboto-Regular.ttf")});
@@ -13,7 +13,7 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
     ["Prejemnik", `${p.name}\n${p.address}\n${p.city}`],
     ["IBAN prejemnika", p.iban], ["Referenca prejemnika", p.reference],
     ["Koda namena", p.purposeCode], ["Namen plačila", p.purpose],
-    ["Rok plačila", p.deadline], ["Znesek", euro(p.amountCents)],
+    [plan.monthlyBankPayments ? "Rok zadnjega obroka" : "Rok plačila", p.deadline], ["Znesek", euro(p.amountCents)],
   ];
   return renderToBuffer(<Document title="UPN - celotna vadnina">
     <Page size="A4" style={{fontFamily:"TuitionRoboto",padding:48,color:"#33404f",fontSize:11,lineHeight:1.5}}>
@@ -35,7 +35,9 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
       {rows.map(([label,value]) => <View key={label} style={{flexDirection:"row",paddingVertical:9,borderBottomWidth:0.5,borderBottomColor:"#ddd"}}>
         <Text style={{width:160,color:"#585a5a"}}>{label}</Text><Text style={{flex:1}}>{value}</Text>
       </View>)}
-      {plan.invitationFormat === "upn_only" ? (
+      {plan.monthlyBankPayments ? (
+        <View style={{marginTop:18}}>{monthlyBankInstructions(plan).map(text => <Text key={text} style={{marginBottom:9}}>{text}</Text>)}</View>
+      ) : plan.invitationFormat === "upn_only" ? (
         <Text style={{marginTop:26}}>Celotno vadnino poravnajte s tem UPN. Če ste vadnino že poravnali, ne plačujte ponovno; za preverbo odgovorite na sporočilo društva.</Text>
       ) : (
         <>

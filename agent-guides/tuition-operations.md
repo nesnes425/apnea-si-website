@@ -616,6 +616,22 @@ address fields, so do not fabricate placeholders or bypass validation).
 
 ### October 20 email copy and inline UPN QR
 
+October 21 monthly bank-only variant (local implementation; release not yet
+approved): `invitationFormat: "upn_only"` may include `monthlyBankPayments`
+with `amountCents`, `count` and `firstMonth` (YYYY-MM). Their product must equal
+the full `first.amountCents`; the schedule covers the service months, and
+`firstPaymentDeadline` is the first month-end. No `second` is allowed. The
+email/PDF describe month-end payments with one unchanged personal reference and
+an explicitly edited amount. UPN/QR retain the full amount and final month-end
+deadline; the PDF labels it as the final instalment deadline. The saved bank
+offer, durable delivery workflow and no-card safeguards remain unchanged.
+The operator requires an exact matching monthly method and schedule in the
+sheet; never erase special instructions to pass ordinary UPN-only validation.
+Partial bank credits still enter manual review (`amount_mismatch`): this change
+does not aggregate credits or mark a full obligation paid after one instalment.
+Reconcile these separately before any reminder or invoice action. No provider
+payment or schema migration is needed for this optional manifest field.
+
 The combined template now uses Samo's October 20 copy and `ŠD Apnea.Si`
 signature. The subject is `Vadnina 2026/27 – [participant name]`, using the
 participant rather than the payer; safe samples use `Vzorec Član`.

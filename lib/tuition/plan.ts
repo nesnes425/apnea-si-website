@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { siteConfig } from "../config";
+import {monthEnd} from "./monthly-bank";
 
 export const CLUB_STRIPE_ACCOUNT = "acct_1TfaIdEJ7wtq3TXq";
 export const TUITION_TYPE = "training_tuition";
@@ -45,6 +46,12 @@ export const planSchema = z
     // Optional so existing fingerprints remain unchanged. Bank-only invitations
     // retain an unsent Stripe draft for the existing reconciliation workflow.
     invitationFormat: z.literal("upn_only").optional(),
+    // Explicitly reviewed bank-only schedule. The UPN still carries the full total.
+    monthlyBankPayments: z.object({
+      amountCents: z.number().int().positive().max(1_000_000),
+      count: z.number().int().min(2).max(12),
+      firstMonth: z.string().regex(/^20\d{2}-(0[1-9]|1[0-2])$/),
+    }).strict().optional(),
     first: instalment,
     second: instalment
       .safeExtend({ chargeAt: z.iso.datetime({ offset: true }) })
@@ -68,7 +75,15 @@ export const planSchema = z
   .strict()
   .superRefine((p, ctx) => {
     if (p.invitationFormat === "upn_only" && p.second)
-      ctx.addIssue({code: "custom", path: ["second"], message: "UPN-only requires one full-obligation bank payment"});
+      ctx.addIssue({code: "custom", path: ["second"], message: "UPN-only cannot include card instalments"});
+    if (p.monthlyBankPayments) {
+      const m = p.monthlyBankPayments;
+      if (p.invitationFormat !== "upn_only" || p.second || m.amountCents * m.count !== p.first.amountCents)
+        ctx.addIssue({code:"custom", path:["monthlyBankPayments"], message:"Monthly bank payments require UPN-only and an exact full-obligation total"});
+      const validScheduleDates = /^20\d{2}-(0[1-9]|1[0-2])$/.test(m.firstMonth) && Number.isInteger(m.count) && m.count >= 2 && m.count <= 12 && Number.isFinite(Date.parse(p.firstPaymentDeadline));
+      if (validScheduleDates && (m.firstMonth !== p.first.serviceFrom.slice(0,7) || monthEnd(m.firstMonth,m.count-1).slice(0,7) !== p.first.serviceTo.slice(0,7) || displayDate(p.firstPaymentDeadline) !== displayDate(monthEnd(m.firstMonth))))
+        ctx.addIssue({code:"custom", path:["monthlyBankPayments"], message:"Monthly bank schedule must cover the service months and first month-end deadline"});
+    }
     if (!p.approval.agreementSigned && !p.agreementNoticeVersion)
       ctx.addIssue({
         code: "custom",
