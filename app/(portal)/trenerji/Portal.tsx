@@ -494,6 +494,11 @@ function Dashboard({
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
   const [onlySubstitutions, setOnlySubstitutions] = useState(false);
+  const now = new Date();
+  const today = ljubljanaDate(now);
+  const localTime = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Ljubljana", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  }).format(now);
   const months = [
     ...new Set(data.sessions.map((s) => s.date.slice(0, 7))),
   ].sort();
@@ -591,6 +596,7 @@ function Dashboard({
                     </th>
                     {sessions.map((s) => {
                       const e = s.entries.find((e) => e.member_id === m.id);
+                      const hasEnded = s.date < today || (s.date === today && s.ends.slice(0, 5) <= localTime);
                       const value =
                         s.status === "cancelled"
                           ? "×"
@@ -600,13 +606,13 @@ function Dashboard({
                               : e.kind === "makeup"
                                 ? "N"
                                 : "P"
-                            : s.date > ljubljanaDate() || !enrolledOn(data, m.id, s.group_id, s.date)
+                            : s.date > today || !enrolledOn(data, m.id, s.group_id, s.date)
                               ? "—"
                               : "?";
                       return (
                         <td key={s.id}>
                           <button
-                            className="portal-secondary"
+                            className={`portal-secondary${hasEnded && value === "P" ? " portal-matrix-present" : hasEnded && value === "O" ? " portal-matrix-absent" : ""}`}
                             aria-label={`${m.name}, ${formatDate(s.date)}, ${value}`}
                             onClick={() =>
                               setMessage(
