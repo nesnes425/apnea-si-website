@@ -32,8 +32,13 @@ export function upnPayload(plan: TuitionPlan) {
   if (!/^[A-Z]{4}$/.test(p.purposeCode)) throw new Error("Invalid UPN purpose code");
   const date = new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Ljubljana",day:"2-digit",month:"2-digit",year:"numeric"})
     .format(new Date(upnDeadline(plan))).replaceAll("/", ".");
-  const fields = ["UPNQR", "", "", "", "", field(p.payer.name), field(p.payer.address),
-    field(`${p.payer.postalCode} ${p.payer.city}`), String(p.amountCents).padStart(11,"0"), "", "",
+  // Only the explicit SI generic-consumer exception may leave payer address lines
+  // empty. The creditor, payer name and every payment field stay strict.
+  const omitted = plan.payer.accountingMode === "generic_consumer_address_omitted";
+  if (omitted && (plan.payer.country !== "SI" || [p.payer.address,p.payer.postalCode,p.payer.city].some(v => v !== "")))
+    throw new Error("Invalid omitted payer address");
+  const fields = ["UPNQR", "", "", "", "", field(p.payer.name), omitted ? "" : field(p.payer.address),
+    omitted ? "" : field(`${p.payer.postalCode} ${p.payer.city}`), String(p.amountCents).padStart(11,"0"), "", "",
     p.purposeCode, field(p.purpose), date, p.iban, p.reference, field(p.name), field(p.address), field(p.city)];
   const prefix = fields.join("\n") + "\n";
   const payload = prefix + String(iso88592(prefix).length).padStart(3,"0") + "\n";

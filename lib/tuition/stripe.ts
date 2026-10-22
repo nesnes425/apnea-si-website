@@ -5,6 +5,7 @@ import {
   consentText,
   tuitionItem,
   TUITION_TYPE,
+  type TuitionPlan,
 } from "./plan";
 import { patchPlan, type PlanRecord } from "./store";
 
@@ -21,6 +22,21 @@ export async function assertTuitionStripe(mode: "test" | "live") {
     throw new Error("Wrong Stripe account for tuition");
 }
 
+export function tuitionCustomerParams(p: TuitionPlan): Stripe.CustomerCreateParams {
+  return {
+      name: p.payer.name,
+      email: p.payer.email,
+      preferred_locales: ["sl"],
+      ...(p.payer.accountingMode ? {} : {address: {
+        line1: p.payer.address,
+        postal_code: p.payer.postalCode,
+        city: p.payer.city,
+        country: p.payer.country,
+      }}),
+      metadata: { type: TUITION_TYPE, planId: p.id, payerId: p.payerId },
+    };
+}
+
 // Call under the database plan lease. A new customer per obligation keeps personal
 // plans distinct even when families share an email; Minimax uses stable payerId.
 export async function ensureTuitionCustomer(record: PlanRecord) {
@@ -31,18 +47,7 @@ export async function ensureTuitionCustomer(record: PlanRecord) {
     );
   const p = record.manifest;
   const customer = await trainingStripe.customers.create(
-    {
-      name: p.payer.name,
-      email: p.payer.email,
-      preferred_locales: ["sl"],
-      address: {
-        line1: p.payer.address,
-        postal_code: p.payer.postalCode,
-        city: p.payer.city,
-        country: p.payer.country,
-      },
-      metadata: { type: TUITION_TYPE, planId: p.id, payerId: p.payerId },
-    },
+    tuitionCustomerParams(p),
     { idempotencyKey: `tuition-customer-${p.id}` },
   );
   await patchPlan(record, { customer_id: customer.id });

@@ -680,3 +680,29 @@ cannot affect Italy. Foreign customer creation/reuse is followed by a read-only
 address/country verification; invoice verification also rejects wrong addressee
 fields. The UPN PDF prints “Italija” after an Italian address. Tax treatment,
 service location, payment amounts and finite instalments are unchanged.
+
+
+## Explicit SI generic-consumer address omission — local change, 22 October 2026
+
+A new, separately approved personal obligation may set
+`payer.accountingMode: "generic_consumer_address_omitted"` only for country SI
+with all three address strings empty. The hub decision uses the same
+`accountingMode` field and requires empty authoritative address cells; it must
+not erase a known address. The approval must explicitly permit a generic
+Minimax buyer, not merely allow sending without an address. Existing manifests
+omit the new field and retain their exact fingerprints and consent hashes.
+
+The real payer/participant names and recipient email remain in the invitation,
+Stripe customer, payment reference and service description. PDF and UPN QR keep
+empty payer address lines; no invented address is displayed or collected later.
+Only the Minimax adapter uses `Fizična oseba/Kupec` with `/` in address, postcode
+and city, following Minimax's [documented generic-consumer convention](https://help.minimax.si/help/kako-v-sifrant-strank-vnesem-fizicno-osebo).
+Its customer code remains unique to the stable payerId, never a shared generic
+customer. Readback verifies this code, generic identity, markers and SI before
+invoice creation, and verifies the same invoice addressee before issue. Normal
+one-service-invoice-per-paid-instalment accounting remains in place. This changes
+the accounting addressee, so retain the owner's explicit approval in the
+operational decision evidence. No migration or new credentials are required.
+
+This remains local until the normal localhost verification, push approval,
+Vercel check and explicit production merge approval are complete.
