@@ -2,6 +2,15 @@
 
 Last updated: October 7, 2026
 
+## Season attendance colours — October 22, 2026
+
+The management attendance matrix uses the trainer-entry green for P and red for O
+once the scheduled session has ended, using Europe/Ljubljana date and time. This
+applies to every group. Future sessions and other markers (N, ?, —, ×) keep their
+existing appearance. This is display-only; attendance and edit permissions do not change.
+Verified on localhost with synthetic saved attendance and a future session;
+focused ESLint and the production webpack build passed. Publication is pending.
+
 ## Unnamed roster rows — October 15, 2026
 
 Samo requested that rows with an empty or whitespace-only name field be ignored,

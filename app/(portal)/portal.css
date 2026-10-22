@@ -221,8 +221,10 @@
 
 .portal-attendance-present,
 .portal-attendance-absent { background: transparent; border-color: #c5ccd3; color: #33404f; }
-.portal-attendance-present[aria-pressed="true"] { background: #15803d; border-color: #15803d; color: white; box-shadow: 0 0 0 2px #15803d; font-weight: 700; }
-.portal-attendance-absent[aria-pressed="true"] { background: #be123c; border-color: #be123c; color: white; box-shadow: 0 0 0 2px #be123c; font-weight: 700; }
+.portal-attendance-present[aria-pressed="true"],
+.portal-matrix-present { background: #15803d; border-color: #15803d; color: white; box-shadow: 0 0 0 2px #15803d; font-weight: 700; }
+.portal-attendance-absent[aria-pressed="true"],
+.portal-matrix-absent { background: #be123c; border-color: #be123c; color: white; box-shadow: 0 0 0 2px #be123c; font-weight: 700; }
 
 .portal-body .portal-remember { flex-direction: row; align-items: center; gap: 12px; min-height: 48px; cursor: pointer; }
 .portal-body .portal-remember input { width: 22px; height: 22px; min-height: 22px; flex-shrink: 0; accent-color: #33404f; }
