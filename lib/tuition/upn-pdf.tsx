@@ -5,11 +5,14 @@ import {upnDetails, monthlyBankInstructions} from "./combined-template";
 import {tuitionQr} from "./upn-qr";
 import {euro, type TuitionPlan} from "./plan";
 Font.register({family: "TuitionRoboto", src: path.join(process.cwd(), "public/fonts/Roboto-Regular.ttf")});
+export function upnPayerText(payer: TuitionPlan["payer"]) {
+  return [payer.name, payer.address, [payer.postalCode,payer.city].filter(Boolean).join(" "), ...(payer.country === "IT" ? ["Italija"] : [])].filter(Boolean).join("\n");
+}
 export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
   const p = upnDetails(plan, sample);
   const qr = tuitionQr(plan, sample);
   const rows = [
-    ["Plačnik", `${p.payer.name}\n${p.payer.address}\n${p.payer.postalCode} ${p.payer.city}${p.payer.country === "IT" ? "\nItalija" : ""}`],
+    ["Plačnik", upnPayerText(p.payer)],
     ["Prejemnik", `${p.name}\n${p.address}\n${p.city}`],
     ["IBAN prejemnika", p.iban], ["Referenca prejemnika", p.reference],
     ["Koda namena", p.purposeCode], ["Namen plačila", p.purpose],

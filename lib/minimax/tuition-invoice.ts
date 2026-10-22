@@ -22,12 +22,24 @@ export function tuitionCountryId(country: TuitionPlan["payer"]["country"]) {
   throw new Error("Unsupported tuition payer country");
 }
 
+// Minimax documents missing-data markers for a generic consumer. Keep them
+// exclusively in this adapter; the real personal recipient stays in the plan.
+export function tuitionBillingDetails(p: TuitionPlan) {
+  return p.payer.accountingMode === "generic_consumer_address_omitted"
+    ? {Name:"Fizična oseba/Kupec", Address:"/", PostalCode:"/", City:"/"}
+    : {Name:p.payer.name, Address:p.payer.address, PostalCode:p.payer.postalCode, City:p.payer.city};
+}
+export function tuitionCustomerCode(p: TuitionPlan) {
+  return `AP-T-${createHash("sha256").update(p.payerId).digest("hex").slice(0,16).toUpperCase()}`;
+}
 export function assertTuitionCustomerMatches(p: TuitionPlan, customer: MinimaxCustomer) {
-  if (p.payer.country === "IT" &&
+  const wanted = tuitionBillingDetails(p);
+  if ((p.payer.country === "IT" || p.payer.accountingMode) &&
       (customer.Country?.ID !== tuitionCountryId(p.payer.country) ||
-       customer.Name !== p.payer.name || customer.Address !== p.payer.address ||
-       customer.PostalCode !== p.payer.postalCode || customer.City !== p.payer.city))
-    throw new Error("Minimax foreign payer address differs; reconcile before invoicing");
+       customer.Name !== wanted.Name || customer.Address !== wanted.Address ||
+       customer.PostalCode !== wanted.PostalCode || customer.City !== wanted.City ||
+       (p.payer.accountingMode && customer.Code !== tuitionCustomerCode(p))))
+    throw new Error("Minimax payer address differs; reconcile before invoicing");
 }
 
 function id(name: string) {
@@ -57,6 +69,7 @@ export function tuitionInvoicePayload(
     throw new Error(
       "Only the approved zero-VAT tuition configuration is supported",
     );
+  const billing = tuitionBillingDetails(p);
   const amount = payment.amount_cents / 100;
   const paidDay = localDay(payment.paid_at);
   const issuedDay = localDay(new Date().toISOString());
@@ -77,10 +90,10 @@ export function tuitionInvoicePayload(
     DateTransactionFrom: service.serviceFrom,
     DateTransaction: service.serviceTo,
     DateDue: issuedDay,
-    AddresseeName: p.payer.name,
-    AddresseeAddress: p.payer.address,
-    AddresseePostalCode: p.payer.postalCode,
-    AddresseeCity: p.payer.city,
+    AddresseeName: billing.Name,
+    AddresseeAddress: billing.Address,
+    AddresseePostalCode: billing.PostalCode,
+    AddresseeCity: billing.City,
     AddresseeCountry: {
       ID: tuitionCountryId(p.payer.country),
     },
@@ -253,7 +266,7 @@ export async function issueTuitionInvoice(
   // Validate all invoice settings before the first external mutation.
   tuitionInvoicePayload(p, payment, 1);
   const organisationId = id("MINIMAX_TRAINING_ORGANISATION_ID");
-  const code = `AP-T-${createHash("sha256").update(p.payerId).digest("hex").slice(0, 16).toUpperCase()}`;
+  const code = tuitionCustomerCode(p);
   let customer = await getCustomerByCode({ organisationId, code });
   if (!customer) {
     if (payment.invoice_state !== "pending")
@@ -264,10 +277,7 @@ export async function issueTuitionInvoice(
       organisationId,
       customer: {
         Code: code,
-        Name: p.payer.name,
-        Address: p.payer.address,
-        PostalCode: p.payer.postalCode,
-        City: p.payer.city,
+        ...tuitionBillingDetails(p),
         Country: {
           ID: tuitionCountryId(p.payer.country),
         },
@@ -278,10 +288,11 @@ export async function issueTuitionInvoice(
       },
     });
   }
-  // A POST may return only an ID. Verify the persisted foreign address via GET.
-  if (p.payer.country === "IT") {
+  // A POST may return only an ID. Verify foreign and explicit generic-consumer
+  // customer identity/address via GET before creating any invoice.
+  if (p.payer.country === "IT" || p.payer.accountingMode) {
     const persisted = await getCustomerByCode({organisationId, code});
-    if (!persisted) throw new Error("Minimax foreign payer verification unavailable");
+    if (!persisted) throw new Error("Minimax payer verification unavailable");
     customer = persisted;
   }
   assertTuitionCustomerMatches(p, customer);

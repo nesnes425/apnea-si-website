@@ -34,9 +34,11 @@ export const planSchema = z
       .object({
         name: z.string().min(2).max(150),
         email: z.email(),
-        address: z.string().min(3).max(200),
-        postalCode: z.string().min(2).max(20),
-        city: z.string().min(2).max(100),
+        address: z.union([z.literal(""), z.string().min(3).max(200)]),
+        postalCode: z.union([z.literal(""), z.string().min(2).max(20)]),
+        city: z.union([z.literal(""), z.string().min(2).max(100)]),
+        // Explicit owner-approved accounting exception; absent on all legacy plans.
+        accountingMode: z.literal("generic_consumer_address_omitted").optional(),
         country: z.enum(["SI", "IT"]),
       })
       .strict(),
@@ -74,6 +76,12 @@ export const planSchema = z
   })
   .strict()
   .superRefine((p, ctx) => {
+    if (p.payer.accountingMode) {
+      if (p.payer.country !== "SI" || [p.payer.address, p.payer.postalCode, p.payer.city].some(v => v !== ""))
+        ctx.addIssue({code:"custom",path:["payer","accountingMode"],message:"Generic consumer omission requires an SI personal payer and all address fields empty"});
+    } else if (!p.payer.address || !p.payer.postalCode || !p.payer.city) {
+      ctx.addIssue({code:"custom",path:["payer"],message:"Missing verified billing address"});
+    }
     if (p.payer.country === "IT" && !/^\d{5}$/.test(p.payer.postalCode))
       ctx.addIssue({code:"custom",path:["payer","postalCode"],message:"Italian postal code must contain five digits"});
     if (p.invitationFormat === "upn_only" && p.second)
@@ -192,5 +200,5 @@ export function invoicePaymentNotice(plan: TuitionPlan) {
   return notice;
 }
 export function invoiceConsentHash(plan: TuitionPlan) {
-  return createHash("sha256").update(invoicePaymentNotice(plan)).digest("hex");
+  return createHash("sha256").update(invoicePaymentNotice(plan) + (plan.payer.accountingMode ? `\n${plan.payer.accountingMode}` : "")).digest("hex");
 }
