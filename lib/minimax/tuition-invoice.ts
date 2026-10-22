@@ -10,8 +10,25 @@ import {
   listIssuedInvoices,
   runIssuedInvoiceAction,
   type MinimaxIssuedInvoice,
+  type MinimaxCustomer,
 } from "./client";
 import { getInvoicePdf } from "./training-invoice";
+
+// Minimax club country catalogue verified read-only 22 October 2026: IT=106, SI=192.
+// Keep the existing SI configuration; never apply its fallback to a foreign payer.
+export function tuitionCountryId(country: TuitionPlan["payer"]["country"]) {
+  if (country === "IT") return 106;
+  if (country === "SI") return readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192;
+  throw new Error("Unsupported tuition payer country");
+}
+
+export function assertTuitionCustomerMatches(p: TuitionPlan, customer: MinimaxCustomer) {
+  if (p.payer.country === "IT" &&
+      (customer.Country?.ID !== tuitionCountryId(p.payer.country) ||
+       customer.Name !== p.payer.name || customer.Address !== p.payer.address ||
+       customer.PostalCode !== p.payer.postalCode || customer.City !== p.payer.city))
+    throw new Error("Minimax foreign payer address differs; reconcile before invoicing");
+}
 
 function id(name: string) {
   const value = readEnvNumber(name);
@@ -65,7 +82,7 @@ export function tuitionInvoicePayload(
     AddresseePostalCode: p.payer.postalCode,
     AddresseeCity: p.payer.city,
     AddresseeCountry: {
-      ID: readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ?? 192,
+      ID: tuitionCountryId(p.payer.country),
     },
     DocumentReference: payment.id,
     Currency: { ID: id("MINIMAX_TRAINING_CURRENCY_ID") },
@@ -128,6 +145,11 @@ export function assertTuitionInvoiceMatches(
     !["O", "I"].includes(invoice.Status ?? "") ||
     invoice.DocumentReference !== expected.DocumentReference ||
     invoice.Customer?.ID !== expected.Customer.ID ||
+    invoice.AddresseeCountry?.ID !== expected.AddresseeCountry.ID ||
+    invoice.AddresseeName !== expected.AddresseeName ||
+    invoice.AddresseeAddress !== expected.AddresseeAddress ||
+    invoice.AddresseePostalCode !== expected.AddresseePostalCode ||
+    invoice.AddresseeCity !== expected.AddresseeCity ||
     invoice.Currency?.ID !== expected.Currency.ID ||
     invoice.DocumentNumbering?.ID !== expected.DocumentNumbering.ID ||
     (invoice.Status === "I"
@@ -247,9 +269,7 @@ export async function issueTuitionInvoice(
         PostalCode: p.payer.postalCode,
         City: p.payer.city,
         Country: {
-          ID:
-            readOptionalEnvNumber("MINIMAX_TRAINING_CUSTOMER_COUNTRY_ID") ??
-            192,
+          ID: tuitionCountryId(p.payer.country),
         },
         Currency: { ID: id("MINIMAX_TRAINING_CURRENCY_ID") },
         SubjectToVAT: "N",
@@ -258,6 +278,13 @@ export async function issueTuitionInvoice(
       },
     });
   }
+  // A POST may return only an ID. Verify the persisted foreign address via GET.
+  if (p.payer.country === "IT") {
+    const persisted = await getCustomerByCode({organisationId, code});
+    if (!persisted) throw new Error("Minimax foreign payer verification unavailable");
+    customer = persisted;
+  }
+  assertTuitionCustomerMatches(p, customer);
   let invoice = payment.minimax_id
     ? await getIssuedInvoice({
         organisationId,

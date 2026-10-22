@@ -665,3 +665,18 @@ access. Offline and operator previews embed the PNG in their saved HTML, while
 outgoing HTML uses HTTPS. Verify the actual received email image in an explicitly
 approved internal send after deployment; a localhost image or provider-delivered
 callback alone does not prove display in a recipient's email client.
+
+## Italian personal billing addresses — local change, 22 October 2026
+
+The pending `codex/tuition-italian-addresses` change accepts explicit SI/IT payers;
+Italy requires a five-digit postal code. This is not a deployed feature until its
+PR passes Vercel and the owner approves the merge. Existing SI manifests and
+fingerprints remain unchanged. Stripe already uses the manifest country.
+
+Both Minimax customer and invoice use the payer's country. A read-only lookup of
+club organisation241557's `/countries` catalogue on22October2026 confirmed
+IT=106 and SI=192. The SI environment override retains its existing meaning and
+cannot affect Italy. Foreign customer creation/reuse is followed by a read-only
+address/country verification; invoice verification also rejects wrong addressee
+fields. The UPN PDF prints “Italija” after an Italian address. Tax treatment,
+service location, payment amounts and finite instalments are unchanged.

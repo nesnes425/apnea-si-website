@@ -32,6 +32,11 @@ export type MinimaxDocumentAttachment = {
 };
 
 export type MinimaxIssuedInvoice = {
+  AddresseeName?: string;
+  AddresseeAddress?: string;
+  AddresseePostalCode?: string;
+  AddresseeCity?: string;
+  AddresseeCountry?: MinimaxFkField;
   Rabate?: number;
   Currency?: MinimaxFkField;
   DocumentNumbering?: MinimaxFkField;
@@ -87,6 +92,10 @@ export type MinimaxCreatedInvoice = {
 };
 
 export type MinimaxCustomer = {
+  Address?: string;
+  PostalCode?: string;
+  City?: string;
+  Country?: MinimaxFkField;
   CustomerId: number;
   Code?: string;
   Name?: string;
