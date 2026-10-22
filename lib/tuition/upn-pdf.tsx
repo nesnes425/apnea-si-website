@@ -9,7 +9,7 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
   const p = upnDetails(plan, sample);
   const qr = tuitionQr(plan, sample);
   const rows = [
-    ["Plačnik", `${p.payer.name}\n${p.payer.address}\n${p.payer.postalCode} ${p.payer.city}`],
+    ["Plačnik", `${p.payer.name}\n${p.payer.address}\n${p.payer.postalCode} ${p.payer.city}${p.payer.country === "IT" ? "\nItalija" : ""}`],
     ["Prejemnik", `${p.name}\n${p.address}\n${p.city}`],
     ["IBAN prejemnika", p.iban], ["Referenca prejemnika", p.reference],
     ["Koda namena", p.purposeCode], ["Namen plačila", p.purpose],

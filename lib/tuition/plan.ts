@@ -37,7 +37,7 @@ export const planSchema = z
         address: z.string().min(3).max(200),
         postalCode: z.string().min(2).max(20),
         city: z.string().min(2).max(100),
-        country: z.literal("SI"),
+        country: z.enum(["SI", "IT"]),
       })
       .strict(),
     participant: z.string().min(2).max(150),
@@ -74,6 +74,8 @@ export const planSchema = z
   })
   .strict()
   .superRefine((p, ctx) => {
+    if (p.payer.country === "IT" && !/^\d{5}$/.test(p.payer.postalCode))
+      ctx.addIssue({code:"custom",path:["payer","postalCode"],message:"Italian postal code must contain five digits"});
     if (p.invitationFormat === "upn_only" && p.second)
       ctx.addIssue({code: "custom", path: ["second"], message: "UPN-only cannot include card instalments"});
     if (p.monthlyBankPayments) {
