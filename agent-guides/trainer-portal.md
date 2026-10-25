@@ -710,3 +710,38 @@ expiry. Only synthetic local records were used. Read-only production inspection
 found all 21 currently saved sessions have a recoverable first-save audit event.
 Focused lint, TypeScript and the production webpack build passed as well. The first
 sandboxed build could not reach Sanity; the permitted network build passed.
+
+## Third coach on a shared session — prepared October 25, 2026
+
+Samo requested Karin Pesrl as the third regular coach for the beginner swimmers in
+DIF Monday 07:00–08:00, explicitly retaining Polona and Azin. The portal has one
+shared mixed-level group for this slot. Do not split or duplicate the roster or
+silently replace either existing coach.
+
+Prepared on `codex/portal-third-coach`: migration
+`20261025180359_portal_multiple_additional_coaches.sql` retains each additional
+coach in a stable slot, returns all actual/regular coach pairs in matching order,
+and aggregates all coach names when saving attendance. The frontend sends the
+specific coach being replaced; the new RPC checks actor access, planned status,
+version, active replacement and duplicate assignments under the session lock.
+Legacy additional-coach calls remain supported for one additional coach and fail
+closed when ambiguous. No anonymous grants or roster access scope are broadened.
+
+Run `scripts/test-portal-multiple-coaches.mjs` with `PORTAL_PGLITE_MODULE` pointing
+to an isolated PGlite installation. Verification passed for three-coach snapshot
+scope, exact substitutions, duplicate/stale/unauthorized/legacy rejection,
+attendance, the 48-hour correction window, audit and single mail intent. Model
+unit tests, TypeScript, focused ESLint and the production webpack build passed.
+Local browser checks with synthetic people confirmed the third-coach view,
+self-replacement revoking access, and the management view restoring only the
+third coach while retaining the first two. Turbopack failed locally; webpack
+provided the successful browser and build verification.
+
+Samo approved push and production publication on October 25. PR #45 is open;
+the hosted migration was applied and read back as version 20261025180359, with
+all 193 existing additional-coach rows retained. Its local filename matches.
+Frontend merge awaits the final Vercel preview check. No Karin account or live
+assignment exists yet. After release, add Karin's authenticated staff UUID as a new additional
+slot to planned DIF Monday sessions from October 26, preserving history and both
+existing coaches. Verify her scoped snapshot and real login separately. Program
+publication is independent and already complete for October 26–30 in Supabase.

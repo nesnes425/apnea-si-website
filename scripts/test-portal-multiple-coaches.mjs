@@ -1,0 +1,58 @@
+// Isolated PostgreSQL verification; never contacts Supabase or sends mail.
+import {readFile,readdir} from 'node:fs/promises';
+import {pathToFileURL} from 'node:url';
+import assert from 'node:assert/strict';
+const {PGlite}=await import(pathToFileURL(process.env.PORTAL_PGLITE_MODULE).href);
+const db=new PGlite();
+await db.exec(`create role anon;create role authenticated;create role service_role;create schema auth;
+create table auth.users(id uuid primary key);
+create table auth.sessions(id uuid primary key,user_id uuid,created_at timestamptz default now());
+create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+create function auth.jwt() returns jsonb language sql stable as $$select jsonb_build_object('session_id',current_setting('request.jwt.claim.sub',true))$$;
+grant usage on schema auth to authenticated;grant execute on all functions in schema auth to authenticated;`);
+const dir=new URL('../supabase/migrations/',import.meta.url);
+for(const file of (await readdir(dir)).filter(f=>f.endsWith('.sql')).sort()) await db.exec(await readFile(new URL(file,dir),'utf8'));
+const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
+const [first,second,third,sub,outsider,admin,member,group,session,otherGroup,otherSession]=Array.from({length:11},(_,i)=>id(i+1));
+await db.exec(`insert into auth.users values('${first}'),('${second}'),('${third}'),('${sub}'),('${outsider}'),('${admin}');
+insert into portal_staff(id,name,role) values('${first}','First','trainer'),('${second}','Second','trainer'),('${third}','Third','trainer'),('${sub}','Sub','trainer'),('${outsider}','Outsider','trainer'),('${admin}','Admin','admin');
+insert into auth.sessions(id,user_id) select id,id from portal_staff;
+insert into portal_private.device_sessions(id,user_id,started_at,expires_at,remembered) select id,id,now(),now()+interval '1 hour',false from portal_staff;
+insert into portal_groups(id,label,season,level) values('${group}','Three coaches','2026/27','mixed'),('${otherGroup}','Other','2026/27','advanced');
+insert into portal_members(id,name,group_id) values('${member}','Test member','${group}');
+insert into portal_memberships(member_id,group_id,valid_from,source) values('${member}','${group}',current_date-10,'test');
+insert into portal_sessions(id,group_id,date,starts,ends,regular_coach_id,coach_id) values('${session}','${group}',current_date-1,'07:00','08:00','${first}','${first}'),('${otherSession}','${otherGroup}',current_date-1,'07:00','08:00','${outsider}','${outsider}');
+insert into portal_additional_coaches(session_id,regular_coach_id,coach_id,slot) values('${session}','${second}','${second}',1),('${session}','${third}','${third}',2);`);
+async function login(who){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[who]);await db.exec('set role authenticated');}
+async function snapshot(){return (await db.query('select public.portal_snapshot() s')).rows[0].s;}
+async function replace(who,version,target=third){return db.query('select public.portal_assign_additional_coach_at($1,$2,$3,$4)',[session,who,version,target]);}
+await login(third);
+let data=await snapshot();assert.equal(data.sessions.length,1);assert.equal(data.members.length,1);
+assert.deepEqual(data.sessions[0].coach_ids,[first,second,third]);
+assert.deepEqual(data.sessions[0].regular_coach_ids,[first,second,third]);
+await assert.rejects(()=>replace(first,0),/invalid assignment/);
+await assert.rejects(()=>replace(second,0),/invalid assignment/);
+await assert.rejects(()=>replace(sub,0,outsider),/invalid assignment/);
+await assert.rejects(()=>db.query('select public.portal_assign_additional_coach($1,$2,0)',[session,sub]),/ambiguous assignment/);
+await login(outsider);await assert.rejects(()=>replace(sub,0),/unauthorized/);
+await login(third);await replace(sub,0);
+assert.equal((await snapshot()).sessions.length,0);
+await login(sub);data=await snapshot();assert.deepEqual(data.sessions[0].coach_ids,[first,second,sub]);assert.deepEqual(data.sessions[0].regular_coach_ids,[first,second,third]);
+await assert.rejects(()=>replace(third,0,sub),/invalid assignment/);
+await replace(third,1,sub);
+await login(third);
+const entries=[{member_id:member,status:'present',kind:'regular'}];
+const save=version=>db.query('select public.portal_close_session($1) s',[{session_id:session,version,entries,comment:'Three-coach test'}]).then(r=>r.rows[0].s);
+const closed=await save(2);assert.equal(closed.mail_subject,'First in Second in Third, Three coaches, '+closed.date.split('-').reverse().join('. '));
+const savedAt=closed.first_saved_at;
+await login(second);assert.equal((await save(3)).first_saved_at,savedAt);
+await assert.rejects(()=>replace(sub,4),/invalid assignment/);
+await db.exec('reset role');
+assert.equal((await db.query('select count(*)::int n from portal_outbox')).rows[0].n,1);
+const audit=(await db.query("select after_value->'additional_coach' as coach from portal_audit where after_value ? 'additional_coach' order by recorded_at limit 1")).rows[0].coach;
+assert.equal(audit.coach_id,sub);assert.equal(audit.regular_coach_id,third);assert.equal(audit.slot,2);
+await db.exec(`update portal_sessions set first_saved_at=clock_timestamp()-interval '48 hours' where id='${session}'`);
+await login(third);await assert.rejects(()=>save(4),/48 ur/);
+await login(admin);await save(4);
+await db.exec('reset role');await db.exec('set role anon');await assert.rejects(()=>replace(sub,5),/permission denied/);
+await db.close();console.log('PASS: third-coach scope, ordered pairs, targeted substitution, duplicates, stale/unauthorized/legacy rejection, shared attendance, stable 48h window, audit and one mail.');

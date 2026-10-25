@@ -442,7 +442,7 @@ function SessionForm({
               <button className="portal-secondary" disabled={busy} onClick={async () => {
                 setBusy(true);
                 try {
-                  const result = await assignCoach(s.id,c.id,s.version,replacementIndex === 0 ? "primary" : "additional");
+                  const result = await assignCoach(s.id,c.id,s.version,replacementIndex === 0 ? "primary" : "additional", sessionCoaches(s)[replacementIndex]);
                   if (!result.ok) setMessage(result.error);
                   else { setMessage("Nadomestni trener je določen."); setCoachQuery(""); await reload(); }
                 } catch { setMessage("Dodelitev ni uspela. Poskusite ponovno."); }
@@ -733,6 +733,7 @@ function Dashboard({
                         e.target.value,
                         s.version,
                         index === 0 ? "primary" : "additional",
+                        assignedId,
                       );
                       if (!result.ok) setMessage(result.error);
                       else {

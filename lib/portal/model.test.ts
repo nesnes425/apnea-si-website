@@ -208,3 +208,18 @@ test("48 hours starts at first save, corrections never extend it or duplicate ho
   assert.equal(canEditAttendance({...corrected,first_saved_at:null},trainer,'2026-10-26',expiry),false);
   assert.equal(canEditAttendance(corrected,{...trainer,id:'another-coach'},'2026-10-26',beforeExpiry),false);
 });
+
+test('third coach shares attendance and earns hours, with independent substitution', () => {
+  const d=data();
+  const second={...trainer,id:'00000000-0000-4000-8000-000000000009',name:'Drugi trener'};
+  const third={...trainer,id:'00000000-0000-4000-8000-000000000010',name:'Tretji trener'};
+  d.staff.push(second,third);
+  const s=d.sessions[0];s.coach_ids=[trainer.id,second.id,third.id];s.regular_coach_ids=[...s.coach_ids];
+  assert.equal(visibleSnapshot(d,third,'2026-10-06').sessions.length,1);
+  const closed=closeSession(d,third,{...input,session_id:s.id,version:s.version},'2026-10-06');
+  for(const coach of [trainer,second,third]) assert.deepEqual(coachHours([closed],coach.id),{regular:1,makeup:0});
+  const substituted={...closed,coach_ids:[trainer.id,second.id,admin.id]};
+  assert.deepEqual(coachHours([substituted],third.id),{regular:0,makeup:0});
+  assert.deepEqual(coachHours([substituted],second.id),{regular:1,makeup:0});
+  assert.deepEqual(coachHours([substituted],admin.id),{regular:0,makeup:1});
+});
