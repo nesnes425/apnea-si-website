@@ -184,6 +184,7 @@ export async function assignCoach(
   coachId: string,
   version: number,
   position: "primary" | "additional" = "primary",
+  replacedCoachId?: string,
 ) {
   await sameOrigin();
   try {
@@ -192,12 +193,15 @@ export async function assignCoach(
     z.string().uuid().parse(coachId);
     z.number().int().nonnegative().parse(version);
     z.enum(["primary", "additional"]).parse(position);
-    if (id.demo) await assignDemo(id.user, sessionId, coachId, version, position);
+    if (replacedCoachId !== undefined) z.string().uuid().parse(replacedCoachId);
+    if (position === "additional" && !replacedCoachId) throw new Error("Missing replaced coach");
+    if (id.demo) await assignDemo(id.user, sessionId, coachId, version, position, replacedCoachId);
     else
-      await supabase(position === "additional" ? "/rest/v1/rpc/portal_assign_additional_coach" : "/rest/v1/rpc/portal_assign_coach", id.token, {
+      await supabase(position === "additional" ? "/rest/v1/rpc/portal_assign_additional_coach_at" : "/rest/v1/rpc/portal_assign_coach", id.token, {
         session_id: sessionId,
         coach_id: coachId,
         expected_version: version,
+        ...(position === "additional" ? { replaced_coach_id: replacedCoachId } : {}),
       });
     return { ok: true as const };
   } catch {

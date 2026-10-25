@@ -132,6 +132,7 @@ export async function assignDemo(
   coach: string,
   version: number,
   position: "primary" | "additional" = "primary",
+  replacedCoachId?: string,
 ) {
   return mutateDemo((data) => {
     const s = data.sessions.find((s) => s.id === id);
@@ -145,7 +146,8 @@ export async function assignDemo(
     )
       throw new Error("Treninga ni mogoče spremeniti.");
     const coaches = [...(s.coach_ids || [s.coach_id])];
-    const index = position === "primary" ? 0 : 1;
+    const index = position === "primary" ? 0 : coaches.findIndex(id => id === replacedCoachId);
+    if (position === "additional" && index < 1) throw new Error("Neveljaven izvajalec.");
     if (!coaches[index] || coaches.some((id, i) => i !== index && id === coach)) throw new Error("Neveljaven izvajalec.");
     coaches[index] = coach;
     s.coach_ids = coaches;
