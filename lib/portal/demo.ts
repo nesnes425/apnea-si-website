@@ -79,7 +79,8 @@ function seed(): Snapshot {
         regular_coach_id: demoIds.trainer,
         coach_id: demoIds.trainer,
         status: "planned",
-        entries: [],
+        // Synthetic makeup announced in the sheet log, before attendance is saved.
+        entries: i < 2 ? [{ member_id: "10000000-0000-4000-8000-000000000014", name: "Testni član 14", kind: "makeup", source: "tabela" }] : [],
         comment: "",
         version: 0,
         mail_status: "none",

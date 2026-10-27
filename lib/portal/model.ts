@@ -16,8 +16,10 @@ export type Member = { id: string; name: string; group_id: string };
 export type Entry = {
   member_id: string;
   name: string;
-  status: "present" | "absent";
+  // Missing only on a makeup announced in the sheet log before attendance is saved.
+  status?: "present" | "absent";
   kind: "regular" | "makeup";
+  source?: "tabela";
 };
 export type Session = {
   coach_ids?: string[];

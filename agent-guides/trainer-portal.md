@@ -745,3 +745,38 @@ assignment exists yet. After release, add Karin's authenticated staff UUID as a 
 slot to planned DIF Monday sessions from October 26, preserving history and both
 existing coaches. Verify her scoped snapshot and real login separately. Program
 publication is independent and already complete for October 26–30 in Supabase.
+
+## Sheet makeups — October 27, 2026
+
+Katarina asked that "Nadomeščanje" rows of the master sheet tab
+`Odsotnosti & nadomeščanja` appear in the portal automatically; absences
+(`Izostanek`) are not imported. `scripts/sync-portal-makeups.mjs` reads Skupine
+(for identities) and the log, `lib/portal/makeup-source.mjs` maps the target
+group label to the roster key (`Fakulteta za šport` = DIF; level is not part of
+the key) and the member by name+email hash, or by a unique email when the name is
+written differently. Rows without a target or date (still waiting for the
+person's choice) are skipped. Rows that cannot be matched are reported by sheet
+row number and reason only: `not_member` (e.g. "Priložnostni obisk", not in
+Skupine), `unknown_group`, `wrong_weekday`, `invalid_date`, and from the database
+`no_session`, `cancelled`, `closed_without`, `regular_member`, `unknown_group`.
+
+`portal_sync_makeups` (service role only, migration `20261027120000`) appends
+`{kind:"makeup",source:"tabela"}` entries without a status to planned sessions and
+bumps the version, so an open coach draft becomes stale instead of silently
+dropping the guest. The coach still marks Da/Ne and may remove the guest. Rows
+deleted or moved in the sheet are removed from planned sessions only; closed and
+cancelled sessions are never changed. An empty read cannot clear announcements.
+The coach view labels them "nadomeščanje, najavljeno"; the season matrix shows
+`N?` until attendance is saved. Workflow `portal-makeup-sync.yml` runs 06:00,
+12:00 and 16:00 Ljubljana once `PORTAL_MAKEUP_SYNC_ENABLED=true`; enable only after
+a manual dry-run and apply have been checked.
+
+Tivoli Thursday 21:00 was retired on October 27, 2026 (Sanity inactive). Its empty
+block stays in the Skupine sheet so the roster sync still sees 33 groups; do not
+delete it during the season.
+
+Verification: `lib/portal/makeup-source.test.mjs`, roster tests and
+`scripts/test-portal-sheet-makeups.mjs` (PGlite) pass. A read-only dry-run against
+the live sheet matched 29 of 32 complete makeup rows; the other three are
+occasional visitors not in Skupine. `test-portal-edit-window.mjs` already fails on
+main before this change (it applies the newest migration last).

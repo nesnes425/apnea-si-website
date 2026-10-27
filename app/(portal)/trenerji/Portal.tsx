@@ -239,7 +239,7 @@ function SessionForm({
       guests: s.entries
       .filter((e) => e.kind === "makeup")
       .map((e) => ({ id: e.member_id, name: e.name, group_id: "" })),
-      statuses: Object.fromEntries(s.entries.map((e) => [e.member_id, e.status])),
+      statuses: Object.fromEntries(s.entries.filter((e) => e.status).map((e) => [e.member_id, e.status!])),
       comment: s.comment,
     },
   });
@@ -304,7 +304,10 @@ function SessionForm({
           <div>
             {p.name}
             {guests.some((g) => g.id === p.id) && (
-              <span className="portal-muted"> · nadomeščanje</span>
+              <span className="portal-muted">
+                {" "}· nadomeščanje
+                {s.status !== "closed" && s.entries.some((e) => e.member_id === p.id && e.source === "tabela") && ", najavljeno"}
+              </span>
             )}
           </div>
           <div className="portal-controls portal-attendance-buttons">
@@ -574,8 +577,9 @@ function Dashboard({
       {tab === "attendance" ? (
         <section className="portal-card">
           <p className="portal-muted">
-            P prisoten · O odsoten · N prisoten na nadomeščanju · ? ni vneseno ·
-            — ni vpisan / prihodnji termin · × odpovedano
+            P prisoten · O odsoten · N prisoten na nadomeščanju · N? najavljeno
+            nadomeščanje, prisotnost še ni vnesena · ? ni vneseno · — ni vpisan /
+            prihodnji termin · × odpovedano
           </p>
           <div className="portal-scroll">
             <table className="portal-matrix">
@@ -600,6 +604,8 @@ function Dashboard({
                       const value =
                         s.status === "cancelled"
                           ? "×"
+                          : e && !e.status
+                            ? "N?"
                           : e
                             ? e.status === "absent"
                               ? "O"
