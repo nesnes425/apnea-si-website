@@ -98,7 +98,9 @@ Training launch flow uses Stripe online payment:
 
 ### Statika without another membership payment
 
-The explicit secondary button for `siteConfig.trainings.statikaGroupId` opens
+The schedule retains the same single `Prijava` button for every group. On the
+default registration subpage for `siteConfig.trainings.statikaGroupId`, a secondary
+button for members who already paid their membership opens
 `/treningi/prijava?groupId=training-group-tivoli-sreda-2045-statika&mode=statika`.
 `StatikaSignupForm.tsx` and `lib/training/statika-signup-actions.ts` use a separate
 non-payment path; they never create a Stripe payment, Minimax invoice or purchase event.

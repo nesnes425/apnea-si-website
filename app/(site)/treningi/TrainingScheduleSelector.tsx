@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/lib/config";
 import type { TrainingGroup } from "@/lib/sanity/types";
 
 type Props = {
@@ -257,23 +256,9 @@ export function TrainingScheduleSelector({
                         </p>
                       </div>
                       {applicationsOpen && !group.isFull ? (
-                        <div className="flex flex-col items-stretch gap-3 sm:max-w-64">
-                          <Button asChild size="sm" fullWidth className="text-center">
-                            <Link href={`/treningi/prijava?groupId=${group._id}`}>Prijava</Link>
-                          </Button>
-                          {group._id === siteConfig.trainings.statikaGroupId && (
-                            <>
-                              <Button asChild size="sm" fullWidth className="bg-navy text-center hover:bg-navy-dark">
-                                <Link href={`/treningi/prijava?groupId=${group._id}&mode=statika`}>
-                                  Prijava na statiko brez plačila
-                                </Link>
-                              </Button>
-                              <p className="text-sm leading-relaxed text-muted-text">
-                                Za člane z že poravnano članarino za tekočo sezono. Vadnina se ureja ločeno.
-                              </p>
-                            </>
-                          )}
-                        </div>
+                        <Button asChild size="sm" fullWidth>
+                          <Link href={`/treningi/prijava?groupId=${group._id}`}>Prijava</Link>
+                        </Button>
                       ) : !group.isFull ? (
                         <span className="text-sm text-muted-text">Prijave zaprte</span>
                       ) : null}

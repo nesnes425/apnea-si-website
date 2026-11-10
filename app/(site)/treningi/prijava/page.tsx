@@ -5,6 +5,7 @@ import { getTrainingGroup, getTrainingSettings } from "@/lib/sanity/queries";
 import { TrainingSignupForm } from "./TrainingSignupForm";
 import { StatikaSignupForm } from "./StatikaSignupForm";
 import { siteConfig } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Prijava na trening",
@@ -62,9 +63,11 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
             {group._id === siteConfig.trainings.statikaGroupId && (
               <div className="mb-7 border border-gold/30 bg-gold-pale p-5 text-sm leading-relaxed text-navy">
                 <p className="mb-2">Ste članarino za to sezono že poravnali?</p>
-                <Link className="font-semibold underline underline-offset-4" href={`/treningi/prijava?groupId=${group._id}&mode=statika`}>
-                  Prijava na statiko brez plačila →
-                </Link>
+                <Button asChild size="sm" fullWidth className="block bg-navy text-center hover:bg-navy-dark">
+                  <Link href={`/treningi/prijava?groupId=${group._id}&mode=statika`}>
+                    Prijava na statiko brez plačila članarine
+                  </Link>
+                </Button>
               </div>
             )}
             <TrainingSignupForm
