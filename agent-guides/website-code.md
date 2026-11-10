@@ -1,6 +1,6 @@
 # Website Code Guide
 
-Last updated: August 12, 2026
+Last updated: November 10, 2026
 
 Use this when Samo or Katarina asks Claude Code / Codex to change Apnea.si website code.
 
@@ -95,6 +95,49 @@ Training launch flow uses Stripe online payment:
 - `app/(site)/treningi/hvala/page.tsx`
 - `lib/stripe/training-actions.ts`
 - `app/api/stripe/training-webhook/route.ts`
+
+### Statika without another membership payment
+
+The explicit secondary button for `siteConfig.trainings.statikaGroupId` opens
+`/treningi/prijava?groupId=training-group-tivoli-sreda-2045-statika&mode=statika`.
+`StatikaSignupForm.tsx` and `lib/training/statika-signup-actions.ts` use a separate
+non-payment path; they never create a Stripe payment, Minimax invoice or purchase event.
+The normal membership-payment path remains available.
+
+The server verifies the exact group, active venue/program, open season and capacity.
+A matching successful membership payment in the season confirms one additional place
+with the existing Sanity marker. No match or a lookup failure creates a review request
+only, without reserving capacity or enrolling the contact in the group. A declaration
+checkbox is not evidence of payment. Manual memberships require administrative review.
+
+The required admin notification is the private application record; no participant PII
+is written to public Sanity. Confirmed subjects start `Nova prijava na dodatni trening:`;
+review requests start `Nova zahteva za prijavo na statiko:`. Keep these aligned with the
+hub's `trening-spremembe` skill and `trening_sync.py okno`. The existing
+`BREVO_NOTIFY_EMAIL` destination (fallback `siteConfig.email`) is retained. Katarina
+reviews and writes the Sheet; there is no direct website-to-Sheets integration.
+
+After a reserved place, failure of the required admin submission returns an explicit
+partial error and supports retry with the same capacity marker, including when now full.
+Optional customer-mail/Brevo failures do not erase an accepted admin record. Admin mail
+instructs the reviewer to check Brevo and avoid reserving a second place. Provider
+acceptance is not inbox delivery. There is no background retry queue; after repeated
+failure, the visitor contacts administration. Stable per-message UUID keys protect
+short retries; emails can repeat after the provider's deduplication window, so the
+reviewer also deduplicates the person/season/group. Changed contact details use new
+message keys while preserving the same confirmed capacity marker.
+
+For isolated local UI review, start `TRAINING_SIGNUP_PREVIEW=true npm run dev --
+--hostname 127.0.0.1`. The Statika action accepts this mode only in development,
+without `VERCEL`, on a loopback host; provider adapters are never imported in that
+branch. Use `confirmed@example.invalid` for a synthetic confirmed member and
+`pending@example.invalid` for review. Both can use any valid test name/phone.
+The normal training payment action is disabled in this local preview mode too.
+Never set this flag on Vercel. Check the new processor and existing membership paths:
+
+```bash
+node --import tsx --test lib/training/statika-signup.test.ts lib/training/membership-check.test.ts lib/training/additional-group-signup.test.ts
+```
 
 Dormant/deferred course and voucher payment code remains in `lib/stripe/`,
 `app/api/stripe/webhook/route.ts`, and voucher PDF files for possible later reuse. Do

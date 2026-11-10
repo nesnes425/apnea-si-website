@@ -79,6 +79,9 @@ async function decideSignup(
 export async function createTrainingPaymentIntent(
   raw: TrainingReservationInput
 ): Promise<CreateTrainingPaymentResult> {
+  if (process.env.NODE_ENV === "development" && process.env.TRAINING_SIGNUP_PREVIEW === "true" && !process.env.VERCEL) {
+    return { ok: false, error: "Lokalni predogled: plačila so izključena. Preizkusite prijavo na statiko brez plačila." };
+  }
   const parsed = trainingReservationSchema.safeParse(raw);
   if (!parsed.success) {
     return { ok: false, error: "Podatki niso popolni. Preverite obrazec." };
