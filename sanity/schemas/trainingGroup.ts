@@ -113,6 +113,7 @@ export const trainingGroup = defineType({
     defineField({
       name: "notes",
       title: "Opombe",
+      description: "Javno: prikaže se na strani za prijavo v to skupino. Ne pišite internih opomb.",
       type: "text",
       rows: 3,
     }),

@@ -34,6 +34,11 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
     ...group.pricingOverride,
   };
   const membershipFee = settings?.membershipFee ?? 35;
+  // Statika is priced per season, so a monthly figure would mislead.
+  const showMonthlyPrice = group._id !== siteConfig.trainings.statikaGroupId;
+  const tuitionLabel = pricing.secondInstallmentAmount > 0
+    ? `1. obrok ${pricing.firstInstallmentAmount} €, 2. obrok ${pricing.secondInstallmentAmount} €`
+    : `${pricing.firstInstallmentAmount} € enkratno`;
   const preview = process.env.NODE_ENV === "development" &&
     process.env.TRAINING_SIGNUP_PREVIEW === "true" && !process.env.VERCEL;
 
@@ -87,6 +92,9 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
             <p className="mb-5 text-sm font-medium text-navy">
               {group.weekday}, {group.startTime}–{group.endTime}
             </p>
+            {group.notes && (
+              <p className="mb-5 whitespace-pre-line text-sm leading-relaxed text-body">{group.notes}</p>
+            )}
             <dl className="space-y-3 border-t border-border-custom pt-5 text-sm">
               {statikaMode ? <>
                 <div className="flex justify-between gap-4">
@@ -95,24 +103,22 @@ export default async function TrainingSignupPage({ searchParams }: Props) {
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-text">Vadnina</dt>
-                  <dd className="text-right font-medium text-navy">Ureja se ločeno</dd>
+                  <dd className="text-right font-medium text-navy">{tuitionLabel}</dd>
                 </div>
                 <div className="border-t border-border-custom pt-4 leading-relaxed text-body">
                   <p>Obstoječa prijava na druge treninge ostane veljavna.</p>
                   <p className="mt-3">Vpis v tabelo treningov uredimo ob administrativnem pregledu.</p>
                 </div>
               </> : <>
+              {showMonthlyPrice && (
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-text">Mesečna vadnina</dt>
+                  <dd className="font-medium text-navy">{pricing.monthlyDisplayPrice} €/mesec</dd>
+                </div>
+              )}
               <div className="flex justify-between gap-4">
-                <dt className="text-muted-text">Mesečna vadnina</dt>
-                <dd className="font-medium text-navy">{pricing.monthlyDisplayPrice} €/mesec</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted-text">Plačilo vadnine</dt>
-                <dd className="text-right font-medium text-navy">
-                  {pricing.secondInstallmentAmount > 0
-                    ? `1. obrok ${pricing.firstInstallmentAmount} €, 2. obrok ${pricing.secondInstallmentAmount} €`
-                    : `${pricing.firstInstallmentAmount} € enkratno`}
-                </dd>
+                <dt className="text-muted-text">{showMonthlyPrice ? "Plačilo vadnine" : "Vadnina"}</dt>
+                <dd className="text-right font-medium text-navy">{tuitionLabel}</dd>
               </div>
               <div className="border-t border-border-custom pt-3">
                 <div className="flex justify-between gap-4">
