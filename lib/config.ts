@@ -125,6 +125,8 @@ export const siteConfig = {
 
   // Training pricing
   trainings: {
+    // Only this existing group offers the explicit membership-free application.
+    statikaGroupId: "training-group-tivoli-sreda-2045-statika",
     membership: {
       name: "Letna članarina",
       price: 35,
