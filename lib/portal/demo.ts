@@ -1,3 +1,4 @@
+import { applyAttendanceChange, type AttendanceChange } from "./autosave";
 import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
@@ -154,5 +155,23 @@ export async function assignDemo(
     s.coach_id = coaches[0];
     s.version++;
     return s as Session;
+  });
+}
+
+export async function changeDemo(user: Staff, input: AttendanceChange) {
+  return mutateDemo(data => {
+    const receipts = (data as Snapshot & { receipts?: Record<string, string> });
+    receipts.receipts ||= {};
+    const key = user.id + ":" + input.operation_id;
+    if (receipts.receipts[key]) {
+      if (receipts.receipts[key] !== JSON.stringify(input)) throw new Error("operation reused");
+      return { ok: true as const, session: data.sessions.find(s => s.id === input.session_id)! };
+    }
+    const result = applyAttendanceChange(data,user,input,ljubljanaDate());
+    if (result.ok) {
+      data.sessions = data.sessions.map(s => s.id === result.session.id ? result.session : s);
+      receipts.receipts[key] = JSON.stringify(input);
+    }
+    return result;
   });
 }

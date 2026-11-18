@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
   identity,
+  PortalApiError,
   requireIdentity,
   SESSION_COOKIE,
   snapshot,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/portal/backend";
 import {
   assignDemo,
+  changeDemo,
   closeDemo,
   demoEnabled,
   readDemo,
@@ -24,6 +26,7 @@ import {
 } from "@/lib/portal/session-cookies";
 import { dispatchPortalComment } from "@/lib/brevo/portal-comment";
 import { sendLoginCode } from "@/lib/portal/login-code";
+import { changeSchema, type SaveResult } from "@/lib/portal/autosave";
 async function sameOrigin() {
   const h = await headers();
   const origin = h.get("origin"),
@@ -210,5 +213,27 @@ export async function assignCoach(
       error:
         "Dodelitev ni uspela. Osvežite stran in preverite stanje treninga.",
     };
+  }
+}
+
+export async function saveChange(raw: unknown): Promise<SaveResult> {
+  await sameOrigin();
+  try {
+    const id = await requireIdentity();
+    const input = changeSchema.parse(raw);
+    if (input.actor_id !== id.user.id) return { ok: false, error: "Prijavljeni ste z drugim računom. Prijavite se s prvotnim računom za pošiljanje čakajočih vnosov." };
+    const result = id.demo ? await changeDemo(id.user,input) : await supabase<SaveResult>("/rest/v1/rpc/portal_save_change",id.token,{ input });
+    if (result.ok && input.type === "comment" && !id.demo && result.session.mail_status === "pending") {
+      try { result.session.mail_status = await dispatchPortalComment(result.session.id) as Session["mail_status"]; }
+      catch { /* Attendance/comment remains committed; do not roll it back on mail failure. */ }
+    }
+    return result;
+  } catch (e) {
+    if (e instanceof z.ZodError) return { ok: false, error: "Neveljaven vnos. Preverite podatke." };
+    if (e instanceof PortalApiError && e.status < 500 && e.status !== 429)
+      return { ok: false, error: "Vnos ni dovoljen. Preverite prijavo, dodelitev treninga in rok 7 dni od prvega shranjevanja." };
+    if (e instanceof Error && e.message === "Prijavite se za dostop.")
+      return { ok: false, error: "Prijava je potekla. Vnos je ohranjen; po ponovni prijavi se vrnite na ta termin." };
+    return { ok: false, retryable: true, error: "Povezava ni uspela. Vnos čaka na ponovno pošiljanje." };
   }
 }
