@@ -767,7 +767,7 @@ member eligibility and deadline under a row lock. A per-member expected value
 prevents stale same-member overwrites, while different-member changes merge.
 Private receipts keyed by actor/operation UUID make a lost-response retry a no-op.
 These receipts have no direct client grants; existing audit records retain changes.
-Deploy `20261118120706_portal_attendance_autosave.sql` before the frontend.
+Deploy `20261118122150_portal_attendance_autosave.sql` before the frontend.
 
 The browser keeps a durable per-operation journal scoped to user, session and
 live/demo mode. It retries transient failures while the page is open (including
