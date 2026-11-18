@@ -42,6 +42,7 @@ export interface BlogPost {
       url: string;
     };
     alt?: string;
+    caption?: string;
   };
   publishedAt: string;
   categories?: string[];

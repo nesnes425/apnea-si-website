@@ -70,6 +70,44 @@ const components: PortableTextComponents = {
         </figure>
       );
     },
+    imagePair: ({ value }) => {
+      const images = (value?.images || []).filter(
+        (img: { asset?: unknown }) => img?.asset
+      );
+      if (images.length === 0) return null;
+      return (
+        <div className="my-8 grid grid-cols-2 gap-3">
+          {images.map(
+            (
+              img: { _key?: string; asset: { _ref: string }; alt?: string; caption?: string },
+              i: number
+            ) => (
+              <figure key={img._key || i} className="m-0">
+                <Image
+                  src={urlFor(img)
+                    .width(600)
+                    .height(750)
+                    .fit("crop")
+                    .quality(85)
+                    .auto("format")
+                    .url()}
+                  alt={img.alt || ""}
+                  width={600}
+                  height={750}
+                  className="w-full h-auto"
+                  sizes="(max-width: 768px) 50vw, 400px"
+                />
+                {img.caption && (
+                  <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
+            )
+          )}
+        </div>
+      );
+    },
     cta: ({ value }) => {
       if (!value) return null;
       return (

@@ -157,7 +157,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
         ...,
         _type == "image" => { ..., asset-> }
       },
-      featuredImage { asset->, alt },
+      featuredImage { asset->, alt, caption },
       publishedAt,
       categories,
       metaDescription

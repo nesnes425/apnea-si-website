@@ -42,6 +42,52 @@ export const blogPost = defineType({
         },
         {
           type: "object",
+          name: "imagePair",
+          title: "Dve fotki skupaj (kolaž)",
+          description:
+            "Dve fotki druga ob drugi, enake višine. Primerno za pokončne fotke.",
+          fields: [
+            defineField({
+              name: "images",
+              title: "Fotki",
+              type: "array",
+              of: [
+                {
+                  type: "image",
+                  options: { hotspot: true },
+                  fields: [
+                    defineField({
+                      name: "alt",
+                      title: "Alt besedilo",
+                      type: "string",
+                    }),
+                    defineField({
+                      name: "caption",
+                      title: "Podnapis",
+                      type: "string",
+                    }),
+                  ],
+                },
+              ],
+              validation: (Rule) => Rule.required().length(2),
+            }),
+          ],
+          preview: {
+            select: {
+              first: "images.0.caption",
+              media: "images.0",
+            },
+            prepare({ first, media }) {
+              return {
+                title: first || "Dve fotki skupaj",
+                subtitle: "Kolaž dveh fotk",
+                media,
+              };
+            },
+          },
+        },
+        {
+          type: "object",
           name: "cta",
           title: "Poziv k dejanju (CTA)",
           fields: [
@@ -170,6 +216,11 @@ export const blogPost = defineType({
         defineField({
           name: "alt",
           title: "Alt besedilo",
+          type: "string",
+        }),
+        defineField({
+          name: "caption",
+          title: "Podnapis",
           type: "string",
         }),
       ],
