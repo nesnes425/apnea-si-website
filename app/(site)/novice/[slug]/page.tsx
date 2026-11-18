@@ -77,8 +77,8 @@ export default async function BlogPostPage({ params }: Props) {
   const featuredImageUrl = post.featuredImage?.asset?.url
     ? builder
         .image(post.featuredImage)
-        .width(1200)
-        .quality(85)
+        .width(1600)
+        .quality(90)
         .auto("format")
         .url()
     : null;
@@ -153,7 +153,7 @@ export default async function BlogPostPage({ params }: Props) {
               height={675}
               className="w-full h-auto"
               priority
-              sizes="(max-width: 768px) 100vw, 800px"
+              sizes="(max-width: 768px) 100vw, 768px"
             />
             {post.featuredImage?.caption && (
               <figcaption className="mt-2 px-6 md:px-0 text-center text-sm italic leading-relaxed text-muted-text">
