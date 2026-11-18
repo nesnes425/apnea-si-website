@@ -51,19 +51,19 @@ const components: PortableTextComponents = {
   types: {
     image: ({ value }) => {
       if (!value?.asset) return null;
-      const url = urlFor(value).width(800).quality(85).auto("format").url();
+      const url = urlFor(value).width(1600).quality(90).auto("format").url();
       return (
         <figure className="my-8">
           <Image
             src={url}
             alt={value.alt || ""}
-            width={800}
-            height={500}
+            width={1600}
+            height={1000}
             className="w-full h-auto"
-            sizes="(max-width: 768px) 100vw, 800px"
+            sizes="(max-width: 768px) 100vw, 768px"
           />
           {value.caption && (
-            <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+            <figcaption className="mt-2 text-center text-sm italic leading-relaxed text-muted-text">
               {value.caption}
             </figcaption>
           )}
@@ -85,20 +85,20 @@ const components: PortableTextComponents = {
               <figure key={img._key || i} className="m-0">
                 <Image
                   src={urlFor(img)
-                    .width(600)
-                    .height(750)
+                    .width(1000)
+                    .height(1250)
                     .fit("crop")
-                    .quality(85)
+                    .quality(90)
                     .auto("format")
                     .url()}
                   alt={img.alt || ""}
-                  width={600}
-                  height={750}
+                  width={1000}
+                  height={1250}
                   className="w-full h-auto"
-                  sizes="(max-width: 768px) 50vw, 400px"
+                  sizes="(max-width: 768px) 50vw, 380px"
                 />
                 {img.caption && (
-                  <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+                  <figcaption className="mt-2 text-center text-sm italic leading-relaxed text-muted-text">
                     {img.caption}
                   </figcaption>
                 )}
