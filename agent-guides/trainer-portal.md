@@ -745,3 +745,44 @@ assignment exists yet. After release, add Karin's authenticated staff UUID as a 
 slot to planned DIF Monday sessions from October 26, preserving history and both
 existing coaches. Verify her scoped snapshot and real login separately. Program
 publication is independent and already complete for October 26–30 in Supabase.
+
+## Automatic attendance and seven-day corrections — November 18, 2026
+
+This supersedes manual finalization and the 48-hour correction policy above.
+Every Da/Ne click submits one member change, immediately persisted in the database.
+The session stays planned while incomplete and becomes closed automatically when
+all members of its frozen roster are marked. Hours still aggregate each closed
+session once. `attendance_roster` freezes the dated roster on the first attendance
+save; legacy closed sessions derive it from their historical regular entries.
+No unmarked member is silently converted to absent. Makeup addition explicitly
+says “Dodaj kot prisotnega”; its removal is also an individual change.
+
+Active assigned primary/additional coaches may correct for 168 elapsed hours from
+`first_saved_at`, including incomplete sessions. Admins retain their existing
+correction access. Neither later attendance nor comment changes reset the clock.
+Future/cancelled dates remain protected. Older manual clients use the same deadline.
+
+The new `portal_save_change` RPC checks the device session, actor, assignment,
+member eligibility and deadline under a row lock. A per-member expected value
+prevents stale same-member overwrites, while different-member changes merge.
+Private receipts keyed by actor/operation UUID make a lost-response retry a no-op.
+These receipts have no direct client grants; existing audit records retain changes.
+Deploy `20261118122150_portal_attendance_autosave.sql` before the frontend.
+
+The browser keeps a durable per-operation journal scoped to user, session and
+live/demo mode. It retries transient failures while the page is open (including
+navigation between sessions), and restores pending changes when that session is
+reopened. “Shranjeno” requires a database acknowledgement; offline/error states
+remain explicit. Storage failure leaves an in-memory queue and exit warning.
+Closing a browser cannot perform a background upload: reopen the portal/session
+with a connection to finish pending writes. Conflicting fields require an explicit
+choice; old manual drafts remain available for inspection, never silently replayed.
+
+Comments have a separate “Pošlji komentar” button and preserve their local draft.
+Attendance never enqueues email. The explicit comment transaction retains the
+existing fixed recipient, outbox and provider idempotency/uncertainty behavior.
+No real attendance or email is used in verification.
+
+Checks: `scripts/test-portal-autosave.mjs` and
+`scripts/test-portal-multiple-coaches.mjs` with `PORTAL_PGLITE_MODULE`, plus
+`lib/portal/model.test.ts` and `lib/portal/autosave-queue.test.ts`.

@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { trainerPortalConfig } from "@/lib/config";
-import { useAttendanceDraft } from "./useAttendanceDraft";
+import { useAttendanceAutosave } from "./useAttendanceAutosave";
+import { draftKey, parseDraft, type AttendanceDraft } from "@/lib/portal/draft";
 import {
   coachHours,
   canEditAttendance,
@@ -23,7 +24,6 @@ import {
 } from "@/lib/portal/model";
 import {
   assignCoach,
-  finalizeSession,
   findMakeup,
   loadPortal,
   logout,
@@ -130,7 +130,7 @@ export default function Portal({
                       ? "· shranjeno"
                       : s.status === "cancelled"
                         ? "· odpovedano"
-                        : ""}
+                        : s.first_saved_at ? "· delno izpolnjeno" : ""}
                   </option>
                 ))}
               </select>
@@ -191,8 +191,13 @@ export default function Portal({
               </section>
             ) : s ? (
               <SessionForm
-                key={s.id + ":" + s.version}
+                key={user.id + ":" + s.id}
                 session={s}
+                onSaved={saved => setState(previous => {
+                  const current = previous.data.sessions.find(item => item.id === saved.id);
+                  if (current && current.version >= saved.version) return previous;
+                  return { ...previous, data: { ...previous.data, sessions: previous.data.sessions.map(item => item.id === saved.id ? { ...item, ...saved } : item) } };
+                })}
                 data={data}
                 user={user}
                 demo={demo}
@@ -210,18 +215,22 @@ export default function Portal({
   );
 }
 function SessionForm({
-  session: s,
+  session: source,
+  onSaved,
   data,
   user,
   demo,
   reload,
 }: {
   session: Session;
+  onSaved: (s: Session) => void;
   data: Snapshot;
   user: Staff;
   demo: boolean;
   reload: () => Promise<void>;
 }) {
+  const autosave = useAttendanceAutosave(source, user.id, demo, onSaved);
+  const s = autosave.session;
   const roster = sessionRoster(data, s);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -232,20 +241,26 @@ function SessionForm({
   }, []);
   const locked = !canEditAttendance(s, user, ljubljanaDate(now), now);
   const editDeadline = attendanceEditDeadline(s);
-  const draft = useAttendanceDraft({
-    userId: user.id, sessionId: s.id, version: s.version, demo, locked,
-    rosterIds: roster.map(member => member.id),
-    initial: {
-      guests: s.entries
-      .filter((e) => e.kind === "makeup")
-      .map((e) => ({ id: e.member_id, name: e.name, group_id: "" })),
-      statuses: Object.fromEntries(s.entries.map((e) => [e.member_id, e.status])),
-      comment: s.comment,
-    },
-  });
-  const { guests, statuses, comment } = draft.values;
-  const setGuests = (guests: Member[]) => draft.update({ guests });
-  const setComment = (comment: string) => draft.update({ comment });
+  const guests = autosave.visible.entries.filter(e => e.kind === "makeup").map(e => ({ id: e.member_id, name: e.name, group_id: "" }));
+  const statuses = Object.fromEntries(autosave.visible.entries.map(e => [e.member_id,e.status]));
+  const commentKey = `apnea-comment:${demo ? "demo" : "live"}:${user.id}:${s.id}`;
+  const [comment, updateComment] = useState(source.comment);
+  const [commentStored, setCommentStored] = useState(true);
+  const [legacy, setLegacy] = useState<AttendanceDraft | null>(null);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(commentKey);
+      // Browser-only hydration of a durable comment draft after SSR.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (stored !== null) updateComment(stored);
+      setLegacy(parseDraft(localStorage.getItem(draftKey(user.id, source.id, demo))));
+    } catch { setCommentStored(false); }
+  }, [commentKey, user.id, source.id, demo]);
+  function setComment(value: string) {
+    updateComment(value);
+    try { localStorage.setItem(commentKey,value); setCommentStored(true); }
+    catch { setCommentStored(false); }
+  }
   const [coachQuery, setCoachQuery] = useState("");
   const [replacementIndex, setReplacementIndex] = useState(0);
   const [message, setMessage] = useState(""),
@@ -253,8 +268,7 @@ function SessionForm({
     [query, setQuery] = useState(""),
     [results, setResults] = useState<Member[]>([]);
   const people = [...roster, ...guests].sort((a, b) => a.name.localeCompare(b.name, "sl", { sensitivity: "base", numeric: true }));
-  const editingDisabled = locked || busy || draft.status === "loading";
-  const saveLabel = s.status === "closed" ? "Shrani popravek" : "Shrani prisotnost";
+  const editingDisabled = locked || !autosave.ready || autosave.conflict;
   return (
     <section className="portal-card">
       <h2>{data.groups.find((g) => g.id === s.group_id)?.label}</h2>
@@ -270,10 +284,10 @@ function SessionForm({
             : mailLabels[s.mail_status] || s.mail_status}
         </p>
       )}
-      {s.status === "closed" && user.role !== "admin" && (
+      {(s.first_saved_at || s.status === "closed") && user.role !== "admin" && (
         <p className="portal-muted">{locked
           ? "Rok za popravljanje je potekel. Za popravek se obrnite na vodstvo."
-          : `Prisotnost lahko popravljate do ${new Intl.DateTimeFormat("sl-SI", { timeZone: "Europe/Ljubljana", dateStyle: "medium", timeStyle: "short" }).format(new Date(editDeadline!))}. Rok velja 48 ur od prvega shranjevanja.`}</p>
+          : `Prisotnost lahko popravljate do ${new Intl.DateTimeFormat("sl-SI", { timeZone: "Europe/Ljubljana", dateStyle: "medium", timeStyle: "short" }).format(new Date(editDeadline!))}. Rok velja 7 dni od prvega shranjevanja.`}</p>
       )}
       {s.date > ljubljanaDate() && (
         <p className="portal-notice">
@@ -284,20 +298,24 @@ function SessionForm({
         {people.filter((p) => statuses[p.id] === "present").length} prisotnih ·{" "}
         {people.filter((p) => !statuses[p.id]).length} neoznačenih
       </p>
-      {!locked && <p role="status" className={draft.status === "error" || draft.status === "stale" ? "portal-notice" : "portal-muted"}>
-        {draft.status === "loading" ? "Preverjam osnutek …" :
-          draft.status === "saved" ? `Osnutek shranjen na tej napravi. Za potrditev kliknite ${saveLabel}.` :
-          draft.status === "error" ? `Osnutka ni mogoče shraniti na napravo. Ne zaprite strani; prisotnost potrdite z gumbom ${saveLabel}.` :
-          draft.status === "stale" ? "Termin se je medtem spremenil. Starejši osnutek ni bil uporabljen; preverite prikazano evidenco." :
-          `Vnos se sproti shrani kot osnutek na tej napravi. Za potrditev kliknite ${saveLabel}.`}
-      </p>}
-      {!locked && draft.status === "stale" && draft.previousDraft && <details className="portal-makeup">
-        <summary>Preglej prejšnji osnutek</summary>
-        {Object.entries(draft.previousDraft.statuses).map(([id, value]) => <p key={id}>
-          {[...roster, ...draft.previousDraft!.guests].find(member => member.id === id)?.name || "Član"}: {value === "present" ? "Da" : "Ne"}
-        </p>)}
-        <p className="portal-program">{draft.previousDraft.comment}</p>
-        {!locked && <button className="portal-secondary" disabled={busy} onClick={() => draft.update(draft.previousDraft!)}>Obnovi osnutek za pregled</button>}
+      <p role="status" aria-live="polite" className={autosave.error || !autosave.durable ? "portal-notice" : "portal-muted"}>
+        {!autosave.ready ? "Preverjam shranjene vnose …" :
+          autosave.error || (autosave.saving ? "Shranjujem …" : autosave.pending.length ? "Vnosi čakajo na shranjevanje." : s.first_saved_at ? "Shranjeno. Spremembe se shranjujejo samodejno." : "Vsak klik na Da ali Ne se samodejno shrani.")}
+        {!autosave.durable && " Shranjevanje na napravo ni na voljo. Ne zaprite strani, dokler vnosi niso shranjeni v bazo."}
+      </p>
+      {s.first_saved_at && s.status !== "closed" && <p className="portal-notice">Evidenca je delno izpolnjena. Ure trenerjev bodo upoštevane, ko označite vse člane.</p>}
+      {autosave.error && !autosave.conflict && <button className="portal-secondary" onClick={() => void autosave.retry()}>Poskusi ponovno</button>}
+      {autosave.conflict && <div className="portal-notice">
+        <p>{autosave.pending[0]?.member?.name || "Komentar"}: trenutno shranjeno — {autosave.pending[0]?.change.type === "attendance"
+          ? (s.entries.find(e => e.member_id === autosave.pending[0]?.member?.id)?.status === "present" ? "Da" : s.entries.find(e => e.member_id === autosave.pending[0]?.member?.id)?.status === "absent" ? "Ne" : "neoznačeno")
+          : s.comment}</p>
+        <button className="portal-secondary" onClick={() => autosave.resolve(false)}>Obdrži shranjeni vnos</button>{" "}
+        <button className="portal-secondary" onClick={() => autosave.resolve(true)}>Uporabi moj vnos</button>
+      </div>}
+      {legacy && <details className="portal-makeup"><summary>Prejšnji neshranjeni osnutek</summary>
+        <p>Osnutek iz prejšnje različice ni samodejno prepisal shranjene evidence. Preglejte vrednosti in jih po potrebi ponovno označite.</p>
+        {Object.entries(legacy.statuses).map(([id,value]) => <p key={id}>{[...roster,...legacy.guests].find(m => m.id === id)?.name || "Član"}: {value === "present" ? "Da" : "Ne"}</p>)}
+        <p>{legacy.comment}</p>
       </details>}
       {people.map((p) => (
         <div className="portal-row" key={p.id}>
@@ -319,7 +337,7 @@ function SessionForm({
                 className={`portal-secondary portal-attendance-${value}`}
                 aria-label={`${p.name}: ${value === "present" ? "prisoten" : "odsoten"} (${label})`}
                 aria-pressed={(statuses[p.id] || "") === value}
-                onClick={() => draft.update({ statuses: { ...statuses, [p.id]: value as "present" | "absent" } })}
+                onClick={() => autosave.mark(p, value as "present" | "absent")}
               >
                 {label}
               </button>
@@ -328,7 +346,7 @@ function SessionForm({
               <button
                 className="portal-secondary"
                 disabled={editingDisabled}
-                onClick={() => setGuests(guests.filter((g) => g.id !== p.id))}
+                onClick={() => autosave.mark(p, "remove")}
               >
                 Odstrani
               </button>
@@ -336,41 +354,6 @@ function SessionForm({
           </div>
         </div>
       ))}
-      <Button
-        className="portal-finalize"
-        disabled={editingDisabled}
-        onClick={async () => {
-          if (people.some((p) => !statuses[p.id])) {
-            setMessage("Označite vse člane skupine.");
-            return;
-          }
-          setBusy(true);
-          try {
-            const result = await finalizeSession({
-              session_id: s.id,
-              version: s.version,
-              comment,
-              entries: people.map((p) => ({
-                member_id: p.id,
-                status: statuses[p.id],
-                kind: guests.some((g) => g.id === p.id) ? "makeup" : "regular",
-              })),
-            });
-            if (!result.ok) setMessage(result.error);
-            else { draft.clear(); await reload(); }
-          } catch {
-            setMessage(
-              "Povezava ni uspela. Osvežite stran in preverite, ali je evidenca shranjena.",
-            );
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {busy
-          ? "Shranjujem …"
-          : saveLabel}
-      </Button>
       <p role="status" className="portal-error">
         {message}
       </p>
@@ -413,18 +396,18 @@ function SessionForm({
                 <button
                   className="portal-secondary"
                   onClick={() => {
-                    setGuests([...guests, m]);
+                    autosave.mark(m, "present");
                     setResults([]);
                     setQuery("");
                   }}
                 >
-                  Dodaj
+                  Dodaj kot prisotnega
                 </button>
               </div>
             ))}
         </details>
       )}
-      {s.status === "planned" && (
+      {s.status === "planned" && !autosave.pending.length && (
         <details className="portal-makeup">
           <summary>Določi nadomestnega trenerja</summary>
           <p className="portal-muted">Izbira velja samo za ta datum. Nadomestni trener dobi dostop do članov in evidence tega treninga.</p>
@@ -463,9 +446,13 @@ function SessionForm({
         />
       </label>
       <p className="portal-muted">
-        Ob shranitvi se komentar pošlje na info@apnea.si. Zadeva vsebuje ime
+        Z gumbom Pošlji komentar se komentar pošlje na info@apnea.si. Zadeva vsebuje ime
         izvajalca, skupino in datum.
       </p>
+      {!commentStored && <p className="portal-error">Osnutka komentarja ni mogoče shraniti na napravo.</p>}
+      <Button className="portal-finalize" disabled={editingDisabled || !comment.trim() || !!autosave.pending.length || comment.trim() === s.comment}
+        onClick={() => autosave.sendComment(comment)}>Pošlji komentar</Button>
+      {s.comment && <p role="status" className="portal-muted">{demo ? "Testni komentar shranjen, ni poslan" : mailLabels[s.mail_status]}</p>}
       {demo && s.comment && (
         <div className="portal-notice">
           <strong>Predogled, ni poslano</strong>
@@ -699,7 +686,7 @@ function Dashboard({
                     ? "Zaključeno"
                     : s.status === "cancelled"
                       ? "Odpovedano"
-                      : "Evidenca še ni zaključena"}{" "}
+                      : s.first_saved_at ? "Delno izpolnjena evidenca" : "Evidenca še ni izpolnjena"}{" "}
                   ·{" "}
                   {sessionCoaches(s).every(id => regularCoaches(s).includes(id))
                     ? "Redna ura"

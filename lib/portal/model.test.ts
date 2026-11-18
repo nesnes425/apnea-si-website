@@ -187,22 +187,22 @@ test('both regular coaches see one shared roster and each earns one hour', () =>
 });
 
 
-test("48 hours starts at first save, corrections never extend it or duplicate hours", async () => {
+test("7 days starts at first save, corrections never extend it or duplicate hours", async () => {
   const { canEditAttendance } = await import('./model');
   const d = data();
   // First save is days after training: the training date must not start the clock.
   const first = new Date('2026-10-24T20:00:00Z');
   d.sessions[0] = closeSession(d, trainer, input, '2026-10-24', first);
   assert.equal(d.sessions[0].first_saved_at, first.toISOString());
-  const beforeExpiry = new Date(first.getTime() + 48 * 3600000 - 1);
+  const beforeExpiry = new Date(first.getTime() + 168 * 3600000 - 1);
   assert.equal(canEditAttendance(d.sessions[0], trainer, '2026-10-26', beforeExpiry), true);
   d.sessions[0] = closeSession(d, trainer, {...input,version:1,entries:input.entries.map(e=>({...e,status:'absent'}))}, '2026-10-26', beforeExpiry);
   assert.equal(d.sessions[0].first_saved_at, first.toISOString());
   assert.equal(d.sessions[0].entries[0].status, 'absent');
   assert.deepEqual(coachHours(d.sessions, trainer.id), {regular:1,makeup:0});
-  const expiry = new Date(first.getTime() + 48 * 3600000);
+  const expiry = new Date(first.getTime() + 168 * 3600000);
   assert.equal(canEditAttendance(d.sessions[0], trainer, '2026-10-26', expiry), false);
-  assert.throws(()=>closeSession(d,trainer,{...input,version:2},'2026-10-26',expiry), /48 ur/);
+  assert.throws(()=>closeSession(d,trainer,{...input,version:2},'2026-10-26',expiry), /7 dni/);
   const corrected = closeSession(d,admin,{...input,version:2},'2026-10-26',expiry);
   assert.equal(corrected.first_saved_at, first.toISOString());
   assert.equal(canEditAttendance({...corrected,first_saved_at:null},trainer,'2026-10-26',expiry),false);

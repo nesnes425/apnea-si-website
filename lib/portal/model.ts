@@ -34,18 +34,19 @@ export type Session = {
   comment: string;
   version: number;
   first_saved_at?: string | null;
+  attendance_roster?: Member[] | null;
   mail_status: "none" | "pending" | "sent" | "failed" | "uncertain";
   mail_subject: string | null;
 };
-// A correction never restarts the 48-hour window. Missing legacy timestamps fail closed.
+// A correction never restarts the 7-day window. Missing legacy timestamps fail closed.
 export function attendanceEditDeadline(s: Session): number | null {
   const first = s.first_saved_at ? Date.parse(s.first_saved_at) : NaN;
-  return Number.isFinite(first) ? first + 48 * 60 * 60 * 1000 : null;
+  return Number.isFinite(first) ? first + 7 * 24 * 60 * 60 * 1000 : null;
 }
 export function canEditAttendance(s: Session, user: Staff, today = ljubljanaDate(), now = new Date()) {
   if (!user.active || (user.role !== "admin" && !sessionCoaches(s).includes(user.id)) ||
       s.status === "cancelled" || s.date > today) return false;
-  if (s.status !== "closed" || user.role === "admin") return true;
+  if (user.role === "admin" || (!s.first_saved_at && s.status !== "closed")) return true;
   const deadline = attendanceEditDeadline(s);
   return deadline !== null && now.getTime() < deadline;
 }
@@ -96,6 +97,7 @@ export function enrolledOn(data: Snapshot, memberId: string, groupId: string, da
   return data.memberships.some(e => e.member_id === memberId && e.group_id === groupId && e.valid_from <= date && (!e.valid_until || date <= e.valid_until));
 }
 export function sessionRoster(data: Snapshot, session: Session): Member[] {
+  if (session.attendance_roster) return session.attendance_roster;
   if (session.status === "closed") return session.entries.filter(e => e.kind === "regular").map(e => ({ id: e.member_id, name: e.name, group_id: session.group_id }));
   return data.members.filter(m => enrolledOn(data, m.id, session.group_id, session.date));
 }
@@ -175,7 +177,7 @@ export function closeSession(
       "Prihodnjega ali odpovedanega treninga ni mogoče zaključiti.",
     );
   if (!canEditAttendance(s, user, today, now))
-    throw new Error("Rok 48 ur od prvega shranjevanja je potekel. Popravek naj uredi vodstvo.");
+    throw new Error("Rok 7 dni od prvega shranjevanja je potekel. Popravek naj uredi vodstvo.");
   const ids = input.entries.map((e) => e.member_id);
   if (new Set(ids).size !== ids.length)
     throw new Error("Član je dodan večkrat.");
@@ -206,7 +208,7 @@ export function closeSession(
     comment: input.comment,
     status: "closed",
     version: s.version + 1,
-    first_saved_at: s.status === "closed" ? s.first_saved_at : now.toISOString(),
+    first_saved_at: s.first_saved_at || (s.status === "closed" ? null : now.toISOString()),
     mail_status: input.comment
       ? s.status !== "closed" || commentChanged
         ? "pending"
