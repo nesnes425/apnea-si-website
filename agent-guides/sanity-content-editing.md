@@ -263,6 +263,14 @@ Editable:
 - `categories`
 - `metaDescription`
 
+Photos (November 18, 2026):
+
+- `featuredImage.caption` shows under the cover photo.
+- Body block `imagePair` ("Dve fotki skupaj (kolaž)") holds exactly two images, each
+  with `alt` and `caption`, shown side by side cropped to 4:5 (hotspot respected). Use
+  it for portrait photos instead of a full-width single image; a landscape photo in a
+  pair is cropped to portrait.
+
 Be careful:
 
 - `slug`

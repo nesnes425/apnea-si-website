@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Featured image */}
         {featuredImageUrl && (
-          <div className="mb-10 -mx-6 md:mx-0">
+          <figure className="mb-10 -mx-6 md:mx-0">
             <Image
               src={featuredImageUrl}
               alt={post.featuredImage?.alt || post.title}
@@ -155,7 +155,12 @@ export default async function BlogPostPage({ params }: Props) {
               priority
               sizes="(max-width: 768px) 100vw, 800px"
             />
-          </div>
+            {post.featuredImage?.caption && (
+              <figcaption className="mt-2 px-6 md:px-0 text-sm leading-relaxed text-muted-text">
+                {post.featuredImage.caption}
+              </figcaption>
+            )}
+          </figure>
         )}
 
         {/* Body */}
