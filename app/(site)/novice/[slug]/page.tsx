@@ -156,7 +156,7 @@ export default async function BlogPostPage({ params }: Props) {
               sizes="(max-width: 768px) 100vw, 800px"
             />
             {post.featuredImage?.caption && (
-              <figcaption className="mt-2 px-6 md:px-0 text-sm leading-relaxed text-muted-text">
+              <figcaption className="mt-2 px-6 md:px-0 text-center text-sm italic leading-relaxed text-muted-text">
                 {post.featuredImage.caption}
               </figcaption>
             )}

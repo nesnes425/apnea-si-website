@@ -63,7 +63,7 @@ const components: PortableTextComponents = {
             sizes="(max-width: 768px) 100vw, 800px"
           />
           {value.caption && (
-            <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+            <figcaption className="mt-2 text-center text-sm italic leading-relaxed text-muted-text">
               {value.caption}
             </figcaption>
           )}
@@ -98,7 +98,7 @@ const components: PortableTextComponents = {
                   sizes="(max-width: 768px) 50vw, 400px"
                 />
                 {img.caption && (
-                  <figcaption className="mt-2 text-sm leading-relaxed text-muted-text">
+                  <figcaption className="mt-2 text-center text-sm italic leading-relaxed text-muted-text">
                     {img.caption}
                   </figcaption>
                 )}
