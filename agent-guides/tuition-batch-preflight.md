@@ -68,6 +68,15 @@ unclassified overlapping records or missing service dates never produce a false
 absence. Non-overlapping known service periods are excluded. This does not inspect
 proformas, reconcile accounting or establish a person's identity from email alone.
 
+The verified club item `12020024`, “Vadnina za učenje plavanja”, is a separate
+individual-swimming service, not seasonal tuition merely because its title
+contains “Vadnina”. A narrow exclusion requires every invoice row to use that
+exact item ID and title, describe an individual lesson, and contain no seasonal
+or plan/payment reference. Document references, period invoices, conflicting
+metadata, unknown or mixed rows remain blocking. Registry-linked tuition
+invoices cannot use this exclusion. The verified catalogue mapping (25 November
+2026) lives in `lib/config.ts`; this does not exempt arbitrary other services.
+
 Every source is bounded to 20 pages of 100 records. Minimax invoice details use
 groups of at most five reads. A shared 43-second budget stops new requests; existing
 provider timeouts finish below the route's 60-second limit. Page truncation,

@@ -4,6 +4,7 @@ import {getResource, getIssuedInvoice, getItemByCode, type MinimaxIssuedInvoice}
 import {tuitionDb, type PlanRecord} from "./store";
 import {CLUB_STRIPE_ACCOUNT, tuitionItem, TUITION_TYPE, type TuitionPlan} from "./plan";
 import {normalize, type PreflightReaders, type ProviderRecord, type ProviderSnapshot, type RegistrySnapshot} from "./batch-preflight";
+import {classifyMinimaxInvoice} from "./minimax-preflight-classification";
 
 const ORGANISATION = 241557;
 const MAX_PAGES = 20;
@@ -182,11 +183,8 @@ export function runtimePreflightReaders():PreflightReaders {
         for(const customer of matches) {
           result[i].records.push({ref:`minimax:customer:${customer.CustomerId}`,kind:"customer"});
           for(const inv of await readInvoices(customer.CustomerId)) {
-            const rows=inv.IssuedInvoiceRows;
-            if(!rows?.length) throw new Error("Minimax invoice rows missing");
-            const tuition=rows.some(r=>itemIds.has(r.Item?.ID) || /vadnin|tuition/i.test(`${r.ItemName??""} ${r.Description??""} ${r.Item?.Name??""}`));
-            const membershipOnly=Boolean(membership) && rows.every(r=>r.Item?.ID===membership!.ItemId) && !tuition;
-            result[i].records.push({ref:`minimax:${inv.IssuedInvoiceId}`,kind:"invoice",tuition,membershipOnly,serviceFrom:inv.DateTransactionFrom?.slice(0,10),serviceTo:inv.DateTransaction?.slice(0,10)});
+            const classification=classifyMinimaxInvoice(inv,itemIds,membership?.ItemId,ORGANISATION);
+            result[i].records.push({ref:`minimax:${inv.IssuedInvoiceId}`,kind:"invoice",...classification,serviceFrom:inv.DateTransactionFrom?.slice(0,10),serviceTo:inv.DateTransaction?.slice(0,10)});
           }
         }
       }

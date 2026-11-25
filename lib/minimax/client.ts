@@ -43,6 +43,8 @@ export type MinimaxIssuedInvoice = {
   DateTransactionFrom?: string;
   DateTransaction?: string;
   DescriptionBelow?: string;
+  DescriptionAbove?: string;
+  Notes?: string;
   InvoiceType?: string;
   PricesOnInvoice?: string;
   InvoiceForPeriod?: string;

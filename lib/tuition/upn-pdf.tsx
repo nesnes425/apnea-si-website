@@ -35,6 +35,7 @@ export async function tuitionUpnPdf(plan: TuitionPlan, sample = false) {
           <Text style={{fontSize:8,textAlign:"center",marginTop:6}}>{sample ? "Vzorčna QR koda\nNi za plačilo" : "UPN QR\nSkenirajte v bančni aplikaciji"}</Text>
         </View>
       </View>
+      {plan.paymentAdjustmentNote && <Text style={{marginBottom:18}}>{plan.paymentAdjustmentNote}</Text>}
       {rows.map(([label,value]) => <View key={label} style={{flexDirection:"row",paddingVertical:9,borderBottomWidth:0.5,borderBottomColor:"#ddd"}}>
         <Text style={{width:160,color:"#585a5a"}}>{label}</Text><Text style={{flex:1}}>{value}</Text>
       </View>)}

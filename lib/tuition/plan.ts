@@ -45,6 +45,9 @@ export const planSchema = z
     participant: z.string().min(2).max(150),
     locationCode: z.string().regex(/^[A-Z0-9][A-Z0-9-]{2,39}$/),
     description: z.string().min(3).max(200),
+    // Explicit customer-facing explanation; never inferred from internal Sheet notes.
+    // Omitted on existing manifests so their fingerprints remain unchanged.
+    paymentAdjustmentNote: z.string().trim().min(1).max(600).optional(),
     // Optional so existing fingerprints remain unchanged. Bank-only invitations
     // retain an unsent Stripe draft for the existing reconciliation workflow.
     invitationFormat: z.literal("upn_only").optional(),

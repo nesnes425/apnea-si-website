@@ -1,3 +1,11 @@
+// Verified from the club Minimax catalogue/invoice rows on 25 November 2026.
+// This item is individual swimming instruction, separate from seasonal tuition.
+export const minimaxIndividualSwimmingItem = {
+  organisationId: 241557,
+  itemId: 12020024,
+  name: "Vadnina za učenje plavanja",
+} as const;
+
 export const siteConfig = {
   name: "Apnea Slovenija",
   url: "https://www.apnea.si",
