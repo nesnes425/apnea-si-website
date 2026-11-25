@@ -34,6 +34,7 @@ export function combinedInvitation(plan: TuitionPlan, paymentUrl: string, sample
     `Pozdravljeni ${sample ? "Vzorec Član" : plan.participant},`,
     "še enkrat hvala za vašo udeležbo na treningih!",
     `Za obdobje ${period} vam pošiljamo plačilni nalog za plačilo vadnine v skupnem znesku ${euro(upn.amountCents)}.`,
+    ...(plan.paymentAdjustmentNote ? [plan.paymentAdjustmentNote] : []),
     ...(!upnOnly ? ["Izberete lahko eno od dveh možnosti plačila:",
     plan.second ? "1. Plačilo s kartico v dveh obrokih" : "1. Enkratno plačilo s kartico",
     plan.second

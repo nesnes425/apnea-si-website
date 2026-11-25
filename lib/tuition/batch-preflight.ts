@@ -23,6 +23,7 @@ export type ProviderRecord = {
   planId?: string;
   customerId?: string;
   membershipOnly?: boolean;
+  separateService?: "individual_swimming";
   tuition?: boolean;
   inactive?: boolean;
   paid?: boolean;
@@ -68,6 +69,10 @@ function providerCheck(p: TuitionPlan, evidence: ProviderSnapshot, registry: Reg
   const conflicts: string[] = [], matches: string[] = [], excluded: string[] = [];
   for (const r of relevant) {
     if (r.membershipOnly && !r.tuition) { excluded.push(`${r.ref}:membership_only`); continue; }
+    const registeredInvoice=r.kind==="invoice" && registry?.payments.some(payment=>r.ref===`minimax:${payment.minimax_id}`);
+    if (r.kind==="invoice" && r.ref.startsWith("minimax:") && r.separateService==="individual_swimming" && !r.tuition && !r.planId && !registeredInvoice) {
+      excluded.push(`${r.ref}:separate_individual_swimming`); continue;
+    }
     if (r.kind === "customer") { matches.push(r.ref); continue; }
     const linkedPayment = registry?.payments.some(payment => payment.plan_id === p.id && (r.ref === `stripe:${payment.id}` || r.ref === `minimax:${payment.minimax_id}`));
     const savedInvoice = own && r.kind === "invoice" && [own.first_invoice_id, own.collection_invoice_id, own.consent_invoice_id].some(id=>id && r.ref === `stripe:${id}`);

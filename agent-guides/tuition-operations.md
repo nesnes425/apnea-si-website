@@ -1,6 +1,18 @@
 # Tuition payments: Samo and Katarina
 
-Last updated: October 20, 2026
+Last updated: November 25, 2026
+
+## Optional payment adjustment explanation
+
+New reviewed manifests may include `paymentAdjustmentNote`, a plain-text explanation
+of the approved reduction (1–600 characters). The combined email displays it directly
+after the total, and the UPN PDF displays the same explanation above the payment fields.
+It is not populated from internal Sheet comments automatically. The note changes the
+approved manifest fingerprint; never add it to a previously created plan by editing
+the local file. Omission preserves the legacy manifest and message. It does not change
+amounts, dates, bank/QR data, Stripe consent or Minimax accounting descriptions.
+This is a local code change pending the normal approved PR and production release;
+do not send manifests containing the field before the deployed schema accepts it.
 
 ## Current delivery state
 
